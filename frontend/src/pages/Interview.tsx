@@ -1,9 +1,16 @@
 import { useState } from 'react';
 
 export default function Interview() {
-  const [messages] = useState([
+  const [messages, setMessages] = useState([
     { role: 'system', content: 'Welcome to your technical interview. Are you ready to begin?' }
   ]);
+  const [input, setInput] = useState('');
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    setMessages([...messages, { role: 'user', content: input.trim() }]);
+    setInput('');
+  };
 
   return (
     <div className="container max-w-4xl py-8 h-[calc(100vh-80px)] flex flex-col">
@@ -17,9 +24,15 @@ export default function Interview() {
 
       <div className="flex-1 bg-white dark:bg-slate-800 rounded-t-xl border border-slate-200 dark:border-slate-700 p-6 overflow-y-auto mb-4 flex flex-col gap-4 shadow-sm">
         {messages.map((msg, i) => (
-          <div key={i} className="flex flex-col max-w-[80%] self-start">
-            <span className="text-xs text-slate-500 mb-1 ml-1">AI Agent</span>
-            <div className="bg-slate-100 dark:bg-slate-700 p-4 rounded-2xl rounded-tl-sm text-slate-900 dark:text-slate-100">
+          <div key={i} className={`flex flex-col max-w-[80%] ${msg.role === 'user' ? 'self-end items-end' : 'self-start'}`}>
+            <span className={`text-xs text-slate-500 mb-1 ml-1 ${msg.role === 'user' ? 'mr-1 text-right' : ''}`}>
+              {msg.role === 'user' ? 'You' : 'AI Agent'}
+            </span>
+            <div className={`p-4 rounded-2xl text-slate-900 dark:text-slate-100 ${
+              msg.role === 'user'
+                ? 'bg-primary-600 text-white rounded-tr-sm'
+                : 'bg-slate-100 dark:bg-slate-700 rounded-tl-sm'
+            }`}>
               {msg.content}
             </div>
           </div>
@@ -30,10 +43,16 @@ export default function Interview() {
         <div className="flex gap-4">
           <input 
             type="text" 
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Type your response or use voice..." 
             className="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-primary-500 text-slate-900 dark:text-slate-100"
           />
-          <button className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors shadow-sm">
+          <button
+            onClick={handleSend}
+            className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50"
+          >
             Send
           </button>
         </div>
