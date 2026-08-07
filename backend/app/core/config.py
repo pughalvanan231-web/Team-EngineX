@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     # e.g: '["http://localhost", "http://localhost:5173"]'
     BACKEND_CORS_ORIGINS: List[str] = ["*"]
 
+    GROQ_API_KEY: str = ""
+    GROQ_MODEL: str = "llama-3.3-70b-versatile"
+
     class Config:
         case_sensitive = True
         env_file = ".env"

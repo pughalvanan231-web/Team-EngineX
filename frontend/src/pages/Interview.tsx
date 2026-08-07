@@ -1,15 +1,39 @@
 import { useState } from 'react';
 
+interface Message {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
 export default function Interview() {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     { role: 'system', content: 'Welcome to your technical interview. Are you ready to begin?' }
   ]);
   const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    setMessages([...messages, { role: 'user', content: input.trim() }]);
+  const handleSend = async () => {
+    if (!input.trim() || loading) return;
+    const userMessage: Message = { role: 'user', content: input.trim() };
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInput('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/v1/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: updatedMessages }),
+      });
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+      const data = await res.json();
+      setMessages([...updatedMessages, { role: 'assistant', content: data.reply }]);
+    } catch (err) {
+      setMessages([...updatedMessages, { role: 'assistant', content: `Error: ${err}` }]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,9 +75,10 @@ export default function Interview() {
           />
           <button
             onClick={handleSend}
-            className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50"
+            disabled={loading}
+            className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Send
+            {loading ? 'Thinking...' : 'Send'}
           </button>
         </div>
       </div>
