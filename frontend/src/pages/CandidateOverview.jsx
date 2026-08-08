@@ -24,7 +24,7 @@ export function CandidateOverview({ candidates = [], selectedCandidate, onSelect
           setAnalyticsData(res);
         } else {
           // Fallback normalization if backend endpoint not active
-          const found = candidates.find(c => (c.member?.id || c.candidate_id) === activeCandId) || candidates[0];
+          const found = candidates.find(c => (c.member?.id || c.candidate_id) === activeCandId);
           setAnalyticsData({
             candidate: found ? (found.stats ? found : {
               candidate_id: activeCandId,

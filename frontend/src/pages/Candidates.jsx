@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RefreshCw, X, Sparkles } from 'lucide-react';
+import { RefreshCw, X, Sparkles, AlertTriangle } from 'lucide-react';
 import { fetchCurriculum } from '../services/api';
 
-export function Candidates() {
+export function Candidates({ candidates = [] }) {
   const [days, setDays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeDay, setActiveDay] = useState(null);
+  const [lookupError, setLookupError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -150,7 +151,14 @@ export function Candidates() {
             e.preventDefault();
             const studentId = e.currentTarget.studentId.value.trim();
             if (studentId) {
-              navigate(`/candidates/${studentId}`);
+              const exists = candidates.some(c => 
+                (c.member?.id || c.candidate_id || "").toLowerCase() === studentId.toLowerCase()
+              );
+              if (exists) {
+                navigate(`/candidates/${studentId.toUpperCase()}`);
+              } else {
+                setLookupError(studentId);
+              }
             }
           }}
           className="flex flex-col sm:flex-row gap-3 pt-2"
@@ -174,7 +182,7 @@ export function Candidates() {
       {/* Glassmorphic Popup Modal */}
       {activeDay && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fadeIn">
-          <div className="card-surface relative w-full max-w-lg overflow-hidden flex flex-col">
+          <div className="relative w-full max-w-lg overflow-hidden flex flex-col bg-slate-900/95 border border-white/20 shadow-2xl rounded-2xl">
             {/* Top Image Banner */}
             <div className="relative h-[220px] w-full overflow-hidden">
               <img src={activeDay.cardImage} alt={activeDay.title} className="w-full h-full object-cover" />
@@ -226,6 +234,27 @@ export function Candidates() {
                 Close
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Glassmorphic Error Popup Modal */}
+      {lookupError && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fadeIn">
+          <div className="relative w-full max-w-sm overflow-hidden flex flex-col p-6 text-center space-y-4 bg-slate-900/95 border border-white/20 shadow-2xl rounded-2xl">
+            <div className="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-450 mx-auto">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-bold text-white tracking-tight">Student ID Not Found</h3>
+            <p className="text-xs text-white/70 leading-relaxed">
+              We couldn't find any student with the ID <span className="font-mono font-bold text-rose-350">"{lookupError}"</span>. Please double check and try again.
+            </p>
+            <button
+              onClick={() => setLookupError(null)}
+              className="w-full py-2.5 rounded-full bg-white hover:bg-slate-100 text-slate-950 font-bold text-xs shadow-md transition-all active:scale-[0.98]"
+            >
+              Try Again
+            </button>
           </div>
         </div>
       )}
