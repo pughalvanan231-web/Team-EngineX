@@ -350,6 +350,17 @@ class InterviewOrchestrator:
             "degraded": False,
             "created_at": _now(),
             "updated_at": _now(),
+            # Live mental model — evolves with every answer
+            "mental_model": {
+                "technologies_mentioned": [],
+                "candidate_claims": [],
+                "unverified_claims": [],
+                "architecture_decisions": [],
+                "tradeoffs_discussed": [],
+                "interesting_threads": [],
+                "strong_areas": [],
+                "weak_areas": [],
+            },
         }
 
         state = self._advance(state, welcome=True)
@@ -380,7 +391,15 @@ class InterviewOrchestrator:
             "answer": candidate_answer,
             "evaluation_score": eval_res["overall"],
             "classification": eval_res["quality_classification"],
-            "feedback": eval_res.get("evidence", "Candidate answer recorded.")
+            "feedback": eval_res.get("evidence", "Candidate answer recorded."),
+            # Structured reasoning fields for audit log and follow-up chaining
+            "correct_concepts": eval_res.get("correct_concepts", []),
+            "incorrect_concepts": eval_res.get("incorrect_concepts", []),
+            "mentioned_tradeoffs": eval_res.get("mentioned_tradeoffs", []),
+            "missing_tradeoffs": eval_res.get("missing_tradeoffs", []),
+            "implementation_evidence": eval_res.get("implementation_evidence", []),
+            "recommended_followup_type": eval_res.get("recommended_followup_type", ""),
+            "recommended_focus": eval_res.get("recommended_focus", "")
         }
         state.setdefault("question_reviews", []).append(q_review)
 
@@ -418,20 +437,29 @@ class InterviewOrchestrator:
         state = self._rerank_priority_queue(state, eval_res, current_q)
 
         # Check follow-up logic (max 2 follow-ups per topic)
+        # Trigger follow-up for: weak answers (clarify/reteach), partial answers (missing concept),
+        # AND strong answers where a richer follow-up type (TRADE_OFF / FAILURE_SCENARIO / ARCHITECTURE) is recommended.
+        recommended_type = eval_res.get("recommended_followup_type", "")
+        deep_followup_types = ("TRADE_OFF", "FAILURE_SCENARIO", "ARCHITECTURE")
         weak_quality = quality in ("PARTIAL", "WEAK", "INCORRECT")
+        depth_followup = quality in ("EXCEPTIONAL", "STRONG") and recommended_type in deep_followup_types
         followup_depth = state.get("followup_depth", 0)
-        should_followup = weak_quality and followup_depth < 2
+        should_followup = (weak_quality or depth_followup) and followup_depth < 2
 
         if should_followup:
             state["followup_depth"] = followup_depth + 1
             state["followup_depth_current"] = state["followup_depth"]
-            state = self._generate_followup_turn(state, current_q, candidate_answer, quality, eval_res.get("missing_concepts", []))
+            state = self._generate_followup_turn(state, current_q, candidate_answer, quality, eval_res.get("missing_concepts", []), eval_res)
         else:
             state["followup_depth"] = 0
             state["followup_depth_current"] = 0
             state = self._advance(state, welcome=False)
 
         state["updated_at"] = now
+
+        # Update live mental model with insights from this answer
+        self._update_mental_model(state, eval_res, candidate_answer)
+
         save_interview(interview_id, state["candidate_id"], state["status"], state, state["created_at"], now)
         return state
 
@@ -464,53 +492,46 @@ class InterviewOrchestrator:
 
         q_num = answered + 1
         stage = self.stage_for(q_num)
-
-        p_queue = state.get("priority_queue", [])
-        if p_queue:
-            next_p = p_queue[0]
-            day_num = next_p["day"]
-            topic_title = next_p["topic"]
-            p_category = next_p["category"]
-            p_reason = next_p["reason"]
-            p_attempts = next_p.get("attempts")
-        else:
-            day_num = 12
-            topic_title = "Prompt Engineering Fundamentals"
-            p_category = "HIGH_ATTEMPTS"
-            p_reason = "Curriculum priority validation."
-            p_attempts = 4
-
-        topic_obj = self.get_day(day_num)
-        topic_obj["title"] = topic_title
-
         state["stage"] = stage
-        q_item, degraded = self._generate_question(
-            profile=state["profile"],
-            topic_obj=topic_obj,
-            stage=stage,
-            q_num=q_num,
-            difficulty_index=state.get("difficulty_index", 2),
-            is_followup=False,
-            followup_label="CORE QUESTION",
-            priority_category=p_category,
-            priority_reason=p_reason,
-            attempts=p_attempts
+
+        # Q1: personalized opening question driven by candidate profile
+        if welcome or q_num == 1:
+            q_item, degraded = self._generate_opening_question(state)
+            q_item["question_number"] = 1
+            state["degraded"] = state.get("degraded", False) or degraded
+            self._record_question(state, q_item)
+            state["question_number"] = q_item["question_number"]
+            state["current_question"] = q_item
+            return state
+
+        # Q2+: answer-first question generation
+        answers = state.get("answers", [])
+        evaluations = state.get("evaluations", [])
+        latest_answer = answers[-1]["answer"] if answers else ""
+        latest_eval = evaluations[-1] if evaluations else {}
+        interesting_threads = latest_eval.get("interesting_threads", [])
+
+        # Select the most valuable thread from the latest answer
+        selected_thread = self._select_best_thread(state, interesting_threads)
+
+        # Generate an answer-driven question
+        q_item, degraded = self._generate_answer_driven_question(
+            state, selected_thread, latest_answer, latest_eval, q_num, stage
         )
 
         state["degraded"] = state.get("degraded", False) or degraded
         self._record_question(state, q_item)
-
         state["question_number"] = q_item["question_number"]
         state["current_question"] = q_item
         return state
 
-    def _generate_followup_turn(self, state: Dict[str, Any], current_q: Dict[str, Any], answer: str, quality: str, missing: List[str]) -> Dict[str, Any]:
+    def _generate_followup_turn(self, state: Dict[str, Any], current_q: Dict[str, Any], answer: str, quality: str, missing: List[str], eval_res: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         answered = len(state["answers"])
         if self._should_finish(state, answered):
             return self.finish_interview(state["interview_id"])
 
         q_num = current_q["question_number"] + 1
-        q_item, degraded = self._generate_followup(state, current_q, answer, quality, missing)
+        q_item, degraded = self._generate_followup(state, current_q, answer, quality, missing, eval_res)
         q_item["question_number"] = q_num
         self._record_question(state, q_item)
         state["degraded"] = state.get("degraded", False) or degraded
@@ -558,6 +579,285 @@ class InterviewOrchestrator:
             return "Production Readiness"
         return "Capstone Evaluation"
 
+    # ---------------------------------------------------------------------------
+    # NEW: ANSWER-FIRST ENGINE HELPERS
+    # ---------------------------------------------------------------------------
+
+    def _generate_opening_question(self, state: Dict[str, Any]) -> Tuple[Dict[str, Any], bool]:
+        """Generate a personalized, profile-driven opening question (Q1)."""
+        profile = state.get("profile", {})
+        norm_days = profile.get("normalizedDays", [])
+        stats = profile.get("stats", {})
+
+        # Gather high-friction topics (attempts >= 3) for context
+        p_queue = state.get("priority_queue", [])
+        high_friction = [p["topic"] for p in p_queue if p.get("category") in ("HIGH_ATTEMPTS", "SKIPPED")][:3]
+        first_try_passed = [d["title"] for d in norm_days if d.get("status") == "PASSED" and d.get("attempts") == 1][:4]
+        skipped = [d["title"] for d in norm_days if d.get("status") == "SKIPPED"][:3]
+
+        # Modules covered
+        covered_modules = list({d.get("module", "") for d in norm_days if d.get("status") in ("PASSED", "FAILED")})
+
+        exp = profile.get("experience", 4)
+        if exp >= 8:
+            opening_difficulty = "architecture"
+        elif exp >= 4:
+            opening_difficulty = "application"
+        else:
+            opening_difficulty = "fundamentals"
+
+        template = get_prompt_template("opening_question")
+        prompt = template.format(
+            candidate_name=profile.get("name", "Candidate"),
+            candidate_role=profile.get("role", "AI Engineer"),
+            candidate_experience=exp,
+            candidate_education=profile.get("education", "Computer Science"),
+            days_completed=stats.get("completedDays", 0),
+            pass_rate=stats.get("passPct", 0),
+            high_friction_topics=", ".join(high_friction) if high_friction else "None identified",
+            skipped_topics=", ".join(skipped) if skipped else "None",
+            first_try_count=stats.get("missionsFirstTry", 0),
+            modules_covered=", ".join(covered_modules) if covered_modules else "Foundation AI Engineering",
+            opening_difficulty=opening_difficulty,
+        )
+
+        res, degraded = ai_service.call_ai(prompt, schema_type="opening")
+
+        fallback_q = (
+            f"You've worked through {', '.join(covered_modules[:2]) if covered_modules else 'AI engineering fundamentals'} "
+            f"during the cohort. Walk me through a system you built that you're most confident defending technically "
+            f"— focus on the key architectural decisions and trade-offs."
+        )
+        q_text = res.get("question") if isinstance(res, dict) and res.get("question") else fallback_q
+
+        # Identify a starting curriculum day from the priority queue
+        p_queue = state.get("priority_queue", [])
+        starting_day = p_queue[0]["day"] if p_queue else 1
+        starting_topic = p_queue[0]["topic"] if p_queue else "Introduction & Technical Overview"
+
+        q_item = {
+            "question_number": 1,
+            "question": q_text,
+            "topic": starting_topic,
+            "curriculum_day": starting_day,
+            "day": starting_day,
+            "module": self._module_for_day(starting_day),
+            "difficulty": opening_difficulty,
+            "is_follow_up": False,
+            "followup_label": "OPENING QUESTION",
+            "priority_category": p_queue[0].get("category", "GENERAL") if p_queue else "GENERAL",
+            "priority_reason": "Personalized opening based on candidate learning profile.",
+            "attempts": p_queue[0].get("attempts") if p_queue else None,
+        }
+        return q_item, degraded
+
+    def _select_best_thread(
+        self,
+        state: Dict[str, Any],
+        interesting_threads: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """Select the highest-value thread from the answer, biasing toward uncovered curriculum areas."""
+        days_covered_count = len(state.get("curriculum_days_covered", state.get("days_covered", [])))
+        answered = len(state.get("answers", []))
+        topics_covered = set(state.get("topics_covered", []))
+        q_hashes = set(state.get("questions_hashes", []))
+
+        # Coverage still needed — prefer threads that map to uncovered curriculum areas
+        needs_more_coverage = days_covered_count < 4 or answered < 8
+
+        # Filter out threads whose question_seed is essentially a duplicate
+        valid_threads = []
+        for t in interesting_threads:
+            if isinstance(t, dict) and t.get("hook") and t.get("question_seed"):
+                seed_hash = normalize_hash(t["question_seed"])
+                if seed_hash not in q_hashes:
+                    valid_threads.append(t)
+
+        if not valid_threads:
+            # No valid threads — fall back to priority queue top
+            p_queue = state.get("priority_queue", [])
+            if p_queue:
+                top = p_queue[0]
+                return {
+                    "hook": top["topic"],
+                    "direction": "missing_concept",
+                    "question_seed": f"How would you approach {top['topic']} in a production system?",
+                    "curriculum_area": top["topic"],
+                    "curriculum_day": top["day"],
+                    "source": "priority_queue_fallback"
+                }
+            return {
+                "hook": "your previous answer",
+                "direction": "trade_off",
+                "question_seed": "What trade-offs would you consider in a production deployment of this system?",
+                "curriculum_area": "production readiness",
+                "curriculum_day": 26,
+                "source": "default_fallback"
+            }
+
+        if needs_more_coverage:
+            # Prefer threads that cover a NEW curriculum area
+            p_queue = state.get("priority_queue", [])
+            uncovered_areas = {p["topic"].lower() for p in p_queue}
+            for thread in valid_threads:
+                area = thread.get("curriculum_area", "").lower()
+                if any(area in uc or uc in area for uc in uncovered_areas):
+                    # Map this thread to its curriculum day
+                    thread = dict(thread)
+                    if not thread.get("curriculum_day") and p_queue:
+                        for p in p_queue:
+                            if p["topic"].lower() in area or area in p["topic"].lower():
+                                thread["curriculum_day"] = p["day"]
+                                break
+                        if not thread.get("curriculum_day"):
+                            thread["curriculum_day"] = p_queue[0]["day"]
+                    thread["source"] = "answer_thread_coverage"
+                    return thread
+
+        # Return the first valid thread (already ranked by evaluator)
+        best = dict(valid_threads[0])
+        if not best.get("curriculum_day"):
+            p_queue = state.get("priority_queue", [])
+            best["curriculum_day"] = p_queue[0]["day"] if p_queue else 8
+        best["source"] = "answer_thread_primary"
+        return best
+
+    def _update_mental_model(self, state: Dict[str, Any], eval_res: Dict[str, Any], answer: str) -> None:
+        """Evolve the live mental model with insights from the latest evaluated answer."""
+        mm = state.setdefault("mental_model", {
+            "technologies_mentioned": [], "candidate_claims": [], "unverified_claims": [],
+            "architecture_decisions": [], "tradeoffs_discussed": [], "interesting_threads": [],
+            "strong_areas": [], "weak_areas": []
+        })
+
+        quality = eval_res.get("quality_classification", "STRONG")
+        topic = ""
+        if state.get("answers"):
+            topic = state["answers"][-1].get("topic", "")
+
+        # Accumulate evidence
+        for item in eval_res.get("implementation_evidence", []):
+            if item and item not in mm["technologies_mentioned"]:
+                mm["technologies_mentioned"].append(item)
+        for item in eval_res.get("correct_concepts", []):
+            if item and item not in mm["candidate_claims"]:
+                mm["candidate_claims"].append(item)
+        for item in eval_res.get("incorrect_concepts", []):
+            if item and item not in mm["unverified_claims"]:
+                mm["unverified_claims"].append(item)
+        for item in eval_res.get("mentioned_tradeoffs", []):
+            if item and item not in mm["tradeoffs_discussed"]:
+                mm["tradeoffs_discussed"].append(item)
+
+        # Track strong/weak topic areas
+        if quality in ("EXCEPTIONAL", "STRONG") and topic and topic not in mm["strong_areas"]:
+            mm["strong_areas"].append(topic)
+        elif quality in ("WEAK", "INCORRECT") and topic and topic not in mm["weak_areas"]:
+            mm["weak_areas"].append(topic)
+
+        # Store the latest interesting threads for _advance()
+        new_threads = eval_res.get("interesting_threads", [])
+        if new_threads:
+            mm["interesting_threads"] = new_threads  # always use the freshest threads
+
+    def _generate_answer_driven_question(
+        self,
+        state: Dict[str, Any],
+        selected_thread: Dict[str, Any],
+        latest_answer: str,
+        latest_eval: Dict[str, Any],
+        q_num: int,
+        stage: str
+    ) -> Tuple[Dict[str, Any], bool]:
+        """Generate the next question using the candidate's answer as the primary input."""
+        profile = state.get("profile", {})
+        diff_idx = state.get("difficulty_index", 2)
+        diff = DIFFICULTY_LEVELS[diff_idx]
+
+        # Build conversation history (last 3 Q&A pairs)
+        answers = state.get("answers", [])
+        questions_asked = state.get("questions_asked", [])
+        history_lines = []
+        for i, ans_rec in enumerate(answers[-3:]):
+            q_text = ans_rec.get("question", "")
+            a_text = ans_rec.get("answer", "")
+            history_lines.append(f"Q: {q_text}")
+            history_lines.append(f"A: {a_text[:300]}{'...' if len(a_text) > 300 else ''}")
+        conversation_history = "\n".join(history_lines) if history_lines else "(This is an early stage of the interview.)"
+
+        # Previous questions summary for deduplication
+        prev_qs = [q["question"] if isinstance(q, dict) else q for q in questions_asked]
+        prev_summary = "\n".join([f"- {q}" for q in prev_qs[-8:]]) if prev_qs else "None"
+
+        # Curriculum context for the selected thread
+        curriculum_day = selected_thread.get("curriculum_day", 8)
+        topic_obj = self.get_day(curriculum_day)
+
+        def _fmt(lst): return ", ".join(lst) if lst else "None"
+
+        template = get_prompt_template("question_generator")
+        prompt = template.format(
+            candidate_name=profile.get("name", "Candidate"),
+            candidate_role=profile.get("role", "AI Engineer"),
+            candidate_experience=profile.get("experience", state.get("experience", 4)),
+            conversation_history=conversation_history,
+            latest_answer=latest_answer,
+            quality_classification=latest_eval.get("quality_classification", "STRONG"),
+            correct_concepts=_fmt(latest_eval.get("correct_concepts", [])),
+            incorrect_concepts=_fmt(latest_eval.get("incorrect_concepts", [])),
+            mentioned_tradeoffs=_fmt(latest_eval.get("mentioned_tradeoffs", [])),
+            missing_tradeoffs=_fmt(latest_eval.get("missing_tradeoffs", [])),
+            implementation_evidence=_fmt(latest_eval.get("implementation_evidence", [])),
+            thread_hook=selected_thread.get("hook", "your previous answer"),
+            thread_direction=selected_thread.get("direction", "trade_off"),
+            thread_focus=selected_thread.get("question_seed", latest_eval.get("recommended_focus", "production trade-offs")),
+            thread_curriculum_area=selected_thread.get("curriculum_area", topic_obj.get("title", "AI Engineering")),
+            curriculum_area=topic_obj.get("title", f"Day {curriculum_day}"),
+            curriculum_day=curriculum_day,
+            day_title=topic_obj.get("title", f"Day {curriculum_day}"),
+            objectives="\n".join(topic_obj.get("objectives", ["Master AI engineering concepts"])),
+            tools=", ".join(topic_obj.get("tools", ["Python"])),
+            topics_already_covered=", ".join(state.get("topics_covered", ["None"])),
+            days_covered_count=len(state.get("curriculum_days_covered", state.get("days_covered", []))),
+            difficulty=diff,
+            previous_questions_summary=prev_summary,
+        )
+
+        res, degraded = ai_service.call_ai(prompt, schema_type="question")
+
+        # Fallback: reference the thread hook directly
+        fallback_q = (
+            f"You mentioned {selected_thread['hook']} — {selected_thread.get('question_seed', 'can you walk through the key trade-offs that decision introduced?')}"
+            if selected_thread.get("hook") and selected_thread["hook"] != "your previous answer"
+            else f"Let's go deeper on {topic_obj.get('title', 'that topic')} — how would you evaluate the trade-offs of your approach in a production system?"
+        )
+
+        q_text = res.get("question") if isinstance(res, dict) and res.get("question") else fallback_q
+
+        # Pop the matched curriculum area from the priority queue if it was covered
+        p_queue = state.get("priority_queue", [])
+        matched_day = curriculum_day
+        state["priority_queue"] = [p for p in p_queue if p["day"] != matched_day]
+
+        q_item = {
+            "question_number": q_num,
+            "question": q_text,
+            "topic": selected_thread.get("curriculum_area", topic_obj.get("title", "AI Engineering")),
+            "curriculum_day": curriculum_day,
+            "day": curriculum_day,
+            "module": self._module_for_day(curriculum_day),
+            "difficulty": diff,
+            "is_follow_up": False,
+            "followup_label": "CORE QUESTION",
+            "priority_category": "ANSWER_DRIVEN",
+            "priority_reason": f"Thread: '{selected_thread.get('hook', 'answer')}' → {selected_thread.get('direction', 'investigate')}",
+            "thread_hook": selected_thread.get("hook", ""),
+            "thread_source": selected_thread.get("source", "answer_thread"),
+            "attempts": None,
+            "generation_rationale": res.get("generation_rationale", "") if isinstance(res, dict) else "",
+        }
+        return q_item, degraded
+
     def _generate_question(self, profile: Dict[str, Any], topic_obj: Dict[str, Any], stage: str, q_num: int,
                            difficulty_index: int, is_followup: bool, followup_label: Optional[str],
                            priority_category: str = "GENERAL", priority_reason: str = "", attempts: Optional[int] = None) -> Tuple[Dict[str, Any], bool]:
@@ -572,6 +872,7 @@ class InterviewOrchestrator:
         prompt = template.format(
             candidate_name=profile.get("name", "Candidate"),
             candidate_role=profile.get("role", "Software Engineer"),
+            candidate_experience=profile.get("experience", 4),
             topic=topic_title,
             curriculum_day=day_num,
             day_title=topic_title,
@@ -679,23 +980,57 @@ class InterviewOrchestrator:
         }
         return eval_res, True
 
-    def _generate_followup(self, state: Dict[str, Any], current_q: Dict[str, Any], answer: str, quality: str, missing: List[str]) -> Tuple[Dict[str, Any], bool]:
+    def _generate_followup(self, state: Dict[str, Any], current_q: Dict[str, Any], answer: str, quality: str, missing: List[str], eval_res: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], bool]:
+        """Generate a targeted follow-up question using the full structured evaluation result."""
         q_num = current_q["question_number"] + 1
+        ev = eval_res or {}
+        profile = state.get("profile", {})
+
+        # Extract all structured evaluation fields
+        correct_concepts = ev.get("correct_concepts", [])
+        incorrect_concepts = ev.get("incorrect_concepts", [])
+        mentioned_tradeoffs = ev.get("mentioned_tradeoffs", [])
+        missing_tradeoffs = ev.get("missing_tradeoffs", [])
+        implementation_evidence = ev.get("implementation_evidence", [])
+        recommended_type = ev.get("recommended_followup_type", "MISSING_CONCEPT")
+        recommended_focus = ev.get("recommended_focus", missing[0] if missing else "production trade-offs")
+
+        def _fmt(lst) -> str:
+            return ", ".join(lst) if lst else "None"
+
         template = get_prompt_template("followup_generator")
         prompt = template.format(
             topic=current_q.get("topic", "AI Engineering"),
             curriculum_day=current_q.get("day", 8),
             day_title=current_q.get("topic", "AI Engineering"),
+            candidate_experience=profile.get("experience", state.get("experience", 4)),
+            candidate_role=profile.get("role", state.get("job_role", "AI Engineer")),
             previous_question=current_q.get("question", ""),
             previous_answer=answer,
             quality_classification=quality,
-            missing_concepts=", ".join(missing) if missing else "None",
+            correct_concepts=_fmt(correct_concepts),
+            incorrect_concepts=_fmt(incorrect_concepts),
+            mentioned_tradeoffs=_fmt(mentioned_tradeoffs),
+            missing_tradeoffs=_fmt(missing_tradeoffs),
+            implementation_evidence=_fmt(implementation_evidence),
+            missing_concepts=_fmt(missing),
+            recommended_followup_type=recommended_type,
+            recommended_focus=recommended_focus,
             difficulty=current_q.get("difficulty", "application")
         )
         res, degraded = ai_service.call_ai(prompt, schema_type="followup")
 
-        q_text = res.get("question") if isinstance(res, dict) and res.get("question") else f"Following up on your response regarding {current_q['topic']}, what specific production failure modes or trade-offs would you expect, and how would you mitigate them?"
+        # Fallback question references the recommended_focus for specificity
+        fallback_q = (
+            f"You mentioned {correct_concepts[0]} — what specific trade-offs or failure scenarios would you consider "
+            f"when deploying that in a production environment?"
+        ) if correct_concepts else (
+            f"Regarding {current_q['topic']}: {recommended_focus}. How would you approach this in a real system?"
+        )
+
+        q_text = res.get("question") if isinstance(res, dict) and res.get("question") else fallback_q
         label = res.get("followup_label") if isinstance(res, dict) and res.get("followup_label") else "Let's go one level deeper."
+        followup_type = res.get("followup_type") if isinstance(res, dict) and res.get("followup_type") else recommended_type
 
         q_item = {
             "question_number": q_num,
@@ -707,8 +1042,9 @@ class InterviewOrchestrator:
             "difficulty": DIFFICULTY_LEVELS[state.get("difficulty_index", 2)],
             "is_follow_up": True,
             "followup_label": label,
+            "followup_type": followup_type,
             "priority_category": current_q.get("priority_category", "FOLLOW_UP"),
-            "priority_reason": f"Clarifying conceptual depth following {quality.lower()} response.",
+            "priority_reason": f"{followup_type}: targeting '{recommended_focus}' following {quality.lower()} response.",
             "attempts": current_q.get("attempts")
         }
         return q_item, degraded

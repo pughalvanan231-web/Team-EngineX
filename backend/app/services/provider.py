@@ -108,6 +108,29 @@ class AIProviderService:
         """Deterministic fallback responses tailored to prompt type."""
         prompt_lower = prompt.lower()
 
+        if schema_type == "opening":
+            role_match = re.search(r'- Role: (.*)', prompt, re.IGNORECASE)
+            role = role_match.group(1).strip() if role_match else "AI Engineer"
+            exp_match = re.search(r'- Experience: (\d+)', prompt, re.IGNORECASE)
+            experience = int(exp_match.group(1).strip()) if exp_match else 4
+            
+            if experience >= 8:
+                q = f"Given your {experience} years of experience as a {role}, walk me through the architecture of a production AI application you designed recently, focusing on how you handled scalability and cost constraints."
+                diff = "architecture"
+            elif experience >= 4:
+                q = f"As a {role} with {experience} years of experience, pick one key technical design decision you made in a recent project and explain what trade-offs you balanced."
+                diff = "application"
+            else:
+                q = f"Welcome! Let's start by walking through a recent technical project you worked on as an engineer. What were the core tools you used and how did you verify the system worked correctly?"
+                diff = "fundamentals"
+                
+            return {
+                "question": q,
+                "topic": "Introduction & Technical Overview",
+                "curriculum_day": 1,
+                "difficulty": diff
+            }
+
         if schema_type == "question":
             topic = ""
             match = re.search(r'Topic: (.*?) \(Day (\d+)\)', prompt, re.IGNORECASE)
@@ -124,14 +147,18 @@ class AIProviderService:
             }
 
         if schema_type == "followup":
-            topic_match = re.search(r'Topic: (.*?) \(Day (\d+)\)', prompt, re.IGNORECASE)
+            topic_match = re.search(r'CURRENT TOPIC: (.*?) \(Day (\d+)', prompt, re.IGNORECASE)
             topic = topic_match.group(1).strip() if topic_match else "RAG"
             day = int(topic_match.group(2)) if topic_match else 8
+            # Extract recommended_followup_type from prompt for demo specificity
+            type_match = re.search(r'Recommended follow-up type: (\w+)', prompt, re.IGNORECASE)
+            followup_type = type_match.group(1).strip() if type_match else "MISSING_CONCEPT"
             return {
                 "question": "What specific failure modes or trade-offs does that approach introduce in a production system, and how would you measure them?",
                 "topic": topic,
                 "curriculum_day": day,
                 "difficulty": "advanced",
+                "followup_type": followup_type,
                 "followup_label": "Let's go one level deeper.",
             }
 
@@ -154,6 +181,27 @@ class AIProviderService:
                     "missing_concepts": [],
                     "evidence": "Candidate provided a detailed, well-reasoned answer covering mechanisms and constraints.",
                     "suggested_action": "Increase difficulty",
+                    "correct_concepts": ["core mechanism", "production trade-offs"],
+                    "incorrect_concepts": [],
+                    "mentioned_tradeoffs": ["latency vs. throughput", "cost vs. accuracy"],
+                    "missing_tradeoffs": ["index rebuild cost"],
+                    "implementation_evidence": ["mentioned specific tooling", "referenced configuration"],
+                    "recommended_followup_type": "FAILURE_SCENARIO",
+                    "recommended_focus": "failure modes and degradation under production load",
+                    "interesting_threads": [
+                        {
+                            "hook": "latency vs. throughput",
+                            "direction": "trade_off",
+                            "question_seed": "How did you measure and balance latency vs throughput in your production configuration?",
+                            "curriculum_area": "evaluation"
+                        },
+                        {
+                            "hook": "mentioned specific tooling",
+                            "direction": "failure",
+                            "question_seed": "What specific production failure modes does this tooling introduce, and how did you mitigate them?",
+                            "curriculum_area": "deployment"
+                        }
+                    ]
                 }
             if length > 70:
                 return {
@@ -165,6 +213,21 @@ class AIProviderService:
                     "missing_concepts": ["Failure mode handling", "Trade-off analysis"],
                     "evidence": "Candidate explained the main concept but omitted production edge cases.",
                     "suggested_action": "Probe deeper into missing concept",
+                    "correct_concepts": ["high-level mechanism"],
+                    "incorrect_concepts": [],
+                    "mentioned_tradeoffs": [],
+                    "missing_tradeoffs": ["Failure mode handling", "Trade-off analysis"],
+                    "implementation_evidence": [],
+                    "recommended_followup_type": "IMPLEMENTATION",
+                    "recommended_focus": "concrete implementation and failure mode handling",
+                    "interesting_threads": [
+                        {
+                            "hook": "high-level mechanism",
+                            "direction": "implement",
+                            "question_seed": "Could you walk me through the code or config details of how that high-level mechanism was implemented?",
+                            "curriculum_area": "vector databases"
+                        }
+                    ]
                 }
             return {
                 "technical_correctness": 4, "depth": 3, "practical_understanding": 4,
@@ -175,6 +238,21 @@ class AIProviderService:
                 "missing_concepts": ["Implementation details", "System design"],
                 "evidence": "Candidate gave a brief high-level answer without concrete execution steps.",
                 "suggested_action": "Return to fundamentals",
+                "correct_concepts": [],
+                "incorrect_concepts": [],
+                "mentioned_tradeoffs": [],
+                "missing_tradeoffs": ["Implementation details", "System design"],
+                "implementation_evidence": [],
+                "recommended_followup_type": "CLARIFICATION",
+                "recommended_focus": "the underlying mechanism and how it actually works",
+                "interesting_threads": [
+                    {
+                        "hook": "unclear concepts",
+                        "direction": "clarify",
+                        "question_seed": "Could you clarify exactly what components were involved in that process and how they communicated?",
+                        "curriculum_area": "fundamentals"
+                    }
+                ]
             }
 
         if schema_type == "feedback":
