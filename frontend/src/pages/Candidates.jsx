@@ -51,7 +51,7 @@ export function Candidates() {
       </div>
 
       {loading ? (
-        <div className="py-20 flex flex-col items-center justify-center space-y-3 text-slate-350 font-mono text-xs">
+        <div className="py-20 flex flex-col items-center justify-center space-y-3 text-slate-355 font-mono text-xs">
           <RefreshCw className="w-6 h-6 animate-spin text-indigo-400" />
           <span>Loading curriculum syllabus...</span>
         </div>
