@@ -196,18 +196,37 @@ export function CandidateOverview({ candidates = [], selectedCandidate, onSelect
             </div>
           </div>
           
-          {/* Overlay Profile Image aligned on right edge (Dynamic Gender Portraits) */}
+          {/* Overlay Profile Image aligned on right edge (Dynamic Unique Local Renders) */}
           <div className="absolute right-0 bottom-0 h-full w-[45%] z-0 pointer-events-none opacity-90">
             <img 
               src={
                 (() => {
-                  const nameLower = (cand.name || "").toLowerCase();
-                  // Check if candidate name is female
-                  if (nameLower.includes("sarah") || nameLower.includes("emily") || nameLower.includes("jessica") || nameLower.includes("lisa") || nameLower.includes("anna")) {
-                    return "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80";
+                  const id = (cand.candidate_id || activeCandId || "").toUpperCase();
+                  if (id.includes("001")) {
+                    // Sarah Johnson
+                    return "/src/assets/candidates image/001.png";
+                  } else if (id.includes("002")) {
+                    // Alex Turner
+                    return "/src/assets/candidates image/confident-businessman-smiling-with-arms-crossed-conveying-professionalism-and-success-photo.jpg";
+                  } else if (id.includes("003")) {
+                    // Marcus Vance
+                    return "/src/assets/candidates image/003.avif";
+                  } else if (id.includes("004")) {
+                    // Emily Watson
+                    return "/src/assets/candidates image/004.jpg";
+                  } else if (id.includes("005")) {
+                    // Michael Brown
+                    return "/src/assets/candidates image/005.avif";
+                  } else if (id.includes("006")) {
+                    // Jessica Davis
+                    return "/src/assets/candidates image/businesswomen.jpg";
                   }
-                  // Otherwise fallback to male portrait placeholder
-                  return "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=80";
+                  // Fallbacks for dynamically matched items
+                  const nameLower = (cand.name || "").toLowerCase();
+                  if (nameLower.includes("sarah") || nameLower.includes("emily") || nameLower.includes("jessica") || nameLower.includes("lisa") || nameLower.includes("anna")) {
+                    return "/src/assets/candidates image/businesswomen.jpg";
+                  }
+                  return "/src/assets/candidates image/serious-indian-professional-business-man-office-portrait-serious-young-ambitious-indian-businessman-project-leader-dressed-367980912.webp";
                 })()
               } 
               alt={cand.name} 
