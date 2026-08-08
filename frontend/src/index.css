@@ -8,7 +8,8 @@
   }
   
   body {
-    background-color: #7B8B70;
+    background: linear-gradient(135deg, #93A18A 0%, #7B8B70 50%, #5E6C55 100%);
+    background-attachment: fixed;
     color: #FFFFFF;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
