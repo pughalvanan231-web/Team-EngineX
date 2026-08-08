@@ -12,11 +12,13 @@ INSTRUCTIONS:
 4. List 3-5 concrete gaps/areas to improve that map to actual weak answers or missing concepts.
 5. List 3-5 actionable next steps the candidate should take.
 6. Group performance into 4 category scores (0-100%): Technical Understanding, System Design, Practical Knowledge, Communication.
-7. Do not include per-question score tables in the summary.
+7. Integrate the cohort recommendation classification: HIRE_SENIOR | HIRE_MID | HIRE_JUNIOR | REJECT based on overall score and candidate depth.
+8. Assess priority coverage including skipped topics and friction topics.
 
 Return a JSON object conforming strictly to this JSON schema:
 {{
   "overall_score": 84,
+  "cohort_recommendation": "HIRE_SENIOR",
   "category_scores": [
     {{ "category": "Technical Understanding", "score": 85 }},
     {{ "category": "System Design", "score": 78 }},

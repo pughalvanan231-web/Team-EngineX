@@ -1,6 +1,8 @@
 import os
+from dotenv import load_dotenv
 
 BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(BACKEND_DIR, ".env"))
 
 
 class Settings:
@@ -22,7 +24,7 @@ class Settings:
 
     CORS_ALLOWED_ORIGINS: list = [
         origin.strip()
-        for origin in os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,*").split(",")
+        for origin in os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176").split(",")
     ]
     _db_dir = os.getenv("DATABASE_DIR", os.path.join(BACKEND_DIR, "data", "interviews"))
     DATABASE_DIR: str = _db_dir
