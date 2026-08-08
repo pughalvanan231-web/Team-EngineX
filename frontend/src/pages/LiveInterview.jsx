@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Terminal, Send, CheckCircle2, Sparkles, RefreshCw, AlertCircle, Award, User, HelpCircle } from 'lucide-react';
+import { Send, RefreshCw, User } from 'lucide-react';
 import { fetchInterviewSession, submitInterviewAnswer, finishInterviewSession } from '../services/api';
 
 export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, onFinishEarly: propFinish, loading: propLoading, candidate }) {
@@ -98,9 +98,9 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
 
   if (!state && !sessionId) {
     return (
-      <div className="py-20 text-center space-y-4 font-mono text-xs">
-        <div className="text-slate-500">No active interview session found.</div>
-        <button onClick={() => navigate('/candidates')} className="btn-pill-primary px-6 py-2">
+      <div className="py-20 text-center space-y-4 font-mono text-xs text-white">
+        <div className="text-white/60">No active interview session found.</div>
+        <button onClick={() => navigate('/candidates')} className="px-6 py-2 rounded-full bg-white text-slate-900 font-bold shadow-md hover:bg-slate-50">
           Select Candidate
         </button>
       </div>
@@ -118,19 +118,19 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
   const jobRole = activeState.job_role || candidate?.role || candidate?.member?.jobRole || "AI Engineer";
 
   return (
-    <div className="w-full flex flex-col h-[calc(100vh-4rem)] max-w-6xl mx-auto overflow-hidden bg-slate-50/50 py-4">
+    <div className="w-full flex flex-col h-[calc(100vh-6rem)] max-w-6xl mx-auto overflow-hidden py-4 text-white">
       {/* 1. TEST PANEL HEADER */}
-      <div className="w-full border-b border-slate-200 bg-white px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-sans rounded-t-3xl shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-bold font-mono text-xs shrink-0">
+      <div className="w-full border-b border-white/10 bg-black/25 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-sans rounded-t-3xl shadow-md">
+        <div className="flex items-center gap-3 text-left">
+          <div className="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white font-bold font-mono text-xs shrink-0 shadow-inner">
             {candidateId}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-extrabold text-slate-900">{candidateName}</h2>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold">Active Session</span>
+              <h2 className="text-base font-extrabold text-white">{candidateName}</h2>
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-900/40 text-emerald-300 border border-emerald-500/30 text-[9px] font-semibold">Active Session</span>
             </div>
-            <p className="text-xs text-slate-500 font-medium">{jobRole}</p>
+            <p className="text-xs text-white/60 font-medium">{jobRole}</p>
           </div>
         </div>
 
@@ -138,14 +138,14 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
         <div className="flex items-center gap-6">
           <div className="flex flex-col items-end gap-1.5">
             <div className="flex items-center gap-2 text-xs font-mono">
-              <span className="text-slate-500 font-medium">Question</span>
-              <span className="font-bold text-slate-900">{qNum} / ~{totalTarget}</span>
+              <span className="text-white/60 font-medium">Question</span>
+              <span className="font-bold text-white">{qNum} / ~{totalTarget}</span>
             </div>
 
             {/* Progress Bar */}
-            <div className="w-36 bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200/80">
+            <div className="w-36 bg-white/10 rounded-full h-2 overflow-hidden border border-white/10">
               <div
-                className="bg-gradient-to-r from-indigo-600 to-emerald-500 h-2 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-indigo-500 to-emerald-400 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
@@ -153,7 +153,7 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
 
           <button
             onClick={handleFinishEarly}
-            className="px-3.5 py-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-medium transition-colors"
+            className="px-4 py-2 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-all"
           >
             End Early
           </button>
@@ -161,33 +161,33 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
       </div>
 
       {/* 2. QUESTION & CONVERSATION AREA */}
-      <div className="flex-1 flex flex-col bg-white border-x border-slate-200 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 flex flex-col bg-black/15 border-x border-white/10 overflow-y-auto p-6 space-y-6">
         
         {/* Previous Q&A Conversation Turns */}
         {activeState.answers?.map((ans, idx) => (
-          <div key={idx} className="space-y-4 pt-2 border-b border-slate-100 pb-4">
+          <div key={idx} className="space-y-4 pt-2 border-b border-white/5 pb-4">
             {/* Question */}
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-sm">
+            <div className="flex items-start gap-3 text-left">
+              <div className="w-8 h-8 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-md">
                 AI
               </div>
-              <div className="p-4 rounded-2xl bg-orange-50/70 border border-orange-100 text-slate-800 text-xs font-sans space-y-1 max-w-3xl">
-                <div className="text-[10px] font-mono text-orange-700 font-bold uppercase">
+              <div className="p-4 rounded-2xl bg-[#272d1f]/60 border border-white/10 text-white text-xs font-sans space-y-1 max-w-3xl">
+                <div className="text-[10px] font-mono text-orange-300 font-bold uppercase">
                   Question {ans.question_number} · {ans.topic}
                 </div>
-                <p className="font-medium text-slate-900 leading-relaxed">{ans.question}</p>
+                <p className="font-medium text-white leading-relaxed">{ans.question}</p>
               </div>
             </div>
 
             {/* Answer */}
-            <div className="flex items-start justify-end gap-3">
-              <div className="p-4 rounded-2xl bg-slate-900 text-white text-xs font-sans space-y-1 max-w-3xl">
-                <div className="text-[10px] font-mono text-slate-400 font-bold uppercase">
+            <div className="flex items-start justify-end gap-3 text-left">
+              <div className="p-4 rounded-2xl bg-[#1d2d35]/60 border border-white/10 text-white text-xs font-sans space-y-1 max-w-3xl">
+                <div className="text-[10px] font-mono text-white/50 font-bold uppercase">
                   {candidateName}
                 </div>
-                <p className="leading-relaxed">{ans.answer}</p>
+                <p className="leading-relaxed text-white/90">{ans.answer}</p>
               </div>
-              <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold shrink-0">
+              <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center text-xs font-bold shrink-0">
                 <User className="w-4 h-4" />
               </div>
             </div>
@@ -196,13 +196,13 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
 
         {/* Current Active Question Card */}
         {currentQ.question && (
-          <div className="space-y-4 animate-fadeIn">
+          <div className="space-y-4 animate-fadeIn text-left">
             <div className="flex items-start gap-3">
               <div className="w-9 h-9 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-md">
                 AI
               </div>
 
-              <div className="flex-1 p-6 rounded-3xl bg-slate-900 text-white shadow-md space-y-3">
+              <div className="flex-1 p-6 rounded-3xl bg-[#291e26]/70 border border-white/10 shadow-lg space-y-3">
                 {/* Topic & Priority Badges */}
                 <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
                   <span className="px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 border border-orange-400/30 font-semibold">
@@ -221,7 +221,7 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
                     </span>
                   )}
 
-                  <span className="ml-auto text-slate-400 text-[11px] capitalize">
+                  <span className="ml-auto text-white/50 text-[11px] capitalize">
                     Difficulty: {currentQ.difficulty || 'Intermediate'}
                   </span>
                 </div>
@@ -239,9 +239,9 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
       </div>
 
       {/* 3. ANSWER SUBMISSION AREA */}
-      <div className="border border-slate-200 bg-white p-4 rounded-b-3xl shadow-sm space-y-3">
+      <div className="border-t border-white/10 bg-black/25 p-4 rounded-b-3xl shadow-md space-y-3">
         {error && (
-          <div className="text-xs font-mono text-rose-600 bg-rose-50 p-2 rounded-xl text-center">
+          <div className="text-xs font-mono text-rose-300 bg-rose-950/40 border border-rose-500/20 p-2 rounded-xl text-center">
             {error}
           </div>
         )}
@@ -253,17 +253,17 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
             placeholder="Type your technical response, trade-off analysis, and system architecture explanation..."
             disabled={submitting || propLoading}
             rows={3}
-            className="flex-1 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-sans text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white resize-none"
+            className="flex-1 p-3.5 rounded-2xl bg-black/35 border border-white/15 text-xs font-sans text-white placeholder:text-white/45 focus:outline-none focus:border-indigo-500 focus:bg-black/45 resize-none"
           />
 
           <button
             type="submit"
             disabled={!answerText.trim() || submitting || propLoading}
-            className="px-6 py-3.5 rounded-full bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold flex items-center justify-center gap-2 self-end sm:self-center disabled:opacity-50 shadow-md shadow-orange-600/20 transition-all"
+            className="px-6 py-3.5 rounded-full bg-white hover:bg-slate-100 text-slate-900 text-xs font-bold flex items-center justify-center gap-2 self-end sm:self-center disabled:opacity-50 transition-all active:scale-[0.98] shadow-md shrink-0"
           >
             {submitting || propLoading ? (
               <>
-                <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                <RefreshCw className="w-4 h-4 animate-spin text-slate-900" />
                 <span>Evaluating...</span>
               </>
             ) : (

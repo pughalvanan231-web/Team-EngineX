@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { CheckCircle2, AlertTriangle, ArrowRight, RotateCcw, ChevronDown, ChevronUp, Sparkles, HelpCircle, BarChart2, ShieldCheck, Award } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, RotateCcw, ChevronDown, ChevronUp, Sparkles, HelpCircle, BarChart2, ShieldCheck } from 'lucide-react';
 import { fetchInterviewResult } from '../services/api';
 
 export function FeedbackReport({ state: propState, onReset }) {
@@ -80,26 +80,26 @@ export function FeedbackReport({ state: propState, onReset }) {
   };
 
   return (
-    <div className="w-full py-10 max-w-5xl mx-auto space-y-8 font-sans">
+    <div className="w-full py-10 max-w-5xl mx-auto space-y-8 font-sans text-white">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-xs font-mono text-slate-500 mb-1">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/20 pb-6">
+        <div className="space-y-1 text-left">
+          <div className="flex items-center gap-2 text-xs font-mono text-white/50 mb-1">
             <span>AI EVALUATION REPORT</span>
             <span>•</span>
-            <span className="text-orange-600 font-semibold">{sessionId}</span>
+            <span className="text-orange-400 font-semibold">{sessionId}</span>
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
             Skill Analytics & Final Result
           </h1>
-          <p className="text-sm text-slate-600 font-medium">
-            Candidate: <strong className="text-slate-900">{candidateName}</strong> ({candidateId}) — {jobRole}
+          <p className="text-sm text-slate-200">
+            Candidate: <strong className="text-white">{candidateName}</strong> ({candidateId}) — {jobRole}
           </p>
         </div>
 
         <button
           onClick={() => navigate('/candidates')}
-          className="px-6 py-3 rounded-full bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold flex items-center gap-2 self-start sm:self-auto shadow-md shadow-orange-600/20 transition-all"
+          className="px-6 py-3 rounded-full bg-white hover:bg-slate-50 text-slate-900 text-xs font-bold flex items-center gap-2 self-start sm:self-auto shadow-md transition-all active:scale-[0.98]"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>Back to Candidates</span>
@@ -107,25 +107,25 @@ export function FeedbackReport({ state: propState, onReset }) {
       </div>
 
       {/* Top Banner: Score & Performance Label Card */}
-      <div className="p-8 rounded-3xl bg-slate-900 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+      <div className="p-8 rounded-3xl bg-[#1d2d35]/90 border border-white/10 backdrop-blur-md shadow-xl flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden text-left">
         <div className="space-y-3 max-w-xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 border border-orange-400/30 text-xs font-mono font-semibold">
             <Sparkles className="w-3.5 h-3.5 text-orange-400" />
             <span>EVALUATION COMPLETE</span>
           </div>
-          <h2 className="font-serif text-3xl font-bold tracking-tight">
+          <h2 className="text-3xl font-extrabold tracking-tight">
             {candidateName}
           </h2>
-          <p className="text-xs text-slate-300 leading-relaxed font-sans">
+          <p className="text-xs text-slate-200 leading-relaxed">
             {result.interviewer_summary || `${candidateName} completed the AI adaptive technical interview across 31-day curriculum focus areas.`}
           </p>
         </div>
 
         {/* Big Overall Score Badge */}
         <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md text-center shrink-0 min-w-[200px]">
-          <div className="text-xs font-mono text-slate-300 uppercase tracking-widest font-semibold">Overall Score</div>
+          <div className="text-xs font-mono text-white/60 uppercase tracking-widest font-semibold">Overall Score</div>
           <div className="text-5xl font-extrabold font-mono text-orange-400 mt-1">
-            {overallScore} <span className="text-base text-slate-400 font-normal">/ 100</span>
+            {overallScore} <span className="text-base text-white/50 font-normal">/ 100</span>
           </div>
           <div className="mt-2 px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 border border-orange-400/30 text-xs font-semibold">
             {performanceLabel}
@@ -134,22 +134,22 @@ export function FeedbackReport({ state: propState, onReset }) {
       </div>
 
       {/* Score Breakdown Charts */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-5">
-        <h3 className="font-serif text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-          <BarChart2 className="w-5 h-5 text-orange-600" />
+      <div className="p-6 sm:p-8 rounded-3xl bg-[#272d1f]/75 border border-white/10 backdrop-blur-md shadow-lg space-y-5 text-left">
+        <h3 className="text-lg font-bold tracking-tight flex items-center gap-2">
+          <BarChart2 className="w-5 h-5 text-orange-400" />
           <span>Category Score Breakdown</span>
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
           {Object.entries(categoryScores).map(([catName, scoreVal]) => (
-            <div key={catName} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
-              <div className="flex justify-between font-semibold text-slate-700">
+            <div key={catName} className="p-3.5 rounded-2xl bg-black/25 border border-white/10 space-y-1.5">
+              <div className="flex justify-between font-semibold text-white/80">
                 <span>{catName}</span>
-                <span className="font-mono text-indigo-600 font-bold">{scoreVal} / 100</span>
+                <span className="font-mono text-indigo-300 font-bold">{scoreVal} / 100</span>
               </div>
-              <div className="w-full bg-slate-200 rounded-full h-2">
+              <div className="w-full bg-white/10 rounded-full h-2">
                 <div
-                  className="bg-indigo-600 h-2 rounded-full transition-all duration-500"
+                  className="bg-indigo-400 h-2 rounded-full transition-all duration-500"
                   style={{ width: `${Math.min(100, Math.max(0, scoreVal))}%` }}
                 />
               </div>
@@ -159,17 +159,17 @@ export function FeedbackReport({ state: propState, onReset }) {
       </div>
 
       {/* Strengths & Weaknesses 2-Column Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
         {/* Strengths */}
-        <div className="p-6 rounded-3xl bg-[#F2F7F4] border border-emerald-100/90 shadow-card space-y-4">
-          <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+        <div className="p-6 rounded-3xl bg-emerald-950/40 border border-emerald-500/20 shadow-lg space-y-4">
+          <div className="flex items-center gap-2 text-emerald-300 font-bold text-sm">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
             <span>Validated Strengths</span>
           </div>
-          <ul className="space-y-2 text-xs text-slate-700 font-medium">
+          <ul className="space-y-2 text-xs text-white/95 font-medium">
             {strengths.map((st, i) => (
               <li key={i} className="flex items-start gap-2">
-                <span className="text-emerald-600 font-bold">✓</span>
+                <span className="text-emerald-400 font-bold">✓</span>
                 <span>{st}</span>
               </li>
             ))}
@@ -177,15 +177,15 @@ export function FeedbackReport({ state: propState, onReset }) {
         </div>
 
         {/* Weaknesses */}
-        <div className="p-6 rounded-3xl bg-amber-50/60 border border-amber-100/90 shadow-card space-y-4">
-          <div className="flex items-center gap-2 text-amber-900 font-bold text-sm">
-            <AlertTriangle className="w-5 h-5 text-amber-600" />
+        <div className="p-6 rounded-3xl bg-amber-950/40 border border-amber-500/20 shadow-lg space-y-4">
+          <div className="flex items-center gap-2 text-amber-300 font-bold text-sm">
+            <AlertTriangle className="w-5 h-5 text-amber-400" />
             <span>Identified Weaknesses</span>
           </div>
-          <ul className="space-y-2 text-xs text-slate-700 font-medium">
+          <ul className="space-y-2 text-xs text-white/95 font-medium">
             {weaknesses.map((wk, i) => (
               <li key={i} className="flex items-start gap-2">
-                <span className="text-amber-600 font-bold">⚠</span>
+                <span className="text-amber-400 font-bold">⚠</span>
                 <span>{wk}</span>
               </li>
             ))}
@@ -194,15 +194,15 @@ export function FeedbackReport({ state: propState, onReset }) {
       </div>
 
       {/* Knowledge Gaps */}
-      <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-card space-y-4">
-        <h3 className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
-          <HelpCircle className="w-5 h-5 text-indigo-600" />
+      <div className="p-6 rounded-3xl bg-[#1d2d35]/75 border border-white/10 backdrop-blur-md shadow-lg space-y-4 text-left">
+        <h3 className="text-base font-bold tracking-tight flex items-center gap-2">
+          <HelpCircle className="w-5 h-5 text-indigo-400" />
           <span>Knowledge Gaps</span>
         </h3>
         <ul className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
           {knowledgeGaps.map((gap, i) => (
-            <li key={i} className="p-3 rounded-2xl bg-indigo-50/50 border border-indigo-100 text-indigo-900 font-medium flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-600" />
+            <li key={i} className="p-3 rounded-2xl bg-black/25 border border-white/10 text-white font-medium flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
               <span>{gap}</span>
             </li>
           ))}
@@ -210,39 +210,39 @@ export function FeedbackReport({ state: propState, onReset }) {
       </div>
 
       {/* Previously Skipped & Missing Analysis Section */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-card space-y-6">
+      <div className="p-6 sm:p-8 rounded-3xl bg-[#272d1f]/75 border border-white/10 backdrop-blur-md shadow-lg space-y-6 text-left">
         <div>
-          <h3 className="text-base font-bold text-slate-900 tracking-tight">
+          <h3 className="text-base font-bold text-white tracking-tight">
             Prior Learning Evidence Analysis
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-white/60 mt-0.5">
             Explicit analysis of topics prioritized due to limited prior evidence.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs font-sans">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
           {/* Skipped */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
-            <h4 className="font-bold text-slate-900 font-mono text-xs uppercase flex items-center gap-2 text-rose-700">
+          <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-3">
+            <h4 className="font-bold font-mono text-xs uppercase flex items-center gap-2 text-rose-350">
               <span>Previously Skipped Topics</span>
             </h4>
             {skippedAnalysis.map((sk, idx) => (
-              <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200 text-slate-700 space-y-1">
-                <div className="font-semibold text-slate-900">Day {sk.day}: {sk.topic}</div>
-                <p className="text-slate-500 italic text-[11px]">{sk.note}</p>
+              <div key={idx} className="p-3 rounded-xl bg-black/20 border border-white/10 text-white space-y-1">
+                <div className="font-semibold text-white/95">Day {sk.day}: {sk.topic}</div>
+                <p className="text-white/60 italic text-[11px]">{sk.note}</p>
               </div>
             ))}
           </div>
 
           {/* Missing */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
-            <h4 className="font-bold text-slate-900 font-mono text-xs uppercase flex items-center gap-2 text-slate-700">
+          <div className="p-4 rounded-2xl bg-black/25 border border-white/10 space-y-3">
+            <h4 className="font-bold font-mono text-xs uppercase flex items-center gap-2 text-white/80">
               <span>Previously Missing Curriculum Signals</span>
             </h4>
             {missingAnalysis.map((ms, idx) => (
-              <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200 text-slate-700 space-y-1">
-                <div className="font-semibold text-slate-900">Day {ms.day}: {ms.topic}</div>
-                <p className="text-slate-500 italic text-[11px]">{ms.note}</p>
+              <div key={idx} className="p-3 rounded-xl bg-black/20 border border-white/10 text-white space-y-1">
+                <div className="font-semibold text-white/95">Day {ms.day}: {ms.topic}</div>
+                <p className="text-white/60 italic text-[11px]">{ms.note}</p>
               </div>
             ))}
           </div>
@@ -250,63 +250,63 @@ export function FeedbackReport({ state: propState, onReset }) {
       </div>
 
       {/* Question-by-Question Review */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-card space-y-6">
+      <div className="p-6 sm:p-8 rounded-3xl bg-[#1d2d35]/75 border border-white/10 backdrop-blur-md shadow-lg space-y-6 text-left">
         <div>
-          <h3 className="text-base font-bold text-slate-900 tracking-tight">
+          <h3 className="text-base font-bold text-white tracking-tight">
             Question-by-Question Review
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-white/60 mt-0.5">
             Expandable breakdown of questions, answers, AI evaluations, and priority selection reasons.
           </p>
         </div>
 
         <div className="space-y-3">
           {questionReviews.map((qr, idx) => (
-            <div key={idx} className="border border-slate-200 rounded-2xl overflow-hidden text-xs">
+            <div key={idx} className="border border-white/10 rounded-2xl overflow-hidden text-xs">
               <button
                 onClick={() => toggleExpand(idx)}
-                className="w-full p-4 bg-slate-50 hover:bg-slate-100/80 flex items-center justify-between text-left transition-colors font-sans"
+                className="w-full p-4 bg-white/5 hover:bg-white/10 flex items-center justify-between text-left transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-full bg-indigo-600 text-white font-mono text-xs font-bold flex items-center justify-center">
+                  <span className="w-6 h-6 rounded-full bg-indigo-500 text-white font-mono text-xs font-bold flex items-center justify-center">
                     Q{qr.question_number || idx + 1}
                   </span>
                   <div>
-                    <div className="font-bold text-slate-900">{qr.topic}</div>
-                    <div className="text-[11px] text-slate-500 font-mono">
+                    <div className="font-bold text-white">{qr.topic}</div>
+                    <div className="text-[11px] text-white/60 font-mono">
                       Category: {qr.priorityCategory || 'GENERAL'} · Score: {qr.evaluation_score || 80}/100
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="px-3 py-1 rounded-full bg-white border border-slate-200 font-semibold font-mono text-indigo-600">
+                  <span className="px-3 py-1 rounded-full bg-black/45 border border-white/10 font-semibold font-mono text-indigo-300">
                     {qr.classification || 'STRONG'}
                   </span>
-                  {expandedQuestion === idx ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+                  {expandedQuestion === idx ? <ChevronUp className="w-4 h-4 text-white/60" /> : <ChevronDown className="w-4 h-4 text-white/60" />}
                 </div>
               </button>
 
               {expandedQuestion === idx && (
-                <div className="p-4 bg-white space-y-3 border-t border-slate-200 text-slate-700 font-sans">
+                <div className="p-4 bg-black/20 space-y-3 border-t border-white/10 text-white/90">
                   <div>
-                    <div className="font-bold text-slate-900 text-xs mb-1">Question:</div>
-                    <p className="p-3 rounded-xl bg-slate-50 text-slate-800">{qr.question}</p>
+                    <div className="font-bold text-white text-xs mb-1">Question:</div>
+                    <p className="p-3 rounded-xl bg-black/30 text-white">{qr.question}</p>
                   </div>
 
                   <div>
-                    <div className="font-bold text-slate-900 text-xs mb-1">Candidate Answer:</div>
-                    <p className="p-3 rounded-xl bg-slate-900 text-white leading-relaxed">{qr.answer}</p>
+                    <div className="font-bold text-white text-xs mb-1">Candidate Answer:</div>
+                    <p className="p-3 rounded-xl bg-black/40 text-white leading-relaxed">{qr.answer}</p>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row justify-between gap-2 p-3 rounded-xl bg-indigo-50/50 border border-indigo-100 text-[11px]">
+                  <div className="flex flex-col sm:flex-row justify-between gap-4 p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/20 text-[11px]">
                     <div>
-                      <span className="font-bold text-indigo-900">Selection Reason: </span>
-                      <span className="text-slate-700">{qr.reason}</span>
+                      <span className="font-bold text-indigo-300">Selection Reason: </span>
+                      <span className="text-white/80">{qr.reason}</span>
                     </div>
                     <div>
-                      <span className="font-bold text-indigo-900">AI Feedback: </span>
-                      <span className="text-slate-700">{qr.feedback}</span>
+                      <span className="font-bold text-indigo-300">AI Feedback: </span>
+                      <span className="text-white/80">{qr.feedback}</span>
                     </div>
                   </div>
                 </div>
@@ -314,7 +314,7 @@ export function FeedbackReport({ state: propState, onReset }) {
             </div>
           ))}
           {questionReviews.length === 0 && (
-            <div className="p-4 rounded-xl bg-slate-50 text-slate-500 text-xs font-mono text-center">
+            <div className="p-4 rounded-xl bg-black/25 text-white/50 text-xs font-mono text-center">
               No detailed per-question logs recorded.
             </div>
           )}
@@ -322,7 +322,7 @@ export function FeedbackReport({ state: propState, onReset }) {
       </div>
 
       {/* Final Recommendation Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-emerald-900 to-indigo-950 text-white shadow-xl space-y-4">
+      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-emerald-900/80 to-indigo-950/80 border border-white/10 backdrop-blur-md text-white shadow-xl space-y-4 text-left">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-6 h-6 text-emerald-400" />
           <h3 className="text-base font-bold uppercase tracking-wider text-slate-200">
