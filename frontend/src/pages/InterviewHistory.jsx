@@ -24,19 +24,19 @@ export function InterviewHistory({ history = [], activeSession, onSelectSession 
     <div className="w-full py-10 max-w-3xl mx-auto space-y-8 font-sans">
       
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-agent-border pb-6">
+      <div className="flex items-center justify-between border-b border-slate-200/80 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-agent-secondary mb-1">
+          <div className="flex items-center gap-2 text-xs font-mono text-slate-500 mb-1">
             <span>SESSION RECORDS</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-agent-text tracking-tight">
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
             Interview History
           </h1>
         </div>
 
         <button
           onClick={handleStartNew}
-          className="px-4 py-2 rounded-lg bg-agent-accent text-white font-medium text-xs hover:bg-agent-accentHover transition-colors flex items-center gap-2 shadow-subtle font-mono"
+          className="btn-pill-primary text-xs px-5 py-2.5 shadow-sm font-mono"
         >
           <PlusCircle className="w-4 h-4" />
           <span>Start Interview</span>
@@ -46,20 +46,20 @@ export function InterviewHistory({ history = [], activeSession, onSelectSession 
       {/* History List or Empty State */}
       {mockHistory.length === 0 ? (
         
-        /* 24. Clean Empty State */
-        <div className="py-16 p-8 rounded-lg bg-agent-surface border border-agent-border text-center space-y-4">
-          <div className="w-12 h-12 rounded-full bg-agent-elevated border border-agent-border mx-auto flex items-center justify-center text-agent-muted">
+        /* Empty State */
+        <div className="py-16 p-8 rounded-3xl bg-white border border-slate-200/90 shadow-card text-center space-y-4">
+          <div className="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 mx-auto flex items-center justify-center text-slate-400">
             <History className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <h3 className="text-base font-semibold text-agent-text">No interviews yet</h3>
-            <p className="text-xs text-agent-secondary max-w-sm mx-auto">
+            <h3 className="text-base font-bold text-slate-900">No interviews yet</h3>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto">
               Complete your first technical interview to see your evaluation report here.
             </p>
           </div>
           <button
             onClick={handleStartNew}
-            className="px-5 py-2.5 rounded-lg bg-agent-accent text-white font-medium text-xs hover:bg-agent-accentHover transition-colors font-mono"
+            className="btn-pill-primary text-xs px-6 py-2.5 font-mono"
           >
             Start Interview
           </button>
@@ -72,18 +72,18 @@ export function InterviewHistory({ history = [], activeSession, onSelectSession 
           {mockHistory.map((item, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-lg bg-agent-surface border border-agent-border hover:border-agent-borderMuted transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-card hover:border-indigo-200 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-semibold text-agent-text">
+                  <h4 className="text-sm font-bold text-slate-900">
                     Technical Interview — {item.candidate_name}
                   </h4>
-                  <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
                     {item.status}
                   </span>
                 </div>
-                <div className="text-agent-muted text-[11px] flex items-center gap-3">
+                <div className="text-slate-500 text-[11px] flex items-center gap-3">
                   <span>{item.date}</span>
                   <span>•</span>
                   <span>{item.questions_count} questions</span>
@@ -94,7 +94,7 @@ export function InterviewHistory({ history = [], activeSession, onSelectSession 
 
               <button
                 onClick={() => navigate('/feedback')}
-                className="px-4 py-2 rounded bg-agent-elevated border border-agent-border hover:border-agent-accent/40 text-agent-accentLight hover:text-white font-medium transition-colors flex items-center gap-1.5 shrink-0"
+                className="btn-pill-ghost text-xs px-5 py-2 font-mono shrink-0"
               >
                 <span>View Feedback</span>
                 <ArrowRight className="w-3.5 h-3.5" />

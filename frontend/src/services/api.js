@@ -1,24 +1,25 @@
-const BASE = import.meta.env.VITE_API_URL || ''
+import axios from 'axios';
 
-async function request(path, options = {}) {
-  const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-  })
-  if (!res.ok) {
-    let detail = `Request failed (${res.status})`
-    try {
-      const body = await res.json()
-      if (body && body.detail) detail = typeof body.detail === 'string' ? body.detail : JSON.stringify(body.detail)
-    } catch {
-      /* keep default */
-    }
-    throw new Error(detail)
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_PREFIX = '/api/v1';
+
+const client = axios.create({
+  baseURL: `${BASE_URL}${API_PREFIX}`,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 20000,
+});
+
+export async function fetchHealth() {
+  try {
+    const res = await axios.get(`${BASE_URL}/health`);
+    return res.data;
+  } catch (err) {
+    return { status: 'offline', demo_mode: true };
   }
-  return res.json()
 }
 
-<<<<<<< HEAD
 export async function fetchCandidates() {
   try {
     const res = await client.get('/candidates');
@@ -135,11 +136,9 @@ export async function fetchCurriculum() {
 
 export async function startInterviewSession(candidateId, candidateObj) {
   try {
-    // Attempt standard endpoint first
     const res = await client.post('/interview/start', { candidate_id: candidateId });
     return res.data;
   } catch (err) {
-    // Fallback to unified POST /api/interview
     try {
       const res = await axios.post(`${BASE_URL}/api/interview`, {
         sessionId: `session_${Date.now()}`,
@@ -198,40 +197,6 @@ export async function finishInterviewSession(sessionId) {
   } catch (err) {
     return createMockFinalState(sessionId);
   }
-=======
-export function fetchHealth() {
-  return request('/api/v1/health')
-}
-
-export function fetchCandidates() {
-  return request('/api/v1/candidates')
-}
-
-export function fetchCurriculum() {
-  return request('/api/v1/curriculum')
-}
-
-export function startInterview(sessionId, candidate) {
-  return request('/api/interview', {
-    method: 'POST',
-    body: JSON.stringify({ sessionId, candidate }),
-  })
-}
-
-export function sendAnswer(sessionId, message) {
-  return request('/api/interview', {
-    method: 'POST',
-    body: JSON.stringify({ sessionId, message }),
-  })
-}
-
-export function fetchInterview(sessionId) {
-  return request(`/api/interview/${encodeURIComponent(sessionId)}`)
-}
-
-export function newSessionId() {
-  return `sess_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
->>>>>>> ef5acd71c8e8fed613b3c93946e4dab1962db1e8
 }
 
 // Client-side mock state generator for offline / fallback testing
@@ -339,4 +304,3 @@ function createMockFinalState(sessionId) {
     }
   };
 }
-

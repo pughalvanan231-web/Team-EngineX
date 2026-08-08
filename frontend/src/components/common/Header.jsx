@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Terminal, Shield, Activity, FileText, CheckCircle2 } from 'lucide-react';
+import { Terminal, Sparkles, Activity, ShieldCheck, Play } from 'lucide-react';
 
 export function Header({ activeSession, healthStatus, onResetSession }) {
   const location = useLocation();
 
   return (
-    <header className="w-full border-b border-agent-border bg-agent-bg/85 backdrop-blur-md sticky top-0 z-40">
+    <header className="w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         
         {/* Brand */}
@@ -14,74 +14,74 @@ export function Header({ activeSession, healthStatus, onResetSession }) {
           to="/" 
           className="flex items-center gap-2.5 group transition-opacity hover:opacity-90"
         >
-          <div className="w-7 h-7 rounded-md bg-agent-surface border border-agent-border flex items-center justify-center text-agent-accent group-hover:border-agent-accent/50 transition-colors">
+          <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
             <Terminal className="w-4 h-4" />
           </div>
-          <span className="font-mono font-bold text-sm text-agent-text tracking-tight">
-            Interview<span className="text-agent-accent">Agent</span>
+          <span className="font-sans font-bold text-base text-slate-900 tracking-tight">
+            Interview<span className="text-indigo-600 font-extrabold">Agent</span>
           </span>
         </Link>
 
-        {/* Navigation links */}
-        <nav className="hidden md:flex items-center gap-1 text-xs font-mono">
+        {/* Navigation links - Pill Style */}
+        <nav className="hidden md:flex items-center gap-1.5 p-1 rounded-full bg-slate-100/80 border border-slate-200/60 text-xs font-medium">
           <Link
             to="/"
-            className={`px-3 py-1.5 rounded-md transition-colors ${
+            className={`px-4 py-1.5 rounded-full transition-all ${
               location.pathname === '/' 
-                ? 'bg-agent-elevated text-agent-text border border-agent-border' 
-                : 'text-agent-secondary hover:text-agent-text hover:bg-agent-surface'
+                ? 'bg-white text-slate-900 font-semibold shadow-sm' 
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Overview
           </Link>
           <Link
             to="/prep"
-            className={`px-3 py-1.5 rounded-md transition-colors ${
+            className={`px-4 py-1.5 rounded-full transition-all ${
               location.pathname === '/prep' 
-                ? 'bg-agent-elevated text-agent-text border border-agent-border' 
-                : 'text-agent-secondary hover:text-agent-text hover:bg-agent-surface'
+                ? 'bg-white text-slate-900 font-semibold shadow-sm' 
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Preparation
           </Link>
           <Link
             to="/interview"
-            className={`px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5 ${
+            className={`px-4 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
               location.pathname === '/interview' 
-                ? 'bg-agent-accent/10 text-agent-accentLight border border-agent-accent/30 font-medium' 
-                : 'text-agent-secondary hover:text-agent-text hover:bg-agent-surface'
+                ? 'bg-indigo-600 text-white font-semibold shadow-sm' 
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            {activeSession && <span className="w-1.5 h-1.5 rounded-full bg-agent-accent animate-pulse" />}
+            {activeSession && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />}
             Live Interview
           </Link>
           <Link
             to="/history"
-            className={`px-3 py-1.5 rounded-md transition-colors ${
+            className={`px-4 py-1.5 rounded-full transition-all ${
               location.pathname === '/history' 
-                ? 'bg-agent-elevated text-agent-text border border-agent-border' 
-                : 'text-agent-secondary hover:text-agent-text hover:bg-agent-surface'
+                ? 'bg-white text-slate-900 font-semibold shadow-sm' 
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             History
           </Link>
         </nav>
 
-        {/* System & Session Indicators */}
-        <div className="flex items-center gap-3 text-xs font-mono">
+        {/* Status Indicators & Session */}
+        <div className="flex items-center gap-3 text-xs">
           {activeSession && location.pathname !== '/interview' && (
             <Link
               to="/interview"
-              className="px-2.5 py-1 rounded bg-agent-accent/15 border border-agent-accent/30 text-agent-accentLight hover:bg-agent-accent/25 transition-colors flex items-center gap-1.5 text-[11px]"
+              className="px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-semibold hover:bg-indigo-100 transition-all flex items-center gap-1.5 text-xs shadow-sm"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-agent-accent animate-ping" />
-              Resume Session
+              <Play className="w-3 h-3 fill-current" />
+              <span>Resume Session</span>
             </Link>
           )}
 
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-md bg-agent-surface border border-agent-border text-agent-secondary text-[11px]">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-agent-text font-medium">Engine v1.0</span>
+            <span>AI Engine Online</span>
           </div>
         </div>
 

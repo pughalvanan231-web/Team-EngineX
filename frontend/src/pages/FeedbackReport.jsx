@@ -50,25 +50,25 @@ export function FeedbackReport({ state, onReset }) {
     <div className="w-full py-10 max-w-4xl mx-auto space-y-8 font-sans">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-agent-border pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-agent-secondary mb-1">
+          <div className="flex items-center gap-2 text-xs font-mono text-slate-500 mb-1">
             <span>EVALUATION REPORT</span>
             <span>•</span>
-            <span className="text-agent-accent">{state?.interview_id || 'int_session'}</span>
+            <span className="text-indigo-600 font-semibold">{state?.interview_id || 'int_session'}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-agent-text tracking-tight">
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
             Interview Feedback
           </h1>
-          <p className="text-sm text-agent-secondary mt-0.5 font-mono">
-            Candidate: <strong className="text-agent-text">{candidateName}</strong>
+          <p className="text-sm text-slate-600 mt-0.5 font-medium">
+            Candidate: <strong className="text-slate-900">{candidateName}</strong>
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={onReset}
-            className="px-4 py-2 rounded bg-agent-surface border border-agent-border hover:border-agent-borderMuted text-agent-secondary hover:text-agent-text text-xs font-mono transition-colors flex items-center gap-1.5"
+            className="btn-pill-ghost text-xs px-5 py-2.5"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>New Interview</span>
@@ -77,60 +77,60 @@ export function FeedbackReport({ state, onReset }) {
       </div>
 
       {/* Overall Summary Section */}
-      <div className="p-6 rounded-lg bg-agent-surface border border-agent-border space-y-3">
-        <h3 className="text-xs font-mono font-semibold text-agent-accentLight uppercase tracking-wider">
+      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-card space-y-3">
+        <h3 className="text-xs font-mono font-bold text-indigo-600 uppercase tracking-wider">
           Overall Summary
         </h3>
-        <p className="text-sm sm:text-base text-agent-text leading-relaxed font-normal">
+        <p className="text-base text-slate-900 leading-relaxed font-normal">
           {summary}
         </p>
       </div>
 
-      {/* 21. Minimal Feedback Visualization */}
-      <div className="p-6 rounded-lg bg-agent-surface border border-agent-border space-y-4">
-        <h3 className="text-xs font-mono font-semibold text-agent-muted uppercase tracking-wider">
+      {/* Technical Evaluation Breakdown */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-card space-y-4">
+        <h3 className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
           Technical Evaluation Breakdown
         </h3>
 
         <div className="space-y-3 text-xs font-mono">
           
           <div>
-            <div className="flex justify-between text-agent-secondary mb-1">
+            <div className="flex justify-between text-slate-600 mb-1">
               <span>Technical Depth</span>
-              <span className="text-agent-text">8 / 10</span>
+              <span className="text-slate-900 font-bold">8 / 10</span>
             </div>
-            <div className="w-full h-2 rounded bg-agent-elevated overflow-hidden">
-              <div className="h-full bg-agent-accent rounded" style={{ width: '80%' }} />
+            <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+              <div className="h-full bg-indigo-600 rounded-full" style={{ width: '80%' }} />
             </div>
           </div>
 
           <div>
-            <div className="flex justify-between text-agent-secondary mb-1">
+            <div className="flex justify-between text-slate-600 mb-1">
               <span>Communication</span>
-              <span className="text-agent-text">8 / 10</span>
+              <span className="text-slate-900 font-bold">8 / 10</span>
             </div>
-            <div className="w-full h-2 rounded bg-agent-elevated overflow-hidden">
-              <div className="h-full bg-agent-accent rounded" style={{ width: '80%' }} />
+            <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+              <div className="h-full bg-indigo-600 rounded-full" style={{ width: '80%' }} />
             </div>
           </div>
 
           <div>
-            <div className="flex justify-between text-agent-secondary mb-1">
+            <div className="flex justify-between text-slate-600 mb-1">
               <span>Architecture & Trade-offs</span>
-              <span className="text-agent-text">9 / 10</span>
+              <span className="text-slate-900 font-bold">9 / 10</span>
             </div>
-            <div className="w-full h-2 rounded bg-agent-elevated overflow-hidden">
-              <div className="h-full bg-emerald-500 rounded" style={{ width: '90%' }} />
+            <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+              <div className="h-full bg-emerald-600 rounded-full" style={{ width: '90%' }} />
             </div>
           </div>
 
           <div>
-            <div className="flex justify-between text-agent-secondary mb-1">
+            <div className="flex justify-between text-slate-600 mb-1">
               <span>Problem Solving</span>
-              <span className="text-agent-text">8 / 10</span>
+              <span className="text-slate-900 font-bold">8 / 10</span>
             </div>
-            <div className="w-full h-2 rounded bg-agent-elevated overflow-hidden">
-              <div className="h-full bg-agent-accent rounded" style={{ width: '80%' }} />
+            <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+              <div className="h-full bg-indigo-600 rounded-full" style={{ width: '80%' }} />
             </div>
           </div>
 
@@ -141,17 +141,17 @@ export function FeedbackReport({ state, onReset }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Strengths */}
-        <div className="p-6 rounded-lg bg-agent-surface border border-agent-border space-y-4">
+        <div className="p-6 sm:p-8 rounded-3xl bg-[#F2F7F4] border border-emerald-100/90 shadow-card space-y-4">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <h3 className="text-xs font-mono font-semibold text-agent-text uppercase tracking-wider">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+            <h3 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wider">
               Key Strengths
             </h3>
           </div>
           <ul className="space-y-3">
             {strengths.map((item, index) => (
-              <li key={index} className="flex items-start gap-2.5 text-xs text-agent-text leading-relaxed">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
+              <li key={index} className="flex items-start gap-2.5 text-xs text-slate-800 leading-relaxed font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" />
                 <span>{item}</span>
               </li>
             ))}
@@ -159,17 +159,17 @@ export function FeedbackReport({ state, onReset }) {
         </div>
 
         {/* Gaps */}
-        <div className="p-6 rounded-lg bg-agent-surface border border-agent-border space-y-4">
+        <div className="p-6 sm:p-8 rounded-3xl bg-amber-50/60 border border-amber-200/80 shadow-card space-y-4">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
-            <h3 className="text-xs font-mono font-semibold text-agent-text uppercase tracking-wider">
+            <AlertTriangle className="w-5 h-5 text-amber-600" />
+            <h3 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wider">
               Areas for Improvement (Gaps)
             </h3>
           </div>
           <ul className="space-y-3">
             {gaps.map((item, index) => (
-              <li key={index} className="flex items-start gap-2.5 text-xs text-agent-text leading-relaxed">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />
+              <li key={index} className="flex items-start gap-2.5 text-xs text-slate-800 leading-relaxed font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
                 <span>{item}</span>
               </li>
             ))}
@@ -179,39 +179,39 @@ export function FeedbackReport({ state, onReset }) {
       </div>
 
       {/* Recommended Next Steps */}
-      <div className="p-6 rounded-lg bg-agent-surface border border-agent-border space-y-4">
+      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-card space-y-4">
         <div className="flex items-center gap-2">
-          <ListOrdered className="w-4 h-4 text-agent-accentLight" />
-          <h3 className="text-xs font-mono font-semibold text-agent-text uppercase tracking-wider">
+          <ListOrdered className="w-5 h-5 text-indigo-600" />
+          <h3 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wider">
             Recommended Next Steps
           </h3>
         </div>
         <ol className="space-y-3 font-sans text-xs">
           {nextSteps.map((step, idx) => (
-            <li key={idx} className="flex items-start gap-3 text-agent-text leading-relaxed p-3 rounded bg-agent-elevated border border-agent-borderMuted">
-              <span className="font-mono text-agent-accent font-bold">{idx + 1}.</span>
+            <li key={idx} className="flex items-start gap-3 text-slate-900 leading-relaxed p-4 rounded-2xl bg-slate-50 border border-slate-200/80 font-medium">
+              <span className="font-mono text-indigo-600 font-extrabold">{idx + 1}.</span>
               <span>{step}</span>
             </li>
           ))}
         </ol>
       </div>
 
-      {/* 22. Curriculum Coverage */}
-      <div className="p-6 rounded-lg bg-agent-surface border border-agent-border space-y-4">
+      {/* Curriculum Coverage */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-card space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-xs font-mono font-semibold text-agent-text uppercase tracking-wider">
+          <h3 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wider">
             Curriculum Coverage
           </h3>
-          <span className="text-[11px] font-mono text-agent-muted">
+          <span className="text-xs font-mono text-slate-500 font-semibold">
             {coveredDays.length} topics evaluated
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
           {coveredDays.map((d) => (
-            <div key={d} className="p-2.5 rounded bg-agent-elevated border border-agent-borderMuted flex items-center gap-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              <span className="text-agent-text truncate">
+            <div key={d} className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center gap-2.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span className="text-slate-900 font-semibold truncate">
                 Day {d} — {daysLabelMap[d] || `Topic Day ${d}`}
               </span>
             </div>

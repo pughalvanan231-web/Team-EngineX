@@ -11,59 +11,59 @@ export function InterviewCompletion({ state, onReset }) {
     `The candidate demonstrated strong end-to-end technical understanding across vector search, RAG retrieval pipelines, and agentic orchestration. Key engineering decisions and trade-offs were explained with clarity.`;
 
   return (
-    <div className="w-full py-16 max-w-2xl mx-auto space-y-8 text-center">
+    <div className="w-full py-16 max-w-2xl mx-auto space-y-8 text-center font-sans">
       
       {/* Icon Badge */}
-      <div className="mx-auto w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+      <div className="mx-auto w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shadow-sm">
         <CheckCircle2 className="w-8 h-8" />
       </div>
 
       {/* Main Title & Subtitle */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-agent-text tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
           Interview Complete
         </h1>
-        <p className="text-sm text-agent-secondary">
-          Your technical interview for <strong className="text-agent-text">{candidateName}</strong> has been evaluated.
+        <p className="text-sm text-slate-600">
+          Your technical interview for <strong className="text-slate-900">{candidateName}</strong> has been evaluated.
         </p>
       </div>
 
       {/* Summary Box */}
-      <div className="p-6 rounded-lg bg-agent-surface border border-agent-border text-left space-y-3">
-        <div className="text-xs font-mono font-semibold text-agent-accentLight uppercase tracking-wider">
+      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-card text-left space-y-3">
+        <div className="text-xs font-mono font-bold text-indigo-600 uppercase tracking-wider">
           Interviewer Summary
         </div>
-        <p className="text-sm text-agent-text leading-relaxed font-sans">
+        <p className="text-sm sm:text-base text-slate-900 leading-relaxed font-normal">
           "{summaryText}"
         </p>
       </div>
 
       {/* Qualitative Assessment Grid */}
-      <div className="p-6 rounded-lg bg-agent-surface border border-agent-border space-y-4 text-left">
-        <div className="text-xs font-mono text-agent-muted uppercase tracking-wider">
+      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-card space-y-4 text-left">
+        <div className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
           Qualitative Assessment
         </div>
 
         <div className="grid grid-cols-2 gap-4 font-mono text-xs">
           
-          <div className="p-3.5 rounded bg-agent-elevated border border-agent-borderMuted space-y-1">
-            <div className="text-agent-secondary text-[11px]">TECHNICAL UNDERSTANDING</div>
-            <div className="text-sm font-bold text-emerald-400">Strong</div>
+          <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 space-y-1">
+            <div className="text-slate-500 text-[11px]">TECHNICAL UNDERSTANDING</div>
+            <div className="text-base font-extrabold text-emerald-700">Strong</div>
           </div>
 
-          <div className="p-3.5 rounded bg-agent-elevated border border-agent-borderMuted space-y-1">
-            <div className="text-agent-secondary text-[11px]">COMMUNICATION</div>
-            <div className="text-sm font-bold text-emerald-400">Good</div>
+          <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 space-y-1">
+            <div className="text-slate-500 text-[11px]">COMMUNICATION</div>
+            <div className="text-base font-extrabold text-emerald-700">Good</div>
           </div>
 
-          <div className="p-3.5 rounded bg-agent-elevated border border-agent-borderMuted space-y-1">
-            <div className="text-agent-secondary text-[11px]">PROBLEM SOLVING</div>
-            <div className="text-sm font-bold text-emerald-400">Strong</div>
+          <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 space-y-1">
+            <div className="text-slate-500 text-[11px]">PROBLEM SOLVING</div>
+            <div className="text-base font-extrabold text-emerald-700">Strong</div>
           </div>
 
-          <div className="p-3.5 rounded bg-agent-elevated border border-agent-borderMuted space-y-1">
-            <div className="text-agent-secondary text-[11px]">SYSTEM THINKING</div>
-            <div className="text-sm font-bold text-emerald-400">Good</div>
+          <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 space-y-1">
+            <div className="text-slate-500 text-[11px]">SYSTEM THINKING</div>
+            <div className="text-base font-extrabold text-emerald-700">Good</div>
           </div>
 
         </div>
@@ -73,7 +73,7 @@ export function InterviewCompletion({ state, onReset }) {
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
         <button
           onClick={() => navigate('/feedback')}
-          className="w-full sm:w-auto px-6 py-3 rounded-lg bg-agent-accent text-white font-medium text-sm hover:bg-agent-accentHover transition-colors flex items-center justify-center gap-2 shadow-subtle"
+          className="w-full sm:w-auto btn-pill-primary text-sm px-8 py-3.5 shadow-md"
         >
           <span>View Full Feedback Report</span>
           <ArrowRight className="w-4 h-4" />
@@ -81,9 +81,9 @@ export function InterviewCompletion({ state, onReset }) {
 
         <button
           onClick={onReset}
-          className="w-full sm:w-auto px-6 py-3 rounded-lg bg-agent-surface border border-agent-border text-agent-secondary hover:text-agent-text font-medium text-sm transition-colors flex items-center justify-center gap-2"
+          className="w-full sm:w-auto btn-pill-ghost text-sm px-8 py-3.5"
         >
-          <RefreshCw className="w-3.5 h-3.5" />
+          <RefreshCw className="w-4 h-4" />
           <span>Start New Session</span>
         </button>
       </div>

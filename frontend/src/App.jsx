@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -133,16 +132,16 @@ export default function App() {
 
   if (initialLoading) {
     return (
-      <div className="min-h-screen bg-agent-bg text-agent-text flex flex-col items-center justify-center p-6 space-y-4 font-mono text-xs">
-        <div className="w-8 h-8 rounded-full border-2 border-agent-accent border-t-transparent animate-spin" />
-        <div className="text-agent-secondary">Loading Interview Agent...</div>
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col items-center justify-center p-6 space-y-4 font-mono text-xs">
+        <div className="w-8 h-8 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
+        <div className="text-slate-500">Loading Interview Agent...</div>
       </div>
     );
   }
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-agent-bg text-agent-text font-sans antialiased flex flex-col selection:bg-agent-accent/30 selection:text-agent-accentLight">
+      <div className="min-h-screen bg-[#FAFBFD] text-slate-900 font-sans antialiased flex flex-col selection:bg-indigo-100 selection:text-indigo-600">
         
         {/* Top Global Header */}
         <Header 
@@ -153,7 +152,7 @@ export default function App() {
 
         {/* Global Error Banner */}
         {error && (
-          <div className="bg-agent-error/10 border-b border-agent-error/20 p-3 text-center text-xs font-mono text-agent-error flex items-center justify-center gap-4">
+          <div className="bg-red-50 border-b border-red-200 p-3 text-center text-xs font-mono text-red-600 flex items-center justify-center gap-4">
             <span>{error}</span>
             <button
               onClick={() => setError(null)}
@@ -238,32 +237,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
-=======
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Landing from './pages/Landing.jsx'
-import Candidates from './pages/Candidates.jsx'
-import PreInterview from './pages/PreInterview.jsx'
-import Interview from './pages/Interview.jsx'
-import Feedback from './pages/Feedback.jsx'
-import Navbar from './components/Navbar.jsx'
-
-export default function App() {
-  return (
-    <BrowserRouter>
-      <div className="relative min-h-screen bg-ink-950">
-        <div className="pointer-events-none fixed inset-0 bg-grid-faint bg-size-grid opacity-40" />
-        <div className="pointer-events-none fixed inset-x-0 top-0 h-[420px] bg-radial-glow" />
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/candidates" element={<Candidates />} />
-          <Route path="/pre-interview" element={<PreInterview />} />
-          <Route path="/interview" element={<Interview />} />
-          <Route path="/feedback" element={<Feedback />} />
-          <Route path="*" element={<Landing />} />
-        </Routes>
->>>>>>> ef5acd71c8e8fed613b3c93946e4dab1962db1e8
       </div>
     </BrowserRouter>
-  )
+  );
 }
