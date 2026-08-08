@@ -144,14 +144,19 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-[#949C92] text-white font-sans antialiased flex flex-col selection:bg-white/30 selection:text-white">
-        
-        {/* Top Global Header */}
-        <Header 
-          activeSession={interviewState} 
-          healthStatus={healthStatus}
-          onResetSession={handleResetSession}
-        />
+      <div className="min-h-screen bg-[#949C92] text-white font-sans antialiased flex flex-col selection:bg-white/30 selection:text-white relative overflow-hidden">
+        {/* Soft elegant glows matching the sage theme */}
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-white/5 blur-[120px] pointer-events-none z-0" />
+        <div className="absolute bottom-[10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-amber-100/5 blur-[130px] pointer-events-none z-0" />
+        <div className="absolute top-[40%] right-[20%] w-[35%] h-[35%] rounded-full bg-emerald-100/5 blur-[100px] pointer-events-none z-0" />
+
+        <div className="relative z-10 flex flex-col min-h-screen w-full">
+          {/* Top Global Header */}
+          <Header 
+            activeSession={interviewState} 
+            healthStatus={healthStatus}
+            onResetSession={handleResetSession}
+          />
 
         {/* Global Error Banner */}
         {error && (
@@ -167,7 +172,7 @@ export default function App() {
         )}
 
         {/* Page Views Router */}
-        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6">
+        <main className="flex-1 w-full px-4 sm:px-8 lg:px-16 py-6 relative z-10">
           <Routes>
             <Route path="/" element={<LandingPage onStart={handleStartInterview} />} />
             
@@ -285,6 +290,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
+        </div>
       </div>
     </BrowserRouter>
   );

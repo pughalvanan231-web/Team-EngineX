@@ -10,7 +10,7 @@ export function LandingPage({ onStart }) {
   };
 
   return (
-    <div className="w-full min-h-[88vh] bg-[#949C92] text-white font-sans px-6 sm:px-12 py-8 flex flex-col justify-between space-y-12">
+    <div className="w-full min-h-[88vh] bg-transparent text-slate-800 font-sans px-6 sm:px-12 py-8 flex flex-col justify-between space-y-12">
       
       {/* Hero Container */}
       <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -18,41 +18,41 @@ export function LandingPage({ onStart }) {
         {/* Left Column: Nestive Editorial Typography */}
         <div className="lg:col-span-6 space-y-8 text-left">
           
-          {/* Social Proof Avatar Badge (Exact match to Nestive top badge) */}
+          {/* Social Proof Avatar Badge */}
           <div className="flex items-center gap-3">
             <div className="flex -space-x-2 overflow-hidden">
-              <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar 1" />
-              <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Avatar 2" />
-              <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white/30 object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Avatar 3" />
+              <img className="inline-block h-8 w-8 rounded-full ring-2 ring-slate-200/30 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar 1" />
+              <img className="inline-block h-8 w-8 rounded-full ring-2 ring-slate-200/30 object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Avatar 2" />
+              <img className="inline-block h-8 w-8 rounded-full ring-2 ring-slate-200/30 object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Avatar 3" />
             </div>
-            <span className="text-xs text-white/90 font-medium">
-              +10,000 candidates evaluated using <strong className="text-white">"Engine.AI"</strong>
+            <span className="text-xs text-slate-650 font-medium">
+              +10,000 candidates evaluated using <strong className="text-slate-900">"Engine.AI"</strong>
             </span>
           </div>
 
-          {/* Main Headline (Exact match to Nestive Serif layout) */}
+          {/* Main Headline */}
           <div className="space-y-1">
-            <h1 className="text-5xl sm:text-7xl font-light text-white tracking-tight leading-[1.05]">
-              Assess <span className="font-luxury-serif italic text-white/95">Your Talent</span><br />
+            <h1 className="text-5xl sm:text-7xl font-light text-slate-900 tracking-tight leading-[1.05]">
+              Assess <span className="font-luxury-serif italic text-slate-700">Your Talent</span><br />
               The Smart Way
             </h1>
           </div>
 
           {/* Body Paragraph */}
-          <p className="text-sm sm:text-base text-white/80 max-w-lg leading-relaxed font-light">
+          <p className="text-sm sm:text-base text-slate-600 max-w-lg leading-relaxed font-light">
             Curriculum-aware evaluation of your candidates — without lifting a finger. Your technical hiring is just four steps away from being autonomous!
           </p>
 
-          {/* Primary CTA Button (Exact copy of Nestive pill button layout) */}
+          {/* Primary CTA Button */}
           <div className="pt-2">
             <div 
               onClick={handleSelectCandidate}
-              className="inline-flex items-center gap-3 p-1.5 rounded-full bg-slate-900/40 border border-white/20 backdrop-blur-md cursor-pointer hover:bg-slate-900/60 transition-all shadow-xl group"
+              className="inline-flex items-center gap-3 p-1.5 rounded-full bg-slate-900/5 border border-slate-200 backdrop-blur-md cursor-pointer hover:bg-slate-900/10 transition-all shadow-md group"
             >
-              <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0">
+              <div className="w-10 h-10 rounded-full bg-slate-900/90 flex items-center justify-center text-white shrink-0 shadow-sm">
                 <Sparkles className="w-4 h-4 text-white group-hover:rotate-12 transition-transform" />
               </div>
-              <span className="bg-white text-slate-900 text-xs font-extrabold uppercase tracking-wider px-7 py-3 rounded-full shadow-md font-sans">
+              <span className="bg-slate-950 text-white hover:bg-slate-900 text-xs font-extrabold uppercase tracking-wider px-7 py-3 rounded-full shadow-md font-sans">
                 SELECT CANDIDATE
               </span>
             </div>
