@@ -7,6 +7,7 @@ export function Candidates() {
   const [days, setDays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeDay, setActiveDay] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,10 +15,12 @@ export function Candidates() {
       try {
         setLoading(true);
         const data = await fetchCurriculum();
-        if (data && data.curriculum && data.curriculum.days) {
+        if (data && data.days) {
+          setDays(data.days);
+        } else if (data && data.curriculum && data.curriculum.days) {
           setDays(data.curriculum.days);
-        } else if (data && data.curriculum) {
-          setDays(data.curriculum);
+        } else if (Array.isArray(data)) {
+          setDays(data);
         }
       } catch (err) {
         console.error('Failed to load curriculum list:', err);
@@ -69,77 +72,134 @@ export function Candidates() {
           {(() => {
             const CARD_THEMES = [
               {
-                image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&auto=format&fit=crop&q=80", // Swiss Alps Retreat
                 bgColor: "bg-[#1d2d35]",
               },
               {
-                image: "https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=600&auto=format&fit=crop&q=80", // Iceland Cabin
                 bgColor: "bg-[#272d1f]",
               },
               {
-                image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&auto=format&fit=crop&q=80", // Tokyo Penthouse
                 bgColor: "bg-[#291e26]",
               }
             ];
 
+            const getTopicImage = (day) => {
+              const images = {
+                1: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80", // VS Code Setup
+                2: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTobqm62dGSj8aeDLJkk5eN2P3BwhryI3GKYAYrKwpm8g&s=10", // Local LLM
+                3: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&auto=format&fit=crop&q=80", // React Frontend
+                4: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80", // Data foundations
+                5: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&auto=format&fit=crop&q=80", // SQL / SQLite
+                6: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80", // FastAPI
+                7: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80", // Embeddings
+                8: "https://images.unsplash.com/photo-1544256718-3bcf237f3974?w=600&auto=format&fit=crop&q=80", // Vector DB
+              };
+              return images[day] || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&auto=format&fit=crop&q=80";
+            };
+
             return days.slice(0, 8).map((dayItem, idx) => {
               const theme = CARD_THEMES[idx % CARD_THEMES.length];
+              const cardImage = getTopicImage(dayItem.day);
 
               return (
                 <div
                   key={dayItem.day}
-                  className={`relative rounded-[32px] overflow-hidden ${theme.bgColor} border border-white/10 shadow-lg hover:shadow-2xl transition-all hover:scale-[1.02] flex flex-col justify-between h-[480px] w-full group`}
+                  className={`relative rounded-[32px] overflow-hidden ${theme.bgColor} border border-white/10 shadow-lg hover:shadow-2xl transition-all hover:scale-[1.02] flex flex-col justify-between h-[360px] w-full group`}
                 >
                   {/* Top Image Segment */}
-                  <div className="relative h-[200px] w-full overflow-hidden">
-                    <img 
-                      src={theme.image} 
-                      alt={dayItem.title} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                  <div className="relative h-[190px] w-full overflow-hidden">
+                    <img
+                      src={cardImage}
+                      alt={dayItem.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    {/* Overlay to fade image smoothly into card bg */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                   </div>
 
                   {/* Content Area */}
-                  <div className="p-6 flex-1 flex flex-col justify-between space-y-3">
-                    <div className="space-y-2 text-left">
-                      {/* Title and Badge */}
-                      <div className="flex items-center justify-between gap-2">
-                        <h3 className="text-lg font-bold text-white tracking-tight leading-tight line-clamp-2">
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                    <div className="space-y-1 text-left">
+                      {/* Title and Badge Row */}
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="text-sm font-bold text-white tracking-tight leading-tight line-clamp-2">
                           {dayItem.title}
                         </h3>
-                        <span className="px-2.5 py-0.5 rounded-full bg-black/45 text-[9px] font-mono font-bold text-white border border-white/10 shrink-0 font-sans">
+                        <span className="px-2 py-0.5 rounded-full bg-black/45 text-[9px] font-mono font-bold text-white border border-white/10 shrink-0 font-sans">
                           Day {dayItem.day}
                         </span>
                       </div>
-
-                      {/* Description */}
-                      <p className="text-xs text-white/60 leading-relaxed font-light line-clamp-3">
-                        {dayItem.objectives ? dayItem.objectives.slice(0, 2).join('. ') : 'Learn core AI Engineering principles.'}
-                      </p>
                     </div>
 
-                    {/* Pills */}
-                    <div className="flex flex-wrap gap-1.5 justify-start">
-                      {dayItem.tools && dayItem.tools.slice(0, 2).map((tool, tIdx) => (
-                        <span key={tIdx} className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-medium text-white/80">
-                          {tool}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* White Reserve button */}
+                    {/* White Read more button - triggers popup */}
                     <button
+                      onClick={() => setActiveDay({ ...dayItem, cardImage, bgColor: theme.bgColor })}
                       className="w-full py-3 rounded-full bg-white hover:bg-white/95 active:scale-[0.98] text-slate-900 font-bold text-xs shadow-md transition-all flex items-center justify-center"
                     >
-                      Reserve
+                      Read more
                     </button>
                   </div>
                 </div>
               );
             });
           })()}
+        </div>
+      )}
+
+      {/* Glassmorphic Popup Modal */}
+      {activeDay && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fadeIn">
+          <div className={`relative w-full max-w-lg rounded-[32px] overflow-hidden ${activeDay.bgColor} border border-white/20 shadow-2xl flex flex-col`}>
+            {/* Top Image Banner */}
+            <div className="relative h-[220px] w-full overflow-hidden">
+              <img src={activeDay.cardImage} alt={activeDay.title} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <button
+                onClick={() => setActiveDay(null)}
+                className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/40 border border-white/10 flex items-center justify-center text-white hover:bg-black/60 transition-all"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Content Area */}
+            <div className="p-6 space-y-5 text-left">
+              <div className="flex items-start justify-between gap-3">
+                <h2 className="text-xl font-bold text-white tracking-tight leading-snug">{activeDay.title}</h2>
+                <span className="px-3 py-1 rounded-full bg-black/45 text-xs font-mono font-bold text-white border border-white/10 shrink-0">
+                  Day {activeDay.day}
+                </span>
+              </div>
+
+              {/* Objectives List */}
+              <div className="space-y-2">
+                <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-wider font-mono">Learning Objectives</h4>
+                <ul className="text-xs text-white/80 space-y-1.5 list-disc pl-4 font-light">
+                  {activeDay.objectives && activeDay.objectives.map((obj, oIdx) => (
+                    <li key={oIdx}>{obj}</li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Tools List */}
+              <div className="space-y-2 pt-1">
+                <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-wider font-mono">Tech Stack & Tools</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {activeDay.tools && activeDay.tools.map((tool, tIdx) => (
+                    <span key={tIdx} className="px-3 py-1 rounded-full bg-white/10 border border-white/10 text-[10px] font-medium text-white/90">
+                      {tool}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Button inside modal */}
+              <button
+                onClick={() => setActiveDay(null)}
+                className="w-full py-3.5 mt-2 rounded-full bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs shadow-md transition-all active:scale-[0.98] flex items-center justify-center"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

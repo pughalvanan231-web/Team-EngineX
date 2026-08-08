@@ -86,64 +86,64 @@ export function LandingPage({ onStart }) {
           {/* Step 01 */}
           <div 
             onClick={handleSelectCandidate}
-            className="p-5 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md hover:bg-white/20 transition-all cursor-pointer space-y-4 group"
+            className="p-5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer space-y-4 group shadow-sm"
           >
-            <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white/90">
+            <div className="w-8 h-8 rounded-xl bg-slate-150 border border-slate-200 flex items-center justify-center text-slate-800">
               <UserCheck className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-sm font-bold text-white group-hover:translate-x-0.5 transition-transform">
+              <div className="text-sm font-bold text-slate-900 group-hover:translate-x-0.5 transition-transform">
                 Select Candidate
               </div>
-              <div className="text-[10px] text-white/60 font-mono mt-1">01</div>
+              <div className="text-[10px] text-slate-800 font-mono mt-1 font-bold">01</div>
             </div>
           </div>
 
           {/* Step 02 */}
           <div 
             onClick={() => navigate('/overview')}
-            className="p-5 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md hover:bg-white/20 transition-all cursor-pointer space-y-4 group"
+            className="p-5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer space-y-4 group shadow-sm"
           >
-            <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white/90">
+            <div className="w-8 h-8 rounded-xl bg-slate-150 border border-slate-200 flex items-center justify-center text-slate-800">
               <Layers className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-sm font-bold text-white group-hover:translate-x-0.5 transition-transform">
+              <div className="text-sm font-bold text-slate-900 group-hover:translate-x-0.5 transition-transform">
                 Analyze Syllabus
               </div>
-              <div className="text-[10px] text-white/60 font-mono mt-1">02</div>
+              <div className="text-[10px] text-slate-800 font-mono mt-1 font-bold">02</div>
             </div>
           </div>
 
           {/* Step 03 */}
           <div 
             onClick={handleSelectCandidate}
-            className="p-5 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md hover:bg-white/20 transition-all cursor-pointer space-y-4 group"
+            className="p-5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer space-y-4 group shadow-sm"
           >
-            <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white/90">
+            <div className="w-8 h-8 rounded-xl bg-slate-150 border border-slate-200 flex items-center justify-center text-slate-800">
               <Cpu className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-sm font-bold text-white group-hover:translate-x-0.5 transition-transform">
+              <div className="text-sm font-bold text-slate-900 group-hover:translate-x-0.5 transition-transform">
                 Adaptive Q&A
               </div>
-              <div className="text-[10px] text-white/60 font-mono mt-1">03</div>
+              <div className="text-[10px] text-slate-800 font-mono mt-1 font-bold">03</div>
             </div>
           </div>
 
           {/* Step 04 */}
           <div 
             onClick={() => navigate('/history')}
-            className="p-5 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md hover:bg-white/20 transition-all cursor-pointer space-y-4 group"
+            className="p-5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer space-y-4 group shadow-sm"
           >
-            <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white/90">
+            <div className="w-8 h-8 rounded-xl bg-slate-150 border border-slate-200 flex items-center justify-center text-slate-800">
               <BarChart2 className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-sm font-bold text-white group-hover:translate-x-0.5 transition-transform">
+              <div className="text-sm font-bold text-slate-900 group-hover:translate-x-0.5 transition-transform">
                 Skill Analytics
               </div>
-              <div className="text-[10px] text-white/60 font-mono mt-1">04</div>
+              <div className="text-[10px] text-slate-800 font-mono mt-1 font-bold">04</div>
             </div>
           </div>
 

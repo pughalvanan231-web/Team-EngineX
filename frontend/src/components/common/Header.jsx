@@ -6,7 +6,7 @@ export function Header({ activeSession, healthStatus, onResetSession }) {
   const location = useLocation();
 
   return (
-    <header className="w-full bg-[#949C92]/90 backdrop-blur-2xl sticky top-0 z-50 py-3.5 px-4 sm:px-8 text-white border-b border-white/20 shadow-lg">
+    <header className="w-full bg-black/15 backdrop-blur-2xl sticky top-0 z-50 py-3.5 px-4 sm:px-8 text-white border-b border-white/10 shadow-lg">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         
         {/* Left Brand Logo */}

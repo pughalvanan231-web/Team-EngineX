@@ -144,7 +144,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-[#949C92] text-white font-sans antialiased flex flex-col selection:bg-white/30 selection:text-white relative overflow-hidden">
+      <div className="min-h-screen bg-transparent text-white font-sans antialiased flex flex-col selection:bg-white/30 selection:text-white relative overflow-hidden">
         {/* Soft elegant glows matching the sage theme */}
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-white/5 blur-[120px] pointer-events-none z-0" />
         <div className="absolute bottom-[10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-amber-100/5 blur-[130px] pointer-events-none z-0" />
