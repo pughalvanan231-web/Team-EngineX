@@ -78,6 +78,13 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   const handleFinishEarly = async () => {
     if (propFinish) {
       propFinish();
@@ -250,6 +257,7 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
           <textarea
             value={answerText}
             onChange={(e) => setAnswerText(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Type your technical response, trade-off analysis, and system architecture explanation..."
             disabled={submitting || propLoading}
             rows={3}
