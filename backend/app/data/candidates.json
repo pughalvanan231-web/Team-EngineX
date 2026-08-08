@@ -1,62 +1,464 @@
-[
-  {
-    "candidate_id": "cand_alex_001",
-    "name": "Alex Rivera",
-    "role": "Senior Full-Stack / AI Engineer Candidate",
-    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
-    "completed_days": [1, 4, 6, 8, 12, 15, 20, 24],
-    "skipped_days": [18, 31],
-    "completed_missions": [
-      { "mission_id": "m1", "title": "Prompt Optimizer Engine", "day": 4, "score": 92 },
-      { "mission_id": "m2", "title": "Vector RAG Search Service", "day": 8, "score": 88 },
-      { "mission_id": "m3", "title": "Hybrid Re-ranking Pipeline", "day": 15, "score": 85 },
-      { "mission_id": "m4", "title": "Autonomous ReAct Agent Loop", "day": 20, "score": 90 }
-    ],
-    "learning_signals": {
-      "confidence": "high",
-      "failed_attempts": 1,
-      "strong_areas": ["RAG Architecture", "Agentic Loops", "Vector DBs"],
-      "weak_areas": ["RAG Evaluation Metrics", "AI Security Guardrails"],
-      "baseline_difficulty": "intermediate"
+{
+  "candidates": [
+    {
+      "member": {
+        "id": "CAND-001",
+        "name": "Sarah Johnson",
+        "jobRole": "Senior Data Engineer",
+        "yearsExperience": 9,
+        "education": "MS Computer Science",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 1 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 1 },
+        { "day": 10, "title": "Retrieval & Matching Engine", "passed": true, "attempts": 2 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 4 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 1 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 2 },
+        { "day": 23, "title": "Model Context Protocol (MCP)", "passed": true, "attempts": 2 },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "passed": true, "attempts": 3 },
+        { "day": 29, "title": "Monitoring, Logging & Observability", "skipped": true },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 1 }
+      ],
+      "signals": { "commitDays": 28, "missionsCompleted": 30, "missionsFirstTry": 20 }
+    },
+    {
+      "member": {
+        "id": "CAND-002",
+        "name": "Alex Turner",
+        "jobRole": "Backend Software Engineer",
+        "yearsExperience": 5,
+        "education": "B.Tech Computer Science",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 3 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 2 },
+        { "day": 10, "title": "Retrieval & Matching Engine", "passed": true, "attempts": 4 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 5 },
+        { "day": 13, "title": "Function Calling & Structured Outputs", "passed": true, "attempts": 4 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 1 },
+        { "day": 18, "title": "Streaming Responses", "passed": true, "attempts": 1 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 3 },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "passed": true, "attempts": 1 },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 2 }
+      ],
+      "signals": { "commitDays": 22, "missionsCompleted": 29, "missionsFirstTry": 10 }
+    },
+    {
+      "member": {
+        "id": "CAND-003",
+        "name": "Emily Chen",
+        "jobRole": "AI Engineer",
+        "yearsExperience": 6,
+        "education": "MS Artificial Intelligence",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 1 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 1 },
+        { "day": 10, "title": "Retrieval & Matching Engine", "passed": true, "attempts": 1 },
+        { "day": 11, "title": "RAG End-to-End & LLM API Basics", "passed": true, "attempts": 1 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 1 },
+        { "day": 13, "title": "Function Calling & Structured Outputs", "passed": true, "attempts": 1 },
+        { "day": 21, "title": "LangChain Agents", "passed": true, "attempts": 1 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 1 },
+        { "day": 23, "title": "Model Context Protocol (MCP)", "passed": true, "attempts": 1 },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 1 }
+      ],
+      "signals": { "commitDays": 31, "missionsCompleted": 31, "missionsFirstTry": 30 }
+    },
+    {
+      "member": {
+        "id": "CAND-004",
+        "name": "David Miller",
+        "jobRole": "Business Analyst",
+        "yearsExperience": 8,
+        "education": "MBA",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 4 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 5 },
+        { "day": 10, "title": "Retrieval & Matching Engine", "passed": true, "attempts": 5 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 3 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 2 },
+        { "day": 20, "title": "Conversation Memory & Context Management", "passed": true, "attempts": 3 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 4 },
+        { "day": 23, "title": "Model Context Protocol (MCP)", "passed": true, "attempts": 5 },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "skipped": true },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 2 }
+      ],
+      "signals": { "commitDays": 18, "missionsCompleted": 28, "missionsFirstTry": 6 }
+    },
+    {
+      "member": {
+        "id": "CAND-005",
+        "name": "Michael Brown",
+        "jobRole": "DevOps Engineer",
+        "yearsExperience": 10,
+        "education": "B.Tech Information Technology",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 2 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 2 },
+        { "day": 10, "title": "Retrieval & Matching Engine", "passed": true, "attempts": 2 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 4 },
+        { "day": 18, "title": "Streaming Responses", "passed": true, "attempts": 1 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 2 },
+        { "day": 23, "title": "Model Context Protocol (MCP)", "passed": true, "attempts": 3 },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "passed": true, "attempts": 1 },
+        { "day": 29, "title": "Monitoring, Logging & Observability", "passed": true, "attempts": 1 },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 1 }
+      ],
+      "signals": { "commitDays": 30, "missionsCompleted": 31, "missionsFirstTry": 22 }
+    },
+    {
+      "member": {
+        "id": "CAND-006",
+        "name": "Wendy Foster",
+        "jobRole": "Marketing Manager",
+        "yearsExperience": 12,
+        "education": "BA Marketing",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 1, "title": "VS Code & Python Environment Setup", "passed": true, "attempts": 3 },
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 5 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 5 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 4 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 4 },
+        { "day": 17, "title": "Chatbot Frontend Development", "passed": true, "attempts": 2 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 5 },
+        { "day": 27, "title": "Security, Privacy & Guardrails", "skipped": true },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "skipped": true },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 3 }
+      ],
+      "signals": { "commitDays": 19, "missionsCompleted": 24, "missionsFirstTry": 2 }
+    },
+    {
+      "member": {
+        "id": "CAND-007",
+        "name": "Ethan Brooks",
+        "jobRole": "Computer Science Intern",
+        "yearsExperience": 0,
+        "education": "BS Computer Science (in progress)",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 1, "title": "VS Code & Python Environment Setup", "passed": true, "attempts": 1 },
+        { "day": 3, "title": "First AI Project, React Frontend & GitHub", "passed": true, "attempts": 1 },
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 2 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 1 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 1 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 1 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 1 },
+        { "day": 27, "title": "Security, Privacy & Guardrails", "skipped": true },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "skipped": true },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 2 }
+      ],
+      "signals": { "commitDays": 26, "missionsCompleted": 27, "missionsFirstTry": 22 }
+    },
+    {
+      "member": {
+        "id": "CAND-008",
+        "name": "Harold Whitfield",
+        "jobRole": "Distinguished Engineer",
+        "yearsExperience": 28,
+        "education": "BS Computer Science",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 1, "title": "VS Code & Python Environment Setup", "passed": true, "attempts": 1 },
+        { "day": 4, "title": "Reading & Processing Structured Data", "passed": true, "attempts": 1 },
+        { "day": 5, "title": "Reading & Processing Unstructured Data", "passed": true, "attempts": 1 },
+        { "day": 14, "title": "Fine-Tuning: Concepts & When to Use It", "skipped": true },
+        { "day": 15, "title": "Fine-Tuning: Hands-On with LoRA & QLoRA", "skipped": true },
+        { "day": 21, "title": "LangChain Agents", "passed": true, "attempts": 5 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 4 },
+        { "day": 23, "title": "Model Context Protocol (MCP)", "passed": true, "attempts": 5 },
+        { "day": 27, "title": "Security, Privacy & Guardrails", "passed": true, "attempts": 1 },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "passed": true, "attempts": 1 },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 2 }
+      ],
+      "signals": { "commitDays": 25, "missionsCompleted": 27, "missionsFirstTry": 15 }
+    },
+    {
+      "member": {
+        "id": "CAND-009",
+        "name": "Zara Ahmadi",
+        "jobRole": "AI Engineer",
+        "yearsExperience": 1,
+        "education": "BS Computer Science",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 1 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 1 },
+        { "day": 10, "title": "Retrieval & Matching Engine", "passed": true, "attempts": 1 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 1 },
+        { "day": 13, "title": "Function Calling & Structured Outputs", "passed": true, "attempts": 1 },
+        { "day": 21, "title": "LangChain Agents", "passed": true, "attempts": 1 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 1 },
+        { "day": 23, "title": "Model Context Protocol (MCP)", "passed": true, "attempts": 1 },
+        { "day": 27, "title": "Security, Privacy & Guardrails", "passed": true, "attempts": 1 },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 1 }
+      ],
+      "signals": { "commitDays": 31, "missionsCompleted": 31, "missionsFirstTry": 29 }
+    },
+    {
+      "member": {
+        "id": "CAND-010",
+        "name": "Gerald Combs",
+        "jobRole": "IT Support Specialist",
+        "yearsExperience": 20,
+        "education": "AAS Information Technology",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 1, "title": "VS Code & Python Environment Setup", "passed": true, "attempts": 2 },
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 5 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": false, "attempts": 4 },
+        { "day": 10, "title": "Retrieval & Matching Engine", "passed": false, "attempts": 3 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 5 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 4 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": false, "attempts": 3 },
+        { "day": 27, "title": "Security, Privacy & Guardrails", "skipped": true },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "skipped": true },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 3 }
+      ],
+      "signals": { "commitDays": 22, "missionsCompleted": 23, "missionsFirstTry": 1 }
+    },
+    {
+      "member": {
+        "id": "CAND-011",
+        "name": "Mia Alvarez",
+        "jobRole": "UX Researcher",
+        "yearsExperience": 6,
+        "education": "MA Human-Computer Interaction",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 1, "title": "VS Code & Python Environment Setup", "passed": true, "attempts": 2 },
+        { "day": 2, "title": "Local LLM & AI Coding Assistant Setup", "passed": true, "attempts": 1 },
+        { "day": 3, "title": "First AI Project, React Frontend & GitHub", "passed": true, "attempts": 3 },
+        { "day": 4, "title": "Reading & Processing Structured Data", "passed": true, "attempts": 2 },
+        { "day": 7, "title": "Embeddings Explained", "skipped": true },
+        { "day": 8, "title": "Vector Databases Overview", "skipped": true },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "skipped": true },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "skipped": true },
+        { "day": 22, "title": "Multi-Agent Orchestration", "skipped": true },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 4 }
+      ],
+      "signals": { "commitDays": 9, "missionsCompleted": 14, "missionsFirstTry": 5 }
+    },
+    {
+      "member": {
+        "id": "CAND-012",
+        "name": "Chen Wei",
+        "jobRole": "Mobile App Developer",
+        "yearsExperience": 7,
+        "education": "BS Computer Engineering",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 4 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 5 },
+        { "day": 9, "title": "Building & Populating the Vector Database", "passed": true, "attempts": 4 },
+        { "day": 10, "title": "Retrieval & Matching Engine", "passed": true, "attempts": 4 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 1 },
+        { "day": 18, "title": "Streaming Responses", "passed": true, "attempts": 1 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 2 },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "passed": true, "attempts": 1 },
+        { "day": 30, "title": "Production Readiness & Final Testing", "passed": true, "attempts": 1 },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 1 }
+      ],
+      "signals": { "commitDays": 27, "missionsCompleted": 30, "missionsFirstTry": 14 }
+    },
+    {
+      "member": {
+        "id": "CAND-013",
+        "name": "Ravi Patel",
+        "jobRole": "Software Engineer",
+        "yearsExperience": 15,
+        "education": "MS Computer Science",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 1, "title": "VS Code & Python Environment Setup", "passed": true, "attempts": 3 },
+        { "day": 4, "title": "Reading & Processing Structured Data", "passed": true, "attempts": 2 },
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 3 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 2 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 3 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 2 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 2 },
+        { "day": 27, "title": "Security, Privacy & Guardrails", "passed": true, "attempts": 1 },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "passed": true, "attempts": 1 },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 1 }
+      ],
+      "signals": { "commitDays": 27, "missionsCompleted": 30, "missionsFirstTry": 13 }
+    },
+    {
+      "member": {
+        "id": "CAND-014",
+        "name": "Bethany Cole",
+        "jobRole": "HR Manager",
+        "yearsExperience": 10,
+        "education": "BA Human Resources",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 1, "title": "VS Code & Python Environment Setup", "passed": true, "attempts": 4 },
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 5 },
+        { "day": 8, "title": "Vector Databases Overview", "skipped": true },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 5 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 4 },
+        { "day": 20, "title": "Conversation Memory & Context Management", "passed": true, "attempts": 3 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "skipped": true },
+        { "day": 27, "title": "Security, Privacy & Guardrails", "skipped": true },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "skipped": true },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 4 }
+      ],
+      "signals": { "commitDays": 17, "missionsCompleted": 20, "missionsFirstTry": 1 }
+    },
+    {
+      "member": {
+        "id": "CAND-015",
+        "name": "Noah Kim",
+        "jobRole": "Principal Architect",
+        "yearsExperience": 20,
+        "education": "MS Computer Science",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 1, "title": "VS Code & Python Environment Setup", "passed": true, "attempts": 1 },
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 1 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 1 },
+        { "day": 14, "title": "Fine-Tuning: Concepts & When to Use It", "skipped": true },
+        { "day": 15, "title": "Fine-Tuning: Hands-On with LoRA & QLoRA", "skipped": true },
+        { "day": 21, "title": "LangChain Agents", "passed": true, "attempts": 1 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 1 },
+        { "day": 23, "title": "Model Context Protocol (MCP)", "passed": true, "attempts": 1 },
+        { "day": 27, "title": "Security, Privacy & Guardrails", "passed": true, "attempts": 1 },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 1 }
+      ],
+      "signals": { "commitDays": 29, "missionsCompleted": 29, "missionsFirstTry": 27 }
+    },
+    {
+      "member": {
+        "id": "CAND-016",
+        "name": "Isabella Rossi",
+        "jobRole": "Software Engineer",
+        "yearsExperience": 5,
+        "education": "BS Computer Science",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 1, "title": "VS Code & Python Environment Setup", "passed": true, "attempts": 2 },
+        { "day": 7, "title": "Embeddings Explained", "passed": false, "attempts": 4 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 3 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": false, "attempts": 5 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 2 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": false, "attempts": 4 },
+        { "day": 27, "title": "Security, Privacy & Guardrails", "skipped": true },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "skipped": true },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 2 }
+      ],
+      "signals": { "commitDays": 19, "missionsCompleted": 21, "missionsFirstTry": 2 }
+    },
+    {
+      "member": {
+        "id": "CAND-017",
+        "name": "Tyler Brooks",
+        "jobRole": "Junior Developer",
+        "yearsExperience": 0,
+        "education": "GED + Coding Bootcamp Certificate",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 1, "title": "VS Code & Python Environment Setup", "passed": true, "attempts": 3 },
+        { "day": 3, "title": "First AI Project, React Frontend & GitHub", "passed": true, "attempts": 5 },
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 5 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 5 },
+        { "day": 10, "title": "Retrieval & Matching Engine", "passed": true, "attempts": 5 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 5 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 4 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 5 },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "passed": true, "attempts": 4 },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 3 }
+      ],
+      "signals": { "commitDays": 30, "missionsCompleted": 31, "missionsFirstTry": 1 }
+    },
+    {
+      "member": {
+        "id": "CAND-018",
+        "name": "Diane Foster",
+        "jobRole": "AI Engineer",
+        "yearsExperience": 4,
+        "education": "MS Computer Science",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 1 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 1 },
+        { "day": 10, "title": "Retrieval & Matching Engine", "passed": true, "attempts": 1 },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 1 },
+        { "day": 13, "title": "Function Calling & Structured Outputs", "passed": true, "attempts": 1 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 1 },
+        { "day": 23, "title": "Model Context Protocol (MCP)", "passed": true, "attempts": 1 },
+        { "day": 27, "title": "Security, Privacy & Guardrails", "passed": true, "attempts": 1 },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "passed": true, "attempts": 1 },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 1 }
+      ],
+      "signals": { "commitDays": 31, "missionsCompleted": 31, "missionsFirstTry": 31 }
+    },
+    {
+      "member": {
+        "id": "CAND-019",
+        "name": "Frank DeLuca",
+        "jobRole": "Legacy Systems Engineer",
+        "yearsExperience": 25,
+        "education": "BS Computer Science",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 1, "title": "VS Code & Python Environment Setup", "passed": true, "attempts": 2 },
+        { "day": 4, "title": "Reading & Processing Structured Data", "passed": true, "attempts": 1 },
+        { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 4 },
+        { "day": 8, "title": "Vector Databases Overview", "passed": true, "attempts": 3 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 1 },
+        { "day": 17, "title": "Chatbot Frontend Development", "passed": true, "attempts": 5 },
+        { "day": 19, "title": "Response Formatting & Rich Outputs", "passed": true, "attempts": 4 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 3 },
+        { "day": 28, "title": "Docker & Kubernetes Deployment", "passed": true, "attempts": 1 },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 2 }
+      ],
+      "signals": { "commitDays": 26, "missionsCompleted": 29, "missionsFirstTry": 11 }
+    },
+    {
+      "member": {
+        "id": "CAND-020",
+        "name": "Priyanka Sharma",
+        "jobRole": "Software Engineer",
+        "yearsExperience": 5,
+        "education": "BS Computer Science",
+        "status": "COMPLETED"
+      },
+      "missions": [
+        { "day": 1, "title": "VS Code & Python Environment Setup", "passed": true, "attempts": 1 },
+        { "day": 3, "title": "First AI Project, React Frontend & GitHub", "passed": true, "attempts": 1 },
+        { "day": 4, "title": "Reading & Processing Structured Data", "skipped": true },
+        { "day": 7, "title": "Embeddings Explained", "passed": false, "attempts": 2 },
+        { "day": 8, "title": "Vector Databases Overview", "skipped": true },
+        { "day": 12, "title": "Prompt Engineering Fundamentals", "passed": true, "attempts": 1 },
+        { "day": 16, "title": "Chatbot Backend & API Integration", "passed": true, "attempts": 1 },
+        { "day": 22, "title": "Multi-Agent Orchestration", "passed": true, "attempts": 1 },
+        { "day": 27, "title": "Security, Privacy & Guardrails", "passed": true, "attempts": 1 },
+        { "day": 31, "title": "Capstone Project & Final Demo", "passed": true, "attempts": 1 }
+      ],
+      "signals": { "commitDays": 24, "missionsCompleted": 27, "missionsFirstTry": 19 }
     }
-  },
-  {
-    "candidate_id": "cand_priya_002",
-    "name": "Priya Sharma",
-    "role": "Machine Learning Systems Engineer Candidate",
-    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya",
-    "completed_days": [1, 4, 6, 8, 12, 15, 18, 24, 28],
-    "skipped_days": [20],
-    "completed_missions": [
-      { "mission_id": "m10", "title": "High-Throughput vLLM Serving", "day": 28, "score": 96 },
-      { "mission_id": "m11", "title": "GraphRAG Knowledge Retriever", "day": 15, "score": 91 },
-      { "mission_id": "m12", "title": "Ragas Evaluation Suite", "day": 18, "score": 89 }
-    ],
-    "learning_signals": {
-      "confidence": "high",
-      "failed_attempts": 0,
-      "strong_areas": ["Inference Infrastructure", "Evaluation", "Quantization"],
-      "weak_areas": ["Agentic Loop Frameworks"],
-      "baseline_difficulty": "advanced"
-    }
-  },
-  {
-    "candidate_id": "cand_marcus_003",
-    "name": "Marcus Vance",
-    "role": "Junior AI Application Developer Candidate",
-    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus",
-    "completed_days": [1, 4, 6, 8],
-    "skipped_days": [12, 15, 18, 20, 24, 28, 31],
-    "completed_missions": [
-      { "mission_id": "m20", "title": "Basic Prompting Workshop", "day": 4, "score": 78 },
-      { "mission_id": "m21", "title": "Naive RAG Prototype", "day": 8, "score": 74 }
-    ],
-    "learning_signals": {
-      "confidence": "moderate",
-      "failed_attempts": 3,
-      "strong_areas": ["Prompt Engineering", "Basic API Integration"],
-      "weak_areas": ["Vector Indexing", "System Design", "Inference Optimization"],
-      "baseline_difficulty": "beginner"
-    }
-  }
-]
+  ]
+}

@@ -1,28 +1,24 @@
 import uuid
 import logging
-from fastapi import FastAPI, HTTPException, Request, Response, Header
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional
 
 from app.config import settings
-from app.schemas.schemas import StartInterviewRequest, SubmitAnswerRequest
+from app.schemas.schemas import InterviewRequest
 from app.agents.orchestrator import orchestrator, load_candidate_data, load_curriculum_data
-from app.db.database import load_interview
+from app.db.database import init_db
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] [ReqID: %(correlation_id)s] %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("InterviewAgent")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
+    description="Adaptive AI Technical Interview Agent",
     version=settings.VERSION,
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
 
-# CORS Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ALLOWED_ORIGINS,
@@ -31,95 +27,92 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Request Correlation ID Middleware
+init_db()
+
+
 @app.middleware("http")
 async def correlation_id_middleware(request: Request, call_next):
     corr_id = request.headers.get("X-Request-Id", f"req_{uuid.uuid4().hex[:8]}")
     request.state.correlation_id = corr_id
-    
-    # Custom logger filter
-    class CorrelationFilter(logging.Filter):
-        def filter(self, record):
-            record.correlation_id = corr_id
-            return True
-            
-    logger.addFilter(CorrelationFilter())
-    logger.info(f"Incoming Request: {request.method} {request.url.path}")
-    
     response: Response = await call_next(request)
     response.headers["X-Request-Id"] = corr_id
-    logger.removeFilter(CorrelationFilter())
     return response
 
-# System Health Check Endpoint
+
 @app.get("/health")
+@app.get("/api/v1/health")
 def health_check():
     return {
         "status": "healthy",
         "version": settings.VERSION,
         "ai_provider": settings.AI_PROVIDER,
         "demo_mode": settings.DEMO_MODE,
-        "database": settings.DATABASE_PATH
     }
 
-# Candidate Profiles
-@app.get(f"{settings.API_PREFIX}/candidates")
-def get_candidates():
-    return {"candidates": load_candidate_data()}
 
-# Curriculum Knowledge Base
-@app.get(f"{settings.API_PREFIX}/curriculum")
+def _public_candidates() -> list:
+    """Public-safe candidate cards (no internal scoring)."""
+    out = []
+    for c in load_candidate_data():
+        m = c.get("member", {})
+        missions = c.get("missions", [])
+        completed = [x for x in missions if x.get("passed") and not x.get("skipped")]
+        failed = [x for x in missions if not x.get("passed")]
+        skipped = [x for x in missions if x.get("skipped")]
+        out.append({
+            "candidate_id": m.get("id"),
+            "name": m.get("name"),
+            "role": m.get("jobRole"),
+            "experience": m.get("yearsExperience"),
+            "education": m.get("education"),
+            "status": m.get("status"),
+            "completed_count": len(completed),
+            "failed_count": len(failed),
+            "skipped_count": len(skipped),
+            "commit_days": c.get("signals", {}).get("commitDays", 0),
+            "days": sorted({x.get("day") for x in missions}),
+        })
+    return out
+
+
+@app.get("/api/v1/candidates")
+def get_candidates():
+    return {"candidates": _public_candidates()}
+
+
+@app.get("/api/v1/curriculum")
 def get_curriculum():
     return {"curriculum": load_curriculum_data()}
 
-# Start Interview Session
-@app.post(f"{settings.API_PREFIX}/interview/start")
-def start_interview(payload: StartInterviewRequest):
+
+@app.post("/api/interview")
+@app.post("/api/v1/interview")
+def interview(payload: InterviewRequest):
+    """Primary interview endpoint per technical-spec.md.
+
+    Start:    { "sessionId": "...", "candidate": {...} }
+    Continue: { "sessionId": "...", "message": "..." }
+    """
     try:
-        logger.info(f"Starting interview for candidate: {payload.candidate_id}")
-        state = orchestrator.start_interview(payload.candidate_id)
-        return state
+        if not payload.message or not payload.message.strip():
+            state = orchestrator.start_interview(payload.sessionId, payload.candidate)
+            logger.info("Started interview session %s", payload.sessionId)
+        else:
+            state = orchestrator.process_message(payload.sessionId, payload.message.strip())
+            logger.info("Processed answer for session %s", payload.sessionId)
+        return orchestrator.public_response(state)
     except ValueError as e:
-        logger.error(f"Failed to start interview: {str(e)}")
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        logger.error(f"Unexpected error starting interview: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to initialize interview engine")
+        logger.exception("Interview error for session %s", payload.sessionId)
+        raise HTTPException(status_code=500, detail="Something went wrong while processing your response.")
 
-# Submit Candidate Answer
-@app.post(f"{settings.API_PREFIX}/interview/{{interview_id}}/answer")
-def submit_answer(interview_id: str, payload: SubmitAnswerRequest):
-    if not payload.answer or not payload.answer.strip():
-        raise HTTPException(status_code=400, detail="Answer string cannot be empty")
-        
-    try:
-        logger.info(f"Processing answer for interview {interview_id}")
-        state = orchestrator.process_answer(interview_id, payload.answer.strip())
-        return state
-    except ValueError as e:
-        logger.error(f"Interview error: {str(e)}")
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        logger.error(f"Error processing answer: {str(e)}")
-        raise HTTPException(status_code=500, detail="Error evaluating candidate answer")
 
-# Get Interview Session State (Session Restore & Reload)
-@app.get(f"{settings.API_PREFIX}/interview/{{interview_id}}")
-def get_interview(interview_id: str):
-    state = load_interview(interview_id)
+@app.get("/api/interview/{session_id}")
+@app.get("/api/v1/interview/{session_id}")
+def get_interview(session_id: str):
+    """Restore a session by sessionId (survives frontend refresh)."""
+    state = orchestrator.get_session(session_id)
     if not state:
-        raise HTTPException(status_code=404, detail=f"Interview session {interview_id} not found")
-    return state
-
-# Finish Interview & Generate Feedback
-@app.post(f"{settings.API_PREFIX}/interview/{{interview_id}}/finish")
-def finish_interview(interview_id: str):
-    try:
-        logger.info(f"Finishing interview {interview_id}")
-        state = orchestrator.finish_interview(interview_id)
-        return state
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        logger.error(f"Error finishing interview: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to generate final interview feedback")
+        raise HTTPException(status_code=404, detail=f"Interview session {session_id} not found")
+    return orchestrator.public_response(state)
