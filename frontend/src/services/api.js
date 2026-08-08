@@ -1,150 +1,101 @@
 import axios from 'axios';
-import {
-  INITIAL_PERSONA,
-  INITIAL_STATS,
-  MOCK_POSTS,
-  MOCK_ACTIVITIES,
-  MOCK_SOURCES,
-  MOCK_MEMORY
-} from './mockData';
 
-const BASE_URL = import.meta.env.VITE_API_URL || '';
-const DEMO_MODE = import.meta.env.VITE_DEMO_MODE !== 'false'; // Default to true if not explicitly set to 'false'
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_PREFIX = '/api/v1';
 
-const apiClient = axios.create({
-  baseURL: BASE_URL,
+const client = axios.create({
+  baseURL: `${BASE_URL}${API_PREFIX}`,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 8000,
+  timeout: 20000,
 });
 
-/**
- * Initialize Autonomous Agent
- * POST /api/agent/init
- * @param {Object} payload - { persona: { name: string, domain: string } }
- */
-export async function initializeAgent(payload = { persona: { name: "NOVA", domain: "AI Systems & Developer Intelligence" } }) {
-  if (DEMO_MODE || !BASE_URL) {
-    // Simulate network latency for persona initialization
-    await new Promise(resolve => setTimeout(resolve, 800));
-    const agentId = "nova-agent-" + Math.random().toString(36).substring(2, 9);
-    return {
-      agentId,
-      persona: {
-        ...INITIAL_PERSONA,
-        name: payload?.persona?.name || INITIAL_PERSONA.name,
-        domain: payload?.persona?.domain || INITIAL_PERSONA.domain
+export async function fetchHealth() {
+  try {
+    const res = await axios.get(`${BASE_URL}/health`);
+    return res.data;
+  } catch (err) {
+    return { status: 'offline', demo_mode: true };
+  }
+}
+
+export async function fetchCandidates() {
+  try {
+    const res = await client.get('/candidates');
+    return res.data.candidates || [];
+  } catch (err) {
+    console.warn('Failed to fetch candidates from API, using fallback:', err.message);
+    return [
+      {
+        candidate_id: "cand_alex_001",
+        name: "Alex Rivera",
+        role: "Senior Full-Stack / AI Engineer Candidate",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
+        completed_days: [1, 4, 6, 8, 12, 15, 20, 24],
+        skipped_days: [18, 31],
+        completed_missions: [
+          { mission_id: "m1", title: "Prompt Optimizer Engine", day: 4, score: 92 },
+          { mission_id: "m2", title: "Vector RAG Search Service", day: 8, score: 88 },
+          { mission_id: "m3", title: "Hybrid Re-ranking Pipeline", day: 15, score: 85 },
+          { mission_id: "m4", title: "Autonomous ReAct Agent Loop", day: 20, score: 90 }
+        ],
+        learning_signals: {
+          confidence: "high",
+          failed_attempts: 1,
+          strong_areas: ["RAG Architecture", "Agentic Loops", "Vector DBs"],
+          weak_areas: ["RAG Evaluation Metrics", "AI Security Guardrails"],
+          baseline_difficulty: "intermediate"
+        }
       },
-      status: "initialized"
-    };
-  }
-
-  try {
-    const response = await apiClient.post('/api/agent/init', payload);
-    return response.data;
-  } catch (error) {
-    console.warn('API connection failed, falling back to local simulation:', error.message);
-    const agentId = "nova-agent-" + Math.random().toString(36).substring(2, 9);
-    return {
-      agentId,
-      persona: INITIAL_PERSONA,
-      status: "initialized_fallback"
-    };
-  }
-}
-
-/**
- * Get Published Feed
- * GET /api/agent/feed?agentId=...
- */
-export async function getFeed(agentId) {
-  if (DEMO_MODE || !BASE_URL) {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    return { posts: MOCK_POSTS };
-  }
-
-  try {
-    const response = await apiClient.get('/api/agent/feed', { params: { agentId } });
-    return response.data;
-  } catch (error) {
-    console.warn('getFeed API call failed, falling back to mock posts:', error.message);
-    return { posts: MOCK_POSTS };
+      {
+        candidate_id: "cand_priya_002",
+        name: "Priya Sharma",
+        role: "Machine Learning Systems Engineer Candidate",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya",
+        completed_days: [1, 4, 6, 8, 12, 15, 18, 24, 28],
+        skipped_days: [20],
+        completed_missions: [
+          { mission_id: "m10", title: "High-Throughput vLLM Serving", day: 28, score: 96 },
+          { mission_id: "m11", title: "GraphRAG Knowledge Retriever", day: 15, score: 91 }
+        ],
+        learning_signals: {
+          confidence: "high",
+          failed_attempts: 0,
+          strong_areas: ["Inference Infrastructure", "Evaluation"],
+          weak_areas: ["Agentic Frameworks"],
+          baseline_difficulty: "advanced"
+        }
+      }
+    ];
   }
 }
 
-/**
- * Get Agent Statistics
- * GET /api/agent/stats?agentId=...
- */
-export async function getAgentStats(agentId) {
-  if (DEMO_MODE || !BASE_URL) {
-    await new Promise(resolve => setTimeout(resolve, 200));
-    return { stats: INITIAL_STATS };
-  }
-
+export async function fetchCurriculum() {
   try {
-    const response = await apiClient.get('/api/agent/stats', { params: { agentId } });
-    return response.data;
-  } catch (error) {
-    console.warn('getAgentStats API call failed:', error.message);
-    return { stats: INITIAL_STATS };
+    const res = await client.get('/curriculum');
+    return res.data.curriculum || [];
+  } catch (err) {
+    return [];
   }
 }
 
-/**
- * Get Agent Activity Log
- * GET /api/agent/activity?agentId=...
- */
-export async function getActivity(agentId) {
-  if (DEMO_MODE || !BASE_URL) {
-    await new Promise(resolve => setTimeout(resolve, 250));
-    return { activity: MOCK_ACTIVITIES };
-  }
-
-  try {
-    const response = await apiClient.get('/api/agent/activity', { params: { agentId } });
-    return response.data;
-  } catch (error) {
-    console.warn('getActivity API call failed:', error.message);
-    return { activity: MOCK_ACTIVITIES };
-  }
+export async function startInterview(candidateId) {
+  const res = await client.post('/interview/start', { candidate_id: candidateId });
+  return res.data;
 }
 
-/**
- * Get Agent Memory Store (Published, Rejected, Decisions)
- * GET /api/agent/memory?agentId=...
- */
-export async function getMemory(agentId) {
-  if (DEMO_MODE || !BASE_URL) {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    return { memory: MOCK_MEMORY };
-  }
-
-  try {
-    const response = await apiClient.get('/api/agent/memory', { params: { agentId } });
-    return response.data;
-  } catch (error) {
-    console.warn('getMemory API call failed:', error.message);
-    return { memory: MOCK_MEMORY };
-  }
+export async function submitAnswer(interviewId, answerText) {
+  const res = await client.post(`/interview/${interviewId}/answer`, { answer: answerText });
+  return res.data;
 }
 
-/**
- * Get Monitored Intelligence Sources
- * GET /api/agent/sources?agentId=...
- */
-export async function getSources(agentId) {
-  if (DEMO_MODE || !BASE_URL) {
-    await new Promise(resolve => setTimeout(resolve, 200));
-    return { sources: MOCK_SOURCES };
-  }
+export async function fetchInterview(interviewId) {
+  const res = await client.get(`/interview/${interviewId}`);
+  return res.data;
+}
 
-  try {
-    const response = await apiClient.get('/api/agent/sources', { params: { agentId } });
-    return response.data;
-  } catch (error) {
-    console.warn('getSources API call failed:', error.message);
-    return { sources: MOCK_SOURCES };
-  }
+export async function finishInterview(interviewId) {
+  const res = await client.post(`/interview/${interviewId}/finish`);
+  return res.data;
 }

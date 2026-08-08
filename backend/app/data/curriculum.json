@@ -1,0 +1,90 @@
+[
+  {
+    "day": 1,
+    "module": "LLM Fundamentals",
+    "topic": "Language Model Architectures & Tokens",
+    "learning_objective": "Understand transformer architecture, self-attention mechanisms, tokenization, and context window limits.",
+    "tools": ["Tiktoken", "Hugging Face Transformers"],
+    "related_concepts": ["Self-Attention", "Byte-Pair Encoding", "Context Limit"]
+  },
+  {
+    "day": 4,
+    "module": "LLM Engineering",
+    "topic": "Prompt Engineering & In-Context Learning",
+    "learning_objective": "Master zero-shot, few-shot, chain-of-thought, and system prompt engineering patterns.",
+    "tools": ["OpenAI API", "LangChain PromptTemplates"],
+    "related_concepts": ["Few-Shot Prompting", "Chain-of-Thought", "Instruction Tuning"]
+  },
+  {
+    "day": 6,
+    "module": "Structured Intelligence",
+    "topic": "Structured Outputs & Function Calling",
+    "learning_objective": "Enforce JSON Schema outputs and model tool choice using Pydantic and function calling contracts.",
+    "tools": ["Pydantic", "OpenAI Function Calling", "Instructor"],
+    "related_concepts": ["JSON Schema", "Tool Defs", "Grammar Constrained Decoding"]
+  },
+  {
+    "day": 8,
+    "module": "Retrieval Augmented Generation",
+    "topic": "RAG Fundamentals & Vector Embeddings",
+    "learning_objective": "Build naive RAG pipelines using text chunking, embedding models, cosine similarity, and context injection.",
+    "tools": ["OpenAI Embeddings", "ChromaDB", "LangChain Document Loaders"],
+    "related_concepts": ["Vector Embeddings", "Cosine Similarity", "Context Injection"]
+  },
+  {
+    "day": 12,
+    "module": "Retrieval Augmented Generation",
+    "topic": "Vector Databases & Indexing Strategies",
+    "learning_objective": "Understand HNSW, IVF indexes, metadata filtering, and high-throughput vector database scaling.",
+    "tools": ["Pinecone", "Qdrant", "ChromaDB"],
+    "related_concepts": ["HNSW Index", "IVF Index", "Metadata Filtering", "Recall vs Precision"]
+  },
+  {
+    "day": 15,
+    "module": "Advanced RAG",
+    "topic": "Hybrid Search, Re-ranking & GraphRAG",
+    "learning_objective": "Implement BM25 keyword + vector hybrid search, cross-encoder re-ranking, and GraphRAG knowledge graphs.",
+    "tools": ["Cohere Re-rank", "BM25", "Neo4j", "LlamaIndex"],
+    "related_concepts": ["Reciprocal Rank Fusion", "Cross-Encoder", "GraphRAG", "Knowledge Graphs"]
+  },
+  {
+    "day": 18,
+    "module": "RAG Evaluation",
+    "topic": "RAG Triad & Retrieval Evaluation",
+    "learning_objective": "Evaluate retrieval precision/recall, context relevance, groundedness, and answer faithfulness.",
+    "tools": ["Ragas", "TruLens"],
+    "related_concepts": ["Context Relevance", "Groundedness", "Faithfulness", "Retrieval Decay"]
+  },
+  {
+    "day": 20,
+    "module": "Autonomous AI Agents",
+    "topic": "Agentic AI Loops & ReAct Framework",
+    "learning_objective": "Construct autonomous agentic loops with tool execution, dynamic planning, reflection, and state recovery.",
+    "tools": ["LangGraph", "CrewAI", "Temporal"],
+    "related_concepts": ["ReAct Loop", "Tool Calling", "Stateful Graphs", "Durable Execution"]
+  },
+  {
+    "day": 24,
+    "module": "Model Optimization",
+    "topic": "Quantization & Local LLM Inference",
+    "learning_objective": "Optimize open-source LLMs using GGUF, AWQ, GPTQ quantization, and local hardware acceleration.",
+    "tools": ["Ollama", "Llama.cpp", "vLLM"],
+    "related_concepts": ["GGUF", "AWQ Quantization", "KV Cache", "Speculative Decoding"]
+  },
+  {
+    "day": 28,
+    "module": "Production AI & Operations",
+    "topic": "Production Inference & Serving Infrastructure",
+    "learning_objective": "Deploy high-throughput inference endpoints with continuous batching, tensor parallelism, and KV-cache offloading.",
+    "tools": ["vLLM", "TGI", "Ray Serve"],
+    "related_concepts": ["Continuous Batching", "Tensor Parallelism", "PagedAttention", "KV Offloading"]
+  },
+  {
+    "day": 31,
+    "module": "AI Security & Operations",
+    "topic": "AI Security, Guardrails & Jailbreak Defense",
+    "learning_objective": "Secure production LLM pipelines against prompt injection, data exfiltration, toxicity, and unauthorized tool calls.",
+    "tools": ["NeMo Guardrails", "Llama Guard", "Lakera Guard"],
+    "related_concepts": ["Prompt Injection", "Jailbreak Defense", "Output Guardrails", "Tool Access Control"]
+  }
+]
