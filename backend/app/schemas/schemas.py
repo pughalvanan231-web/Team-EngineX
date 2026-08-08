@@ -1,5 +1,12 @@
+from enum import Enum
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
+
+class DifficultyLevel(str, Enum):
+    BEGINNER = "beginner"
+    INTERMEDIATE = "intermediate"
+    ADVANCED = "advanced"
+    EXPERT = "expert"
 
 
 class CandidateMission(BaseModel):
@@ -26,6 +33,12 @@ class CandidatePayload(BaseModel):
     missions: List[CandidateMission] = []
     signals: CandidateSignals = CandidateSignals()
 
+
+class StartInterviewRequest(BaseModel):
+    candidate_id: str
+
+class SubmitAnswerRequest(BaseModel):
+    answer: str
 
 # --- /api/interview protocol (per technical-spec.md) ---
 class InterviewRequest(BaseModel):
