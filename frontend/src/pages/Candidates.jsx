@@ -48,14 +48,6 @@ export function Candidates() {
             View the 31-day curriculum topics, tooling, and learn modules built for the cohort.
           </p>
         </div>
-
-        <button
-          onClick={() => navigate('/')}
-          className="btn-glass-secondary px-5 py-2 text-xs self-start sm:self-auto"
-        >
-          <X className="w-4 h-4" />
-          <span>Close</span>
-        </button>
       </div>
 
       {loading ? (
@@ -103,7 +95,7 @@ export function Candidates() {
               return (
                 <div
                   key={dayItem.day}
-                  className={`relative rounded-[32px] overflow-hidden ${theme.bgColor} border border-white/10 shadow-lg hover:shadow-2xl transition-all hover:scale-[1.02] flex flex-col justify-between h-[360px] w-full group`}
+                  className="card-surface relative overflow-hidden flex flex-col justify-between h-[360px] w-full group"
                 >
                   {/* Top Image Segment */}
                   <div className="relative h-[190px] w-full overflow-hidden">
@@ -114,6 +106,9 @@ export function Candidates() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                   </div>
+
+                  {/* Glass Divider */}
+                  <div className="glass-divider" />
 
                   {/* Content Area */}
                   <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
@@ -129,10 +124,10 @@ export function Candidates() {
                       </div>
                     </div>
 
-                    {/* White Read more button - triggers popup */}
+                    {/* Glassmorphic Read more button - triggers popup */}
                     <button
                       onClick={() => setActiveDay({ ...dayItem, cardImage, bgColor: theme.bgColor })}
-                      className="w-full py-3 rounded-full bg-white hover:bg-white/95 active:scale-[0.98] text-slate-900 font-bold text-xs shadow-md transition-all flex items-center justify-center"
+                      className="w-full py-2.5 rounded-full bg-white/10 hover:bg-white/20 active:scale-[0.98] text-white border border-white/20 backdrop-blur-md font-bold text-xs shadow-sm transition-all flex items-center justify-center"
                     >
                       Read more
                     </button>
@@ -144,10 +139,42 @@ export function Candidates() {
         </div>
       )}
 
+      {/* Student ID Lookup Section */}
+      <div className="card-surface p-8 mt-12 max-w-lg mx-auto space-y-4 text-center">
+        <h2 className="text-lg font-bold text-white tracking-tight">Access Student Dashboard</h2>
+        <p className="text-xs text-white/60">
+          Enter a Student ID (e.g., CAND-001, CAND-002) to view curriculum mastery, performance signals, and launch adaptive AI interviews.
+        </p>
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            const studentId = e.currentTarget.studentId.value.trim();
+            if (studentId) {
+              navigate(`/candidates/${studentId}`);
+            }
+          }}
+          className="flex flex-col sm:flex-row gap-3 pt-2"
+        >
+          <input
+            type="text"
+            name="studentId"
+            placeholder="e.g. CAND-001"
+            className="flex-1 px-5 py-3 rounded-full bg-white/5 border border-white/25 text-sm text-white placeholder-white/35 focus:outline-none focus:border-white/40 focus:bg-white/10 transition-all backdrop-blur-md"
+            required
+          />
+          <button
+            type="submit"
+            className="px-6 py-3 rounded-full bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold transition-all shadow-md active:scale-[0.98]"
+          >
+            Access Dashboard
+          </button>
+        </form>
+      </div>
+
       {/* Glassmorphic Popup Modal */}
       {activeDay && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fadeIn">
-          <div className={`relative w-full max-w-lg rounded-[32px] overflow-hidden ${activeDay.bgColor} border border-white/20 shadow-2xl flex flex-col`}>
+          <div className="card-surface relative w-full max-w-lg overflow-hidden flex flex-col">
             {/* Top Image Banner */}
             <div className="relative h-[220px] w-full overflow-hidden">
               <img src={activeDay.cardImage} alt={activeDay.title} className="w-full h-full object-cover" />
