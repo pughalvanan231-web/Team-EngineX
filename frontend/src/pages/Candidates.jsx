@@ -1,138 +1,154 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Search, GraduationCap, ArrowRight, CheckCircle2, XCircle, MinusCircle } from 'lucide-react'
-import { fetchCandidates } from '../services/api.js'
-import { Spinner, Badge } from '../components/ui.jsx'
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowRight, RefreshCw, X, UserCheck, Sparkles } from 'lucide-react';
+import { fetchCandidates } from '../services/api';
 
-export default function Candidates() {
-  const [candidates, setCandidates] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [query, setQuery] = useState('')
-  const navigate = useNavigate()
+export function Candidates({ candidates: initialCandidates, onSelectCandidate }) {
+  const [candidates, setCandidates] = useState(initialCandidates || []);
+  const [loading, setLoading] = useState(!initialCandidates || initialCandidates.length === 0);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    let cancelled = false
-    fetchCandidates()
-      .then((res) => {
-        if (!cancelled) setCandidates(res.candidates || [])
-      })
-      .catch((e) => {
-        if (!cancelled) setError(e.message)
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
-    return () => {
-      cancelled = true
+    async function loadData() {
+      try {
+        setLoading(true);
+        const data = await fetchCandidates();
+        if (data && data.length > 0) {
+          setCandidates(data);
+        }
+      } catch (err) {
+        console.error('Failed to load candidate list:', err);
+        setError('Could not load candidates dynamically.');
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [])
+    loadData();
+  }, []);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (!q) return candidates
-    return candidates.filter(
-      (c) =>
-        (c.name || '').toLowerCase().includes(q) ||
-        (c.role || '').toLowerCase().includes(q) ||
-        (c.education || '').toLowerCase().includes(q),
-    )
-  }, [candidates, query])
-
-  const select = (c) => {
-    sessionStorage.setItem('interview_candidate', JSON.stringify(c))
-    navigate('/pre-interview')
-  }
+  const handleReadMore = (cand) => {
+    const candId = cand.member?.id || cand.candidate_id || cand.id;
+    if (onSelectCandidate) onSelectCandidate(cand);
+    navigate(`/candidates/${candId}`);
+  };
 
   return (
-    <main className="relative mx-auto max-w-6xl px-6 pb-24 pt-14">
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <h1 className="text-3xl font-bold tracking-tight text-white">Candidates</h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted">
-          Select a candidate to start an adaptive interview. Difficulty and topics are derived from their
-          real curriculum progress — no generic questions.
-        </p>
-      </motion.div>
-
-      <div className="mt-8 flex items-center gap-3">
-        <div className="relative w-full max-w-md">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by name, role, education…"
-            className="input-field !pl-10"
-          />
+    <div className="w-full py-10 max-w-6xl mx-auto space-y-8">
+      {/* Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+        <div className="space-y-1">
+          <div className="chip-neon-indigo mb-1">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>AI COHORT ASSESSMENT</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            Select a Candidate
+          </h1>
+          <p className="text-sm text-slate-400">
+            Choose a candidate to view their 31-day curriculum progress, 5-tier AI priority queue, and start an adaptive interview.
+          </p>
         </div>
-        {!loading && !error && (
-          <span className="text-xs text-muted">
-            {filtered.length} of {candidates.length}
-          </span>
-        )}
+
+        <button
+          onClick={() => navigate('/')}
+          className="btn-glass-secondary px-5 py-2 text-xs self-start sm:self-auto"
+        >
+          <X className="w-4 h-4" />
+          <span>Close</span>
+        </button>
       </div>
 
-      <div className="mt-6">
-        {loading ? (
-          <div className="flex justify-center py-20">
-            <Spinner label="Loading candidates…" size={22} />
-          </div>
-        ) : error ? (
-          <div className="rounded-2xl border border-coral/30 bg-coral/10 p-6 text-sm text-coral">
-            Could not load candidates: {error}
-          </div>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((c, i) => (
-              <motion.button
-                key={c.candidate_id}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: i * 0.04 }}
-                onClick={() => select(c)}
-                className="card-surface group flex flex-col gap-4 p-5 text-left transition-all hover:border-primary-500/40 hover:shadow-glow-sm"
+      {loading ? (
+        <div className="py-20 flex flex-col items-center justify-center space-y-3 text-slate-400 font-mono text-xs">
+          <RefreshCw className="w-6 h-6 animate-spin text-indigo-400" />
+          <span>Loading candidate profiles...</span>
+        </div>
+      ) : error ? (
+        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono text-center">
+          {error}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {candidates.map((c) => {
+            const member = c.member || {
+              id: c.candidate_id || c.id || "CAND-001",
+              name: c.name || "Sarah Johnson",
+              jobRole: c.role || c.jobRole || "AI Engineer",
+              yearsExperience: c.yearsExperience || c.experience || 4,
+            };
+
+            const stats = c.stats || {
+              completedDays: c.missions?.filter(m => m.passed && !m.skipped)?.length || 24,
+              skippedDays: c.missions?.filter(m => m.skipped)?.length || 2,
+              avgAttempts: c.stats?.avgAttempts || 2.1,
+            };
+
+            const skillsSummary = c.missions
+              ? c.missions.filter(m => m.passed && !m.skipped).slice(0, 3).map(m => m.title.replace(' Explained', '').replace(' Overview', '')).join(' · ')
+              : "Embeddings · RAG · Micro-services";
+
+            return (
+              <div
+                key={member.id}
+                className="glass-card p-6 flex flex-col justify-between space-y-5 group"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <h3 className="text-sm font-semibold text-white">{c.name}</h3>
-                    <p className="mt-0.5 text-xs text-muted">{c.role}</p>
+                {/* Top Badge & Header */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="chip-neon-indigo">
+                      {member.id}
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-400 font-semibold">
+                      {member.yearsExperience} Yrs Experience
+                    </span>
                   </div>
-                  <Badge tone="zinc">{c.status || 'active'}</Badge>
+
+                  <div>
+                    <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">
+                      {member.name}
+                    </h3>
+                    <p className="text-xs font-medium text-slate-400 mt-0.5">
+                      {member.jobRole}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-xs text-muted">
-                  <GraduationCap size={14} />
-                  {c.education || '—'}
+                {/* Statistics Box */}
+                <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800/80 space-y-2 text-xs font-sans">
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span>Completed Syllabus</span>
+                    <span className="font-bold text-emerald-400 font-mono">{stats.completedDays} / 31 days</span>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span>Skipped Topics</span>
+                    <span className="font-bold text-amber-400 font-mono">{stats.skippedDays} days</span>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span>Avg Learning Friction</span>
+                    <span className="font-bold text-indigo-400 font-mono">{stats.avgAttempts} attempts</span>
+                  </div>
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 text-[11px]">
-                  <span className="inline-flex items-center gap-1 rounded-md border border-mint/25 bg-mint/10 px-2 py-0.5 font-medium text-mint">
-                    <CheckCircle2 size={12} /> {c.completed_count} done
-                  </span>
-                  {c.failed_count > 0 && (
-                    <span className="inline-flex items-center gap-1 rounded-md border border-coral/25 bg-coral/10 px-2 py-0.5 font-medium text-coral">
-                      <XCircle size={12} /> {c.failed_count} missed
-                    </span>
-                  )}
-                  {c.skipped_count > 0 && (
-                    <span className="inline-flex items-center gap-1 rounded-md border border-amber/25 bg-amber/10 px-2 py-0.5 font-medium text-amber">
-                      <MinusCircle size={12} /> {c.skipped_count} skipped
-                    </span>
-                  )}
+                {/* Short Skill Summary */}
+                <div className="text-[11px] text-slate-400 line-clamp-1 italic">
+                  <span className="font-semibold not-italic text-slate-300">Missions: </span>
+                  {skillsSummary}
                 </div>
 
-                <div className="mt-auto flex items-center justify-between border-t border-line-800 pt-3">
-                  <span className="text-xs text-muted">{c.experience} yrs experience</span>
-                  <ArrowRight
-                    size={16}
-                    className="text-muted transition-all group-hover:translate-x-0.5 group-hover:text-primary-300"
-                  />
-                </div>
-              </motion.button>
-            ))}
-          </div>
-        )}
-      </div>
-    </main>
-  )
+                {/* Read More Button */}
+                <button
+                  onClick={() => handleReadMore(c)}
+                  className="btn-gradient-primary w-full py-3 text-xs"
+                >
+                  <span>Select Candidate</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }

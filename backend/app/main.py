@@ -1,6 +1,6 @@
 import uuid
 import logging
-from fastapi import FastAPI, HTTPException, Request, Response, Header
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional, Dict, Any
 
@@ -63,8 +63,26 @@ def health_check():
 
 # Candidate Profiles
 @app.get(f"{settings.API_PREFIX}/candidates")
+@app.get("/api/candidates")
 def get_candidates():
-    return {"candidates": load_candidate_data()}
+    candidates_raw = load_candidate_data()
+    normalized_candidates = [orchestrator.normalize_curriculum(c) for c in candidates_raw]
+    return {"candidates": normalized_candidates, "raw": candidates_raw}
+
+# Candidate Specific Analytics Endpoint
+@app.get(f"{settings.API_PREFIX}/candidates/{{candidate_id}}")
+@app.get("/api/candidates/{candidate_id}")
+def get_candidate_analytics(candidate_id: str):
+    raw = orchestrator.find_candidate(candidate_id)
+    if not raw:
+        raise HTTPException(status_code=404, detail=f"Candidate {candidate_id} not found")
+    normalized = orchestrator.normalize_curriculum(raw)
+    priority_analysis = orchestrator.build_interview_priority(raw)
+    return {
+        "candidate": normalized,
+        "raw": raw,
+        "priorityAnalysis": priority_analysis
+    }
 
 # Curriculum Knowledge Base
 @app.get(f"{settings.API_PREFIX}/curriculum")
@@ -73,10 +91,12 @@ def get_curriculum():
 
 # Start Interview Session
 @app.post(f"{settings.API_PREFIX}/interview/start")
+@app.post("/api/interview/start")
 def start_interview(payload: StartInterviewRequest):
     try:
-        logger.info(f"Starting interview for candidate: {payload.candidate_id}")
-        state = orchestrator.start_interview(payload.candidate_id)
+        cand_id = payload.candidate_id or payload.candidateId or "CAND-001"
+        logger.info(f"Starting interview for candidate: {cand_id}")
+        state = orchestrator.start_interview(cand_id)
         return state
     except ValueError as e:
         logger.error(f"Failed to start interview: {str(e)}")
@@ -87,13 +107,15 @@ def start_interview(payload: StartInterviewRequest):
 
 # Submit Candidate Answer
 @app.post(f"{settings.API_PREFIX}/interview/{{interview_id}}/answer")
+@app.post("/api/interview/{interview_id}/answer")
 def submit_answer(interview_id: str, payload: SubmitAnswerRequest):
-    if not payload.answer or not payload.answer.strip():
+    ans_text = payload.answer or payload.message or ""
+    if not ans_text or not ans_text.strip():
         raise HTTPException(status_code=400, detail="Answer string cannot be empty")
         
     try:
         logger.info(f"Processing answer for interview {interview_id}")
-        state = orchestrator.process_answer(interview_id, payload.answer.strip())
+        state = orchestrator.process_answer(interview_id, ans_text.strip())
         return state
     except ValueError as e:
         logger.error(f"Interview error: {str(e)}")
@@ -104,6 +126,7 @@ def submit_answer(interview_id: str, payload: SubmitAnswerRequest):
 
 # Get Interview Session State
 @app.get(f"{settings.API_PREFIX}/interview/{{interview_id}}")
+@app.get("/api/interview/{interview_id}")
 def get_interview(interview_id: str):
     state = load_interview(interview_id)
     if not state:
@@ -112,6 +135,7 @@ def get_interview(interview_id: str):
 
 # Finish Interview & Generate Feedback
 @app.post(f"{settings.API_PREFIX}/interview/{{interview_id}}/finish")
+@app.post("/api/interview/{interview_id}/complete")
 def finish_interview(interview_id: str):
     try:
         logger.info(f"Finishing interview {interview_id}")
@@ -122,6 +146,24 @@ def finish_interview(interview_id: str):
     except Exception as e:
         logger.error(f"Error finishing interview: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to generate final interview feedback")
+
+# Final Interview Result Report
+@app.get("/api/interview/{session_id}/result")
+@app.get(f"{settings.API_PREFIX}/interview/{{session_id}}/result")
+def get_interview_result(session_id: str):
+    state = load_interview(session_id)
+    if not state:
+        raise HTTPException(status_code=404, detail=f"Interview session {session_id} not found")
+    
+    if state.get("status") != "completed":
+        state = orchestrator.finish_interview(session_id)
+        
+    final_res = state.get("final_feedback") or state.get("final_result")
+    if not final_res:
+        feedback, _ = orchestrator._generate_final_feedback(state)
+        final_res = feedback
+        
+    return final_res
 
 # Technical-Spec Compliant Unified /api/interview Endpoint
 @app.post("/api/interview")
@@ -135,7 +177,7 @@ def unified_interview_endpoint(payload: Dict[str, Any]):
     session_id = payload.get("sessionId") or payload.get("interview_id")
     message = payload.get("message") or payload.get("answer")
     candidate_data = payload.get("candidate")
-    candidate_id = payload.get("candidate_id")
+    candidate_id = payload.get("candidate_id") or payload.get("candidateId")
 
     # 1. Start Interview Session if message is not present or session_id does not exist in DB yet
     if not message and (candidate_data or candidate_id or not session_id):
@@ -165,7 +207,6 @@ def unified_interview_endpoint(payload: Dict[str, Any]):
     # Try loading existing session
     existing = load_interview(session_id)
     if not existing:
-        # If session_id not found in DB, auto-start session with CAND-001
         cand_id = candidate_id or "CAND-001"
         try:
             state = orchestrator.start_interview(cand_id, session_id=session_id)

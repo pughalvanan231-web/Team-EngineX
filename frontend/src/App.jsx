@@ -14,6 +14,7 @@ import {
 import { Header } from './components/common/Header';
 import { SkeletonLoader } from './components/common/SkeletonLoader';
 import { LandingPage } from './pages/LandingPage';
+import { Candidates } from './pages/Candidates';
 import { CandidateOverview } from './pages/CandidateOverview';
 import { InterviewPreparation } from './pages/InterviewPreparation';
 import { LiveInterview } from './pages/LiveInterview';
@@ -75,8 +76,8 @@ export default function App() {
     try {
       const state = await startInterviewSession(candidateId, candidateObj);
       setInterviewState(state);
-      if (state?.interview_id) {
-        localStorage.setItem(STORAGE_SESSION_KEY, state.interview_id);
+      if (state?.interview_id || state?.sessionId) {
+        localStorage.setItem(STORAGE_SESSION_KEY, state.interview_id || state.sessionId);
       }
       return state;
     } catch (err) {
@@ -89,11 +90,12 @@ export default function App() {
 
   // 2. Submit Answer in Conversation Turn
   const handleSubmitAnswer = async (answerText) => {
-    if (!interviewState?.interview_id) return;
+    const activeSessionId = interviewState?.interview_id || interviewState?.sessionId;
+    if (!activeSessionId) return;
     setLoading(true);
     setError(null);
     try {
-      const newState = await submitInterviewAnswer(interviewState.interview_id, answerText);
+      const newState = await submitInterviewAnswer(activeSessionId, answerText);
       setInterviewState(newState);
       if (newState?.status === 'completed') {
         localStorage.removeItem(STORAGE_SESSION_KEY);
@@ -108,11 +110,12 @@ export default function App() {
 
   // 3. Finish Early
   const handleFinishEarly = async () => {
-    if (!interviewState?.interview_id) return;
+    const activeSessionId = interviewState?.interview_id || interviewState?.sessionId;
+    if (!activeSessionId) return;
     setLoading(true);
     setError(null);
     try {
-      const finalState = await finishInterviewSession(interviewState.interview_id);
+      const finalState = await finishInterviewSession(activeSessionId);
       setInterviewState(finalState);
       localStorage.removeItem(STORAGE_SESSION_KEY);
     } catch (err) {
@@ -141,7 +144,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-[#FAFBFD] text-slate-900 font-sans antialiased flex flex-col selection:bg-indigo-100 selection:text-indigo-600">
+      <div className="min-h-screen bg-[#949C92] text-white font-sans antialiased flex flex-col selection:bg-white/30 selection:text-white">
         
         {/* Top Global Header */}
         <Header 
@@ -169,6 +172,28 @@ export default function App() {
             <Route path="/" element={<LandingPage onStart={handleStartInterview} />} />
             
             <Route 
+              path="/candidates" 
+              element={
+                <Candidates 
+                  candidates={candidates}
+                  onSelectCandidate={setSelectedCandidate}
+                />
+              } 
+            />
+
+            <Route 
+              path="/candidates/:candidateId" 
+              element={
+                <CandidateOverview 
+                  candidates={candidates}
+                  selectedCandidate={selectedCandidate}
+                  onSelectCandidate={setSelectedCandidate}
+                  curriculum={curriculum}
+                />
+              } 
+            />
+
+            <Route 
               path="/overview" 
               element={
                 <CandidateOverview 
@@ -187,6 +212,29 @@ export default function App() {
                   candidate={selectedCandidate}
                   onStartInterview={handleStartInterview}
                   loading={loading}
+                />
+              } 
+            />
+
+            <Route 
+              path="/interview/:sessionId" 
+              element={
+                <LiveInterview 
+                  state={interviewState}
+                  onSubmitAnswer={handleSubmitAnswer}
+                  onFinishEarly={handleFinishEarly}
+                  loading={loading}
+                  candidate={selectedCandidate}
+                />
+              } 
+            />
+
+            <Route 
+              path="/interview/:sessionId/result" 
+              element={
+                <FeedbackReport 
+                  state={interviewState}
+                  onReset={handleResetSession}
                 />
               } 
             />

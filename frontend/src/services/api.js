@@ -20,6 +20,36 @@ export async function fetchHealth() {
   }
 }
 
+export async function fetchCandidateAnalytics(candidateId) {
+  try {
+    const res = await client.get(`/candidates/${candidateId}`);
+    return res.data;
+  } catch (err) {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/candidates/${candidateId}`);
+      return res.data;
+    } catch (fallbackErr) {
+      console.warn(`Failed to fetch analytics for ${candidateId}:`, fallbackErr.message);
+      return null;
+    }
+  }
+}
+
+export async function fetchInterviewResult(sessionId) {
+  try {
+    const res = await client.get(`/interview/${sessionId}/result`);
+    return res.data;
+  } catch (err) {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/interview/${sessionId}/result`);
+      return res.data;
+    } catch (fallbackErr) {
+      console.warn(`Failed to fetch interview result for ${sessionId}:`, fallbackErr.message);
+      return null;
+    }
+  }
+}
+
 export async function fetchCandidates() {
   try {
     const res = await client.get('/candidates');
