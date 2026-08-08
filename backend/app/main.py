@@ -7,7 +7,7 @@ from typing import Optional, Dict, Any
 from app.config import settings
 from app.schemas.schemas import StartInterviewRequest, SubmitAnswerRequest
 from app.agents.orchestrator import orchestrator, load_candidate_data, load_curriculum_data
-from app.db.database import load_interview
+from app.db.database import load_interview, save_interview
 
 logging.basicConfig(
     level=logging.INFO,
@@ -124,6 +124,7 @@ def finish_interview(interview_id: str):
         raise HTTPException(status_code=500, detail="Failed to generate final interview feedback")
 
 # Technical-Spec Compliant Unified /api/interview Endpoint
+@app.post("/api/interview")
 @app.post(f"{settings.API_PREFIX}/interview")
 def unified_interview_endpoint(payload: Dict[str, Any]):
     """
@@ -143,12 +144,8 @@ def unified_interview_endpoint(payload: Dict[str, Any]):
             cand_id = "CAND-001"
         
         try:
-            state = orchestrator.start_interview(cand_id)
-            if session_id:
-                state["interview_id"] = session_id
-                state["sessionId"] = session_id
-            else:
-                state["sessionId"] = state["interview_id"]
+            state = orchestrator.start_interview(cand_id, session_id=session_id)
+            state["sessionId"] = state["interview_id"]
             
             q_text = state.get("current_question", {}).get("question", "Welcome. Let's begin your technical interview.")
             return {
@@ -171,8 +168,7 @@ def unified_interview_endpoint(payload: Dict[str, Any]):
         # If session_id not found in DB, auto-start session with CAND-001
         cand_id = candidate_id or "CAND-001"
         try:
-            state = orchestrator.start_interview(cand_id)
-            state["interview_id"] = session_id
+            state = orchestrator.start_interview(cand_id, session_id=session_id)
             state["sessionId"] = session_id
         except Exception as e:
             raise HTTPException(status_code=404, detail=f"Session {session_id} not found")

@@ -233,10 +233,10 @@ class InterviewOrchestrator:
             return "Production Thinking"
         return "Capstone Discussion"
 
-    def start_interview(self, candidate_id: str) -> Dict[str, Any]:
+    def start_interview(self, candidate_id: str, session_id: Optional[str] = None) -> Dict[str, Any]:
         profile = self.build_profile(candidate_id)
         diff_idx = self.initial_difficulty(profile)
-        interview_id = f"int_{uuid.uuid4().hex[:12]}"
+        interview_id = session_id or f"int_{uuid.uuid4().hex[:12]}"
 
         state = {
             "session_id": interview_id,
