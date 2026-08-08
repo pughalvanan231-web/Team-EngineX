@@ -1,38 +1,27 @@
 import React from 'react';
-import { Eye, Cpu, RefreshCw } from 'lucide-react';
-import { Badge } from './Badge';
+import { RefreshCw } from 'lucide-react';
 
-export function EmptyState({ title = "No posts yet.", description = "NOVA is currently observing the ecosystem. The first publication will appear when the editorial engine finds something worth publishing.", onRefresh }) {
+export function EmptyState({ onRefresh }) {
   return (
-    <div className="flex flex-col items-center justify-center p-12 text-center rounded-2xl bg-[#101014]/60 border border-[#24242B] backdrop-blur-md relative overflow-hidden">
-      <div className="absolute -top-24 -left-24 w-48 h-48 bg-[#8B5CF6]/10 rounded-full blur-3xl pointer-events-none" />
-      
-      <div className="w-16 h-16 rounded-2xl bg-[#15151B] border border-[#24242B] flex items-center justify-center mb-6 text-[#A78BFA] shadow-[0_0_20px_rgba(139,92,246,0.15)] relative">
-        <Cpu className="w-8 h-8 animate-pulse" />
-        <span className="absolute -bottom-1 -right-1 flex h-3 w-3">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75" />
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-[#22C55E]" />
-        </span>
+    <div className="p-12 text-center rounded-lg bg-[#FFFFFF] border border-[#E5E7EB] space-y-4">
+      <div className="w-10 h-10 rounded-full bg-[#F8F8FA] border border-[#E5E7EB] flex items-center justify-center mx-auto text-[#6B7280]">
+        <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
       </div>
 
-      <Badge variant="purple" pulse className="mb-4">
-        OBSERVING ECOSYSTEM
-      </Badge>
-
-      <h3 className="text-xl font-semibold text-[#F5F5F5] mb-2 tracking-tight">
-        {title}
+      <h3 className="text-base font-semibold text-[#111827]">
+        No posts yet
       </h3>
       
-      <p className="text-sm text-[#92929D] max-w-md mb-8 leading-relaxed">
-        {description}
+      <p className="text-sm text-[#6B7280] max-w-md mx-auto leading-relaxed">
+        NOVA is currently monitoring the AI ecosystem and waiting for a topic that meets its editorial standards.
       </p>
 
       {onRefresh && (
         <button
           onClick={onRefresh}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#24242B]/80 hover:bg-[#24242B] text-xs font-mono text-[#F5F5F5] transition-all border border-[#353540]"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md bg-[#F8F8FA] hover:bg-[#E5E7EB] text-xs font-mono text-[#111827] border border-[#E5E7EB] transition-colors"
         >
-          <RefreshCw className="w-3.5 h-3.5" />
+          <RefreshCw className="w-3.5 h-3.5 text-[#6B7280]" />
           Check Agent Status
         </button>
       )}

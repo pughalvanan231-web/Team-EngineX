@@ -9,8 +9,8 @@ import { InitModal } from './components/common/InitModal';
 import { Dashboard } from './pages/Dashboard';
 import { Feed } from './pages/Feed';
 import { Activity } from './pages/Activity';
-import { Sources } from './pages/Sources';
 import { Memory } from './pages/Memory';
+import { Sources } from './pages/Sources';
 
 export default function App() {
   const [isInitModalOpen, setIsInitModalOpen] = useState(false);
@@ -18,27 +18,27 @@ export default function App() {
   return (
     <AgentProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-[#07070A] text-[#F5F5F5] font-sans antialiased flex flex-col md:flex-row">
-          {/* Desktop Fixed Sidebar */}
+        <div className="min-h-screen bg-[#FFFFFF] text-[#111827] font-sans antialiased flex flex-col md:flex-row">
+          {/* Desktop Left Sidebar */}
           <Sidebar onOpenInitModal={() => setIsInitModalOpen(true)} />
 
           {/* Main Layout Area */}
-          <div className="flex-1 md:ml-64 flex flex-col min-h-screen">
+          <div className="flex-1 md:ml-60 flex flex-col min-h-screen">
             {/* Header */}
             <Header />
 
-            {/* Main Content Area */}
-            <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+            {/* Main Centered Content */}
+            <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto w-full">
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/feed" element={<Feed />} />
                 <Route path="/activity" element={<Activity />} />
-                <Route path="/sources" element={<Sources />} />
                 <Route path="/memory" element={<Memory />} />
+                <Route path="/sources" element={<Sources />} />
               </Routes>
             </main>
 
-            {/* Mobile Navigation */}
+            {/* Mobile Bottom Navigation */}
             <MobileNav />
           </div>
 

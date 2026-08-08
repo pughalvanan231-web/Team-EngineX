@@ -1,72 +1,31 @@
 import React from 'react';
-import { Cpu, Activity, Clock, Zap, Radar } from 'lucide-react';
-import { Badge } from '../common/Badge';
 import { useAgent } from '../../context/AgentContext';
 
 export function AgentStatus() {
   const { stats } = useAgent();
 
   return (
-    <div className="p-6 rounded-2xl bg-[#101014] border border-[#24242B] relative overflow-hidden shadow-xl">
-      {/* Background ambient glow */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-[#8B5CF6]/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#24242B]/80">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 rounded-xl bg-[#8B5CF6]/10 border border-[#8B5CF6]/30 text-[#A78BFA]">
-              <Cpu className="w-5 h-5 animate-pulse" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-[#F5F5F5] tracking-tight">Autonomous Engine</h3>
-              <p className="text-xs text-[#92929D] font-mono">Continuous intelligence observer</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Animated pulse badge */}
-        <div className="flex items-center gap-2">
-          <Badge variant="green" pulse size="lg" className="shadow-[0_0_15px_rgba(34,197,94,0.3)]">
-            ● RUNNING
-          </Badge>
+    <div className="p-6 rounded-lg bg-[#FFFFFF] border border-[#E5E7EB] space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-base font-semibold text-[#111827]">Autonomous Engine</h3>
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#F0FDF4] border border-[#16A34A]/20">
+          <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
+          <span className="text-xs font-mono font-medium text-[#16A34A]">Running</span>
         </div>
       </div>
 
-      {/* Description */}
-      <p className="text-sm text-[#92929D] my-4 leading-relaxed max-w-2xl font-sans">
-        Agent is independently discovering and evaluating AI technology developments across GitHub, ArXiv, Hugging Face, and industry releases.
+      <p className="text-sm text-[#6B7280]">
+        NOVA is currently operating independently.
       </p>
 
-      {/* Cycle Telemetry Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-        <div className="p-3.5 rounded-xl bg-[#07070A] border border-[#24242B] flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-[#8B5CF6]/10 text-[#A78BFA]">
-            <Radar className="w-4 h-4 animate-spin-slow" />
-          </div>
-          <div>
-            <span className="text-[10px] font-mono uppercase text-[#92929D] block">Current Cycle</span>
-            <span className="text-xs font-semibold font-mono text-[#F5F5F5]">{stats?.currentPhase || 'Topic Discovery'}</span>
-          </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-[#E5E7EB]">
+        <div>
+          <span className="text-xs text-[#6B7280] block">Last activity</span>
+          <span className="text-sm font-semibold text-[#111827] font-mono">{stats?.lastCycle || '2 minutes ago'}</span>
         </div>
-
-        <div className="p-3.5 rounded-xl bg-[#07070A] border border-[#24242B] flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-[#22C55E]/10 text-[#22C55E]">
-            <Activity className="w-4 h-4" />
-          </div>
-          <div>
-            <span className="text-[10px] font-mono uppercase text-[#92929D] block">Last Activity</span>
-            <span className="text-xs font-semibold font-mono text-[#F5F5F5]">{stats?.lastCycle || '2 minutes ago'}</span>
-          </div>
-        </div>
-
-        <div className="p-3.5 rounded-xl bg-[#07070A] border border-[#24242B] flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-amber-400/10 text-amber-400">
-            <Clock className="w-4 h-4" />
-          </div>
-          <div>
-            <span className="text-[10px] font-mono uppercase text-[#92929D] block">Next Cycle</span>
-            <span className="text-xs font-semibold font-mono text-[#A78BFA]">{stats?.nextCycle || '1h 58m'}</span>
-          </div>
+        <div>
+          <span className="text-xs text-[#6B7280] block">Next cycle</span>
+          <span className="text-sm font-semibold text-[#6D5DFB] font-mono">{stats?.nextCycle || '1 hour 58 minutes'}</span>
         </div>
       </div>
     </div>

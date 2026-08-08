@@ -8,38 +8,28 @@ export default {
     extend: {
       colors: {
         nova: {
-          bg: "#07070A",
-          card: "#101014",
-          cardHover: "#15151B",
-          border: "#24242B",
-          borderHover: "#353540",
-          accent: "#8B5CF6",
-          accentPurple: "#A78BFA",
-          textPrimary: "#F5F5F5",
-          textSecondary: "#92929D",
-          success: "#22C55E",
-          warning: "#F59E0B",
-          error: "#EF4444",
+          bg: "#FFFFFF",
+          bgSecondary: "#F8F8FA",
+          card: "#FFFFFF",
+          border: "#E5E7EB",
+          borderHover: "#D1D5DB",
+          textPrimary: "#111827",
+          textSecondary: "#6B7280",
+          accent: "#6D5DFB",
+          accentLight: "#F3F0FF",
+          accentHover: "#5B4CF0",
+          success: "#16A34A",
+          warning: "#D97706",
+          error: "#DC2626",
         }
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['JetBrains Mono', 'Menlo', 'Consolas', 'monospace'],
       },
-      animation: {
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'glow-pulse': 'glowPulse 2s infinite ease-in-out',
-        'radar-sweep': 'radarSweep 4s linear infinite',
-      },
-      keyframes: {
-        glowPulse: {
-          '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
-          '50%': { opacity: '0.8', transform: 'scale(1.08)' },
-        },
-        radarSweep: {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' },
-        }
+      boxShadow: {
+        subtle: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        card: '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04)',
       }
     },
   },

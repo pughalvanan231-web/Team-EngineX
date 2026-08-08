@@ -1,33 +1,28 @@
 import React from 'react';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
-import { Badge } from './Badge';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 
-export function ErrorState({ message = "NOVA cannot currently reach the autonomous engine.", onRetry }) {
+export function ErrorState({ onRetry }) {
   return (
-    <div className="flex flex-col items-center justify-center p-10 text-center rounded-2xl bg-[#EF4444]/5 border border-[#EF4444]/20">
-      <div className="w-14 h-14 rounded-2xl bg-[#EF4444]/10 border border-[#EF4444]/30 flex items-center justify-center mb-4 text-[#EF4444]">
-        <AlertTriangle className="w-7 h-7" />
+    <div className="p-8 text-center rounded-lg bg-[#FEF2F2] border border-[#DC2626]/20 space-y-3">
+      <div className="w-10 h-10 rounded-full bg-[#DC2626]/10 text-[#DC2626] mx-auto flex items-center justify-center">
+        <AlertCircle className="w-5 h-5" />
       </div>
 
-      <Badge variant="error" className="mb-3">
-        CONNECTION OFFLINE
-      </Badge>
-
-      <h3 className="text-lg font-semibold text-[#F5F5F5] mb-2">
-        Agent connection unavailable
+      <h3 className="text-base font-semibold text-[#111827]">
+        Unable to connect to NOVA
       </h3>
 
-      <p className="text-sm text-[#92929D] max-w-md mb-6 leading-relaxed">
-        {message}
+      <p className="text-sm text-[#6B7280] max-w-sm mx-auto">
+        The autonomous agent cannot currently be reached.
       </p>
 
       {onRetry && (
         <button
           onClick={onRetry}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#EF4444]/20 hover:bg-[#EF4444]/30 text-xs font-mono font-medium text-[#EF4444] border border-[#EF4444]/40 transition-all shadow-[0_0_15px_rgba(239,68,68,0.2)]"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md bg-[#FFFFFF] hover:bg-[#FEF2F2] text-xs font-mono font-medium text-[#DC2626] border border-[#DC2626]/30 transition-colors shadow-sm"
         >
           <RefreshCw className="w-3.5 h-3.5" />
-          Retry Connection
+          Retry
         </button>
       )}
     </div>

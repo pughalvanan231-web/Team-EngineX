@@ -1,30 +1,28 @@
 import React from 'react';
 
 export function Badge({ children, variant = 'purple', pulse = false, size = 'md', className = '' }) {
-  const baseStyles = 'inline-flex items-center font-mono font-medium rounded-full tracking-wide transition-all';
+  const baseStyles = 'inline-flex items-center font-mono font-medium rounded-md tracking-tight transition-all';
   
   const sizeStyles = {
-    sm: 'text-[10px] px-2 py-0.5 gap-1.5',
+    sm: 'text-[11px] px-2 py-0.5 gap-1.5',
     md: 'text-xs px-2.5 py-1 gap-2',
-    lg: 'text-sm px-3 py-1.5 gap-2.5'
+    lg: 'text-xs px-3 py-1 gap-2'
   };
 
   const variantStyles = {
-    purple: 'bg-[#8B5CF6]/15 text-[#A78BFA] border border-[#8B5CF6]/30',
-    green: 'bg-[#22C55E]/15 text-[#22C55E] border border-[#22C55E]/30',
-    warning: 'bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30',
-    error: 'bg-[#EF4444]/15 text-[#EF4444] border border-[#EF4444]/30',
-    neutral: 'bg-[#24242B]/60 text-[#92929D] border border-[#24242B]',
-    glowing: 'bg-[#8B5CF6]/20 text-[#F5F5F5] border border-[#8B5CF6] shadow-[0_0_12px_rgba(139,92,246,0.5)]'
+    purple: 'bg-[#F3F0FF] text-[#6D5DFB] border border-[#6D5DFB]/20',
+    green: 'bg-[#F0FDF4] text-[#16A34A] border border-[#16A34A]/20',
+    warning: 'bg-[#FFFBEB] text-[#D97706] border border-[#D97706]/20',
+    error: 'bg-[#FEF2F2] text-[#DC2626] border border-[#DC2626]/20',
+    neutral: 'bg-[#F8F8FA] text-[#6B7280] border border-[#E5E7EB]'
   };
 
   const dotColors = {
-    purple: 'bg-[#A78BFA]',
-    green: 'bg-[#22C55E]',
-    warning: 'bg-[#F59E0B]',
-    error: 'bg-[#EF4444]',
-    neutral: 'bg-[#92929D]',
-    glowing: 'bg-[#8B5CF6]'
+    purple: 'bg-[#6D5DFB]',
+    green: 'bg-[#16A34A]',
+    warning: 'bg-[#D97706]',
+    error: 'bg-[#DC2626]',
+    neutral: 'bg-[#6B7280]'
   };
 
   return (
