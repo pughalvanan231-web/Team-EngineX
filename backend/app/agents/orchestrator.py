@@ -11,15 +11,30 @@ from app.schemas.schemas import DifficultyLevel, InterviewStateSchema, QuestionI
 from app.services.provider import ai_service
 
 # Load Curriculum & Candidate Datasets
-def load_curriculum_data() -> List[Dict[str, Any]]:
+def load_curriculum_data() -> Dict[str, Any]:
+    root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "curriculum.json"))
+    if os.path.exists(root_path):
+        with open(root_path, "r", encoding="utf-8") as f:
+            return json.load(f)
     path = os.path.join(os.path.dirname(__file__), "..", "data", "curriculum.json")
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 def load_candidate_data() -> List[Dict[str, Any]]:
+    root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "candidates.json"))
+    if os.path.exists(root_path):
+        with open(root_path, "r", encoding="utf-8") as f:
+            raw = json.load(f)
+            if isinstance(raw, dict) and "candidates" in raw:
+                return raw["candidates"]
+            elif isinstance(raw, list):
+                return raw
     path = os.path.join(os.path.dirname(__file__), "..", "data", "candidates.json")
     with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+        raw = json.load(f)
+        if isinstance(raw, dict) and "candidates" in raw:
+            return raw["candidates"]
+        return raw if isinstance(raw, list) else []
 
 def get_prompt_template(name: str) -> str:
     path = os.path.join(os.path.dirname(__file__), "..", "prompts", f"{name}.txt")
@@ -63,8 +78,10 @@ class InterviewOrchestrator:
         self.candidates = load_candidate_data()
 
     def get_candidate(self, candidate_id: str) -> Optional[Dict[str, Any]]:
+        self.candidates = load_candidate_data()
         for cand in self.candidates:
-            if cand["candidate_id"] == candidate_id:
+            c_id = cand.get("candidate_id") or cand.get("member", {}).get("id") or cand.get("id")
+            if c_id == candidate_id:
                 return cand
         return self.candidates[0] if self.candidates else None
 
@@ -73,6 +90,9 @@ class InterviewOrchestrator:
         if not cand:
             raise ValueError(f"Candidate {candidate_id} not found")
 
+        c_id = cand.get("candidate_id") or cand.get("member", {}).get("id") or candidate_id
+        c_name = cand.get("name") or cand.get("member", {}).get("name", "Candidate")
+
         interview_id = f"int_{uuid.uuid4().hex[:12]}"
         now = datetime.datetime.utcnow().isoformat()
 
@@ -80,12 +100,17 @@ class InterviewOrchestrator:
         initial_difficulty = DifficultyLevel(baseline_diff) if baseline_diff in DIFFICULTY_STEPS else DifficultyLevel.INTERMEDIATE
 
         # Pick initial topic from completed days
-        completed_days = cand.get("completed_days", [1, 4, 6, 8])
+        completed_days = cand.get("completed_days")
+        if completed_days is None and "missions" in cand:
+            completed_days = [m["day"] for m in cand["missions"] if m.get("passed")]
+        if not completed_days:
+            completed_days = [1, 4, 6, 8, 12]
+
         initial_topic_obj = self._select_next_topic(completed_days, [], [])
 
         # Generate Question 1
         q_item, degraded = self._generate_question(
-            candidate_name=cand["name"],
+            candidate_name=c_name,
             topic_obj=initial_topic_obj,
             difficulty=initial_difficulty,
             stage="Warm-up & Fundamentals",
@@ -94,10 +119,11 @@ class InterviewOrchestrator:
         )
 
         state = {
-            "candidate_id": cand["candidate_id"],
-            "candidate_name": cand["name"],
+            "candidate_id": c_id,
+            "candidate_name": c_name,
             "interview_id": interview_id,
             "current_question": q_item,
+
             "question_number": 1,
             "questions_asked": [q_item],
             "questions_asked_hashes": [normalize_hash(q_item["question"])],
@@ -259,18 +285,36 @@ class InterviewOrchestrator:
         return False
 
     def _select_next_topic(self, completed_days: List[int], covered_days: List[int], covered_topics: List[str]) -> Dict[str, Any]:
+        days_list = self.curriculum.get("days", []) if isinstance(self.curriculum, dict) else self.curriculum
+        if not days_list:
+            days_list = [{"day": 1, "title": "Environment & Setup", "tools": ["Python"], "objectives": ["Setup environment"]}]
+        
+        # Helper to normalize topic dict
+        def format_topic_obj(item):
+            topic_name = item.get("title") or item.get("topic", f"Day {item.get('day', 1)}")
+            module_name = item.get("module") or item.get("type", "Core Module")
+            learning_obj = item.get("learning_objective") or (item.get("objectives")[0] if item.get("objectives") else "Master topic")
+            return {
+                "day": item.get("day", 1),
+                "module": module_name,
+                "topic": topic_name,
+                "learning_objective": learning_obj,
+                "tools": item.get("tools", []),
+                "related_concepts": item.get("related_concepts", [])
+            }
+
         # Prioritize completed curriculum days not yet covered
-        uncovered = [curr for curr in self.curriculum if curr["day"] in completed_days and curr["day"] not in covered_days]
+        uncovered = [curr for curr in days_list if curr["day"] in completed_days and curr["day"] not in covered_days]
         if uncovered:
-            return uncovered[0]
+            return format_topic_obj(uncovered[0])
         
         # Fall back to any curriculum topic not yet covered
-        uncovered_all = [curr for curr in self.curriculum if curr["topic"] not in covered_topics]
+        uncovered_all = [curr for curr in days_list if (curr.get("title") or curr.get("topic")) not in covered_topics]
         if uncovered_all:
-            return uncovered_all[0]
+            return format_topic_obj(uncovered_all[0])
 
         # Default fallback
-        return self.curriculum[0]
+        return format_topic_obj(days_list[0])
 
     def _get_stage_for_question(self, q_num: int) -> str:
         if q_num <= 2:

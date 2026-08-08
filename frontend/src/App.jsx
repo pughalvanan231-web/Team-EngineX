@@ -1,180 +1,240 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
 import {
   fetchHealth,
   fetchCandidates,
-  startInterview,
-  submitAnswer,
-  fetchInterview,
-  finishInterview
+  fetchCurriculum,
+  startInterviewSession,
+  submitInterviewAnswer,
+  fetchInterviewSession,
+  finishInterviewSession
 } from './services/api';
 
-import { CandidateSetup } from './components/CandidateSetup';
-import { InterviewActive } from './components/InterviewActive';
-import { CompletionScreen } from './components/CompletionScreen';
+import { Header } from './components/common/Header';
+import { SkeletonLoader } from './components/common/SkeletonLoader';
+import { LandingPage } from './pages/LandingPage';
+import { CandidateOverview } from './pages/CandidateOverview';
+import { InterviewPreparation } from './pages/InterviewPreparation';
+import { LiveInterview } from './pages/LiveInterview';
+import { InterviewCompletion } from './pages/InterviewCompletion';
+import { FeedbackReport } from './pages/FeedbackReport';
+import { InterviewHistory } from './pages/InterviewHistory';
 
-const STORAGE_KEY = 'active_interview_id';
+const STORAGE_SESSION_KEY = 'interview_agent_session_id';
 
 export default function App() {
   const [candidates, setCandidates] = useState([]);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
-  const [interviewState, setInterviewState] = useState(null);
+  const [curriculum, setCurriculum] = useState(null);
   
+  const [interviewState, setInterviewState] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [healthStatus, setHealthStatus] = useState({ status: 'online', demo_mode: true });
+  const [healthStatus, setHealthStatus] = useState({ status: 'healthy', demo_mode: true });
 
-  // Load Initial Health & Candidates
+  // Load initial candidates and curriculum from API / root JSON datasets
   useEffect(() => {
-    async function loadInitial() {
-      const [h, cList] = await Promise.all([fetchHealth(), fetchCandidates()]);
-      if (h) setHealthStatus(h);
-      if (cList && cList.length > 0) {
-        setCandidates(cList);
-        setSelectedCandidate(cList[0]);
-      }
-
-      // Check localStorage for active session reload recovery
-      const savedId = localStorage.getItem(STORAGE_KEY);
-      if (savedId) {
-        try {
-          const savedState = await fetchInterview(savedId);
-          if (savedState) {
-            setInterviewState(savedState);
-          }
-        } catch (err) {
-          console.warn('Saved interview session expired or invalid:', err);
-          localStorage.removeItem(STORAGE_KEY);
+    async function initData() {
+      setInitialLoading(true);
+      try {
+        const [h, candList, curr] = await Promise.all([
+          fetchHealth(),
+          fetchCandidates(),
+          fetchCurriculum()
+        ]);
+        if (h) setHealthStatus(h);
+        if (candList && candList.length > 0) {
+          setCandidates(candList);
+          setSelectedCandidate(candList[0]);
         }
+        if (curr) setCurriculum(curr);
+
+        // Restore active session if present in localStorage
+        const savedSessionId = localStorage.getItem(STORAGE_SESSION_KEY);
+        if (savedSessionId) {
+          const restoredState = await fetchInterviewSession(savedSessionId);
+          if (restoredState) {
+            setInterviewState(restoredState);
+          }
+        }
+      } catch (err) {
+        console.error('Initialization error:', err);
+      } finally {
+        setInitialLoading(false);
       }
     }
-    loadInitial();
+    initData();
   }, []);
 
-  // Start New Interview
-  const handleStartInterview = async (candidateId) => {
+  // 1. Start Interview Session
+  const handleStartInterview = async (candidateId, candidateObj) => {
     setLoading(true);
     setError(null);
     try {
-      const state = await startInterview(candidateId);
+      const state = await startInterviewSession(candidateId, candidateObj);
       setInterviewState(state);
       if (state?.interview_id) {
-        localStorage.setItem(STORAGE_KEY, state.interview_id);
+        localStorage.setItem(STORAGE_SESSION_KEY, state.interview_id);
       }
+      return state;
     } catch (err) {
       console.error('Failed to start interview:', err);
-      setError('Could not initialize interview engine. Check server connection.');
+      setError('Unable to start interview session. Retrying...');
     } finally {
       setLoading(false);
     }
   };
 
-  // Submit Answer
+  // 2. Submit Answer in Conversation Turn
   const handleSubmitAnswer = async (answerText) => {
     if (!interviewState?.interview_id) return;
     setLoading(true);
     setError(null);
     try {
-      const newState = await submitAnswer(interviewState.interview_id, answerText);
+      const newState = await submitInterviewAnswer(interviewState.interview_id, answerText);
       setInterviewState(newState);
       if (newState?.status === 'completed') {
-        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(STORAGE_SESSION_KEY);
       }
     } catch (err) {
-      console.error('Failed to submit answer:', err);
+      console.error('Failed to process answer:', err);
       setError('Failed to evaluate answer. Retrying...');
     } finally {
       setLoading(false);
     }
   };
 
-  // Finish Early
+  // 3. Finish Early
   const handleFinishEarly = async () => {
     if (!interviewState?.interview_id) return;
     setLoading(true);
     setError(null);
     try {
-      const finalState = await finishInterview(interviewState.interview_id);
+      const finalState = await finishInterviewSession(interviewState.interview_id);
       setInterviewState(finalState);
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_SESSION_KEY);
     } catch (err) {
-      console.error('Failed to finish interview:', err);
-      setError('Failed to complete interview assessment.');
+      console.error('Failed to complete interview:', err);
+      setError('Failed to finalize interview assessment.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Reset & Start Over
-  const handleReset = () => {
-    localStorage.removeItem(STORAGE_KEY);
+  // 4. Reset & Start Over
+  const handleResetSession = () => {
+    localStorage.removeItem(STORAGE_SESSION_KEY);
     setInterviewState(null);
     setError(null);
   };
 
+  if (initialLoading) {
+    return (
+      <div className="min-h-screen bg-agent-bg text-agent-text flex flex-col items-center justify-center p-6 space-y-4 font-mono text-xs">
+        <div className="w-8 h-8 rounded-full border-2 border-agent-accent border-t-transparent animate-spin" />
+        <div className="text-agent-secondary">Loading Interview Agent...</div>
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-[#FFFFFF] text-[#111111] font-sans antialiased flex flex-col">
-        {/* Minimal Global Top Header */}
-        <header className="w-full border-b border-[#E5E5E5] bg-[#FFFFFF] sticky top-0 z-30">
-          <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <Link to="/" onClick={handleReset} className="flex items-center gap-2 font-bold text-base text-[#111111] tracking-tight font-mono hover:opacity-80">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#6D5DFB]" />
-              <span>Interview Agent</span>
-            </Link>
-
-            <div className="flex items-center gap-4 text-xs font-mono">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
-                <span className="text-[#16A34A] font-medium">● Autonomous</span>
-              </div>
-              {healthStatus.demo_mode && (
-                <span className="px-2 py-0.5 rounded bg-[#F8F8FA] border border-[#E5E5E5] text-[#737373]">
-                  DEMO MODE
-                </span>
-              )}
-            </div>
-          </div>
-        </header>
+      <div className="min-h-screen bg-agent-bg text-agent-text font-sans antialiased flex flex-col selection:bg-agent-accent/30 selection:text-agent-accentLight">
+        
+        {/* Top Global Header */}
+        <Header 
+          activeSession={interviewState} 
+          healthStatus={healthStatus}
+          onResetSession={handleResetSession}
+        />
 
         {/* Global Error Banner */}
         {error && (
-          <div className="bg-[#FEF2F2] border-b border-[#DC2626]/20 p-3 text-center text-xs font-mono text-[#DC2626]">
-            {error}
+          <div className="bg-agent-error/10 border-b border-agent-error/20 p-3 text-center text-xs font-mono text-agent-error flex items-center justify-center gap-4">
+            <span>{error}</span>
+            <button
+              onClick={() => setError(null)}
+              className="underline hover:opacity-80"
+            >
+              Dismiss
+            </button>
           </div>
         )}
 
-        {/* Main View Area */}
-        <main className="flex-1 w-full max-w-6xl mx-auto px-4">
+        {/* Page Views Router */}
+        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6">
           <Routes>
-            <Route
-              path="*"
+            <Route path="/" element={<LandingPage onStart={handleStartInterview} />} />
+            
+            <Route 
+              path="/overview" 
               element={
-                !interviewState ? (
-                  <CandidateSetup
-                    candidates={candidates}
-                    selectedCandidate={selectedCandidate}
-                    onSelectCandidate={setSelectedCandidate}
-                    onStart={handleStartInterview}
-                    loading={loading}
-                  />
-                ) : interviewState.status === 'completed' ? (
-                  <CompletionScreen
-                    feedback={interviewState.final_feedback}
-                    candidateName={interviewState.candidate_name}
-                    onReset={handleReset}
-                  />
-                ) : (
-                  <InterviewActive
-                    state={interviewState}
-                    onSubmitAnswer={handleSubmitAnswer}
-                    onFinishEarly={handleFinishEarly}
-                    loading={loading}
-                    candidate={selectedCandidate}
-                  />
-                )
-              }
+                <CandidateOverview 
+                  candidates={candidates}
+                  selectedCandidate={selectedCandidate}
+                  onSelectCandidate={setSelectedCandidate}
+                  curriculum={curriculum}
+                />
+              } 
             />
+
+            <Route 
+              path="/prep" 
+              element={
+                <InterviewPreparation 
+                  candidate={selectedCandidate}
+                  onStartInterview={handleStartInterview}
+                  loading={loading}
+                />
+              } 
+            />
+
+            <Route 
+              path="/interview" 
+              element={
+                <LiveInterview 
+                  state={interviewState}
+                  onSubmitAnswer={handleSubmitAnswer}
+                  onFinishEarly={handleFinishEarly}
+                  loading={loading}
+                  candidate={selectedCandidate}
+                />
+              } 
+            />
+
+            <Route 
+              path="/complete" 
+              element={
+                <InterviewCompletion 
+                  state={interviewState}
+                  onReset={handleResetSession}
+                />
+              } 
+            />
+
+            <Route 
+              path="/feedback" 
+              element={
+                <FeedbackReport 
+                  state={interviewState}
+                  onReset={handleResetSession}
+                />
+              } 
+            />
+
+            <Route 
+              path="/history" 
+              element={
+                <InterviewHistory 
+                  activeSession={interviewState}
+                  onSelectSession={setInterviewState}
+                />
+              } 
+            />
+
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
       </div>

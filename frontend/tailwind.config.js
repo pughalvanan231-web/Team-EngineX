@@ -7,23 +7,30 @@ export default {
   theme: {
     extend: {
       colors: {
-        nova: {
-          bg: "#FFFFFF",
-          text: "#111111",
-          secondary: "#737373",
-          rationale: "#525252",
-          border: "#E5E5E5",
-          accent: "#6D5DFB",
-          success: "#16A34A",
-          error: "#DC2626",
+        agent: {
+          bg: "#09090B",
+          surface: "#121215",
+          elevated: "#18181B",
+          border: "#27272A",
+          borderMuted: "#1F1F23",
+          text: "#FAFAFA",
+          secondary: "#A1A1AA",
+          muted: "#71717A",
+          accent: "#6366F1",
+          accentHover: "#4F46E5",
+          accentLight: "#818CF8",
+          success: "#22C55E",
+          warning: "#F59E0B",
+          error: "#EF4444",
         }
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['JetBrains Mono', 'Menlo', 'monospace'],
       },
-      maxWidth: {
-        '720': '720px',
+      boxShadow: {
+        'subtle': '0 1px 2px 0 rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+        'glow': '0 0 20px -5px rgba(99, 102, 241, 0.15)',
       }
     },
   },
