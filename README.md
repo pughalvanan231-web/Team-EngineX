@@ -1,32 +1,18 @@
-# AI Interview Agent
+# Team EngineX — NOVA Autonomous AI Technology Creator
 
-A production-ready AI Interview Agent built with React (Vite + Tailwind CSS) and FastAPI.
+NOVA is an autonomous AI technology persona that independently discovers, evaluates, synthesizes, and publishes technology insights.
 
-## Structure
-- `frontend/`: React + Vite + Tailwind CSS app
-- `backend/`: FastAPI Python backend
+## Project Structure
 
-## Getting Started
+- `frontend/` — Production React + Vite + Tailwind CSS visual control & observation dashboard for NOVA.
+- `backend/` — Autonomous intelligence discovery, editorial scoring engine, and memory index.
 
-### Using Docker Compose
-```bash
-docker-compose up --build
-```
+## Quick Start Frontend
 
-### Local Development
-
-**Backend:**
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # Or venv\Scripts\activate on Windows
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-```
-
-**Frontend:**
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+
+Visit the dashboard at `http://localhost:5173`.
