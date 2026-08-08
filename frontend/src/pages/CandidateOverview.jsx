@@ -201,32 +201,47 @@ export function CandidateOverview({ candidates = [], selectedCandidate, onSelect
             <img 
               src={
                 (() => {
-                  const id = (cand.candidate_id || activeCandId || "").toUpperCase();
-                  if (id.includes("001")) {
-                    // Sarah Johnson
-                    return "/src/assets/candidates image/001.png";
-                  } else if (id.includes("002")) {
-                    // Alex Turner
-                    return "/src/assets/candidates image/confident-businessman-smiling-with-arms-crossed-conveying-professionalism-and-success-photo.jpg";
-                  } else if (id.includes("003")) {
-                    // Marcus Vance
-                    return "/src/assets/candidates image/003.avif";
-                  } else if (id.includes("004")) {
-                    // Emily Watson
-                    return "/src/assets/candidates image/004.jpg";
-                  } else if (id.includes("005")) {
-                    // Michael Brown
-                    return "/src/assets/candidates image/005.avif";
-                  } else if (id.includes("006")) {
-                    // Jessica Davis
-                    return "/src/assets/candidates image/businesswomen.jpg";
-                  }
-                  // Fallbacks for dynamically matched items
                   const nameLower = (cand.name || "").toLowerCase();
-                  if (nameLower.includes("sarah") || nameLower.includes("emily") || nameLower.includes("jessica") || nameLower.includes("lisa") || nameLower.includes("anna")) {
-                    return "/src/assets/candidates image/businesswomen.jpg";
+                  const femaleNames = ["sarah", "emily", "wendy", "zara", "mia", "bethany", "isabella", "diane", "priyanka", "jessica", "lisa", "anna"];
+                  const isFemale = femaleNames.some(fn => nameLower.includes(fn));
+
+                  const femaleImages = [
+                    "/src/assets/candidates image/images (7).jpg",
+                    "/src/assets/candidates image/businesswomen.jpg",
+                    "/src/assets/candidates image/images (9).jpg",
+                    "/src/assets/candidates image/images (8).jpg",
+                    "/src/assets/candidates image/003.avif"
+                  ];
+
+                  const maleImages = [
+                    "/src/assets/candidates image/001.png",
+                    "/src/assets/candidates image/004.jpg",
+                    "/src/assets/candidates image/005.avif",
+                    "/src/assets/candidates image/cheerful-indian-businessman-smiling-closeup-portrait-jobs-career-campaign_53876-129417.avif",
+                    "/src/assets/candidates image/confident-businessman-smiling-with-arms-crossed-conveying-professionalism-and-success-photo.jpg",
+                    "/src/assets/candidates image/depositphotos_126047328-stock-photo-handsome-business-man.jpg",
+                    "/src/assets/candidates image/images (2).jpg",
+                    "/src/assets/candidates image/images (3).jpg",
+                    "/src/assets/candidates image/images (4).jpg",
+                    "/src/assets/candidates image/images (5).jpg",
+                    "/src/assets/candidates image/images (6).jpg",
+                    "/src/assets/candidates image/images.jpg",
+                    "/src/assets/candidates image/portrait-young-handsome-man-jean-shirt-smiling-with-crossed-arms_176420-12083.avif",
+                    "/src/assets/candidates image/serious-indian-professional-business-man-office-portrait-serious-young-ambitious-indian-businessman-project-leader-dressed-367980912.webp"
+                  ];
+
+                  // Use a simple hash of the name to pick a consistent image
+                  let hash = 0;
+                  for (let i = 0; i < nameLower.length; i++) {
+                    hash = nameLower.charCodeAt(i) + ((hash << 5) - hash);
                   }
-                  return "/src/assets/candidates image/serious-indian-professional-business-man-office-portrait-serious-young-ambitious-indian-businessman-project-leader-dressed-367980912.webp";
+                  hash = Math.abs(hash);
+
+                  if (isFemale) {
+                    return femaleImages[hash % femaleImages.length];
+                  } else {
+                    return maleImages[hash % maleImages.length];
+                  }
                 })()
               } 
               alt={cand.name} 
