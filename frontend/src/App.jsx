@@ -158,7 +158,7 @@ export default function App() {
             onResetSession={handleResetSession}
           />
 
-        {/* Global Error Banner */}
+        {/* Subtle premium layout wrapper */}
         {error && (
           <div className="bg-red-50 border-b border-red-200 p-3 text-center text-xs font-mono text-red-600 flex items-center justify-center gap-4">
             <span>{error}</span>

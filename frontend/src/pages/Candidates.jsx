@@ -142,8 +142,8 @@ export function Candidates({ candidates = [] }) {
 
       {/* Student ID Lookup Section */}
       <div className="card-surface p-8 mt-12 max-w-lg mx-auto space-y-4 text-center">
-        <h2 className="text-lg font-bold text-white tracking-tight">Access Student Dashboard</h2>
-        <p className="text-xs text-white/60">
+        <h2 className="text-lg font-bold text-[var(--text-headings)] tracking-tight">Access Student Dashboard</h2>
+        <p className="text-xs text-[var(--text-muted)]">
           Enter a Student ID (e.g., CAND-001, CAND-002) to view curriculum mastery, performance signals, and launch adaptive AI interviews.
         </p>
         <form 
@@ -167,12 +167,12 @@ export function Candidates({ candidates = [] }) {
             type="text"
             name="studentId"
             placeholder="e.g. CAND-001"
-            className="flex-1 px-5 py-3 rounded-full bg-white/5 border border-white/25 text-sm text-white placeholder-white/35 focus:outline-none focus:border-white/40 focus:bg-white/10 transition-all backdrop-blur-md"
+            className="flex-1 px-5 py-3 rounded-lg bg-[var(--panel-bg)] border border-[var(--border-color)] text-sm text-[var(--text-headings)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#EA580C] transition-all"
             required
           />
           <button
             type="submit"
-            className="px-6 py-3 rounded-full bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold transition-all shadow-md active:scale-[0.98]"
+            className="px-6 py-3 rounded-lg bg-[#EA580C] hover:bg-[#D94E09] text-white text-xs font-bold transition-all shadow-md active:scale-[0.98]"
           >
             Access Dashboard
           </button>

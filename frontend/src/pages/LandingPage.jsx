@@ -32,14 +32,14 @@ export function LandingPage({ onStart }) {
 
           {/* Main Headline */}
           <div className="space-y-1">
-            <h1 className="text-5xl sm:text-7xl font-light text-slate-900 tracking-tight leading-[1.05]">
-              Assess <span className="font-luxury-serif italic text-slate-700">Your Talent</span><br />
+            <h1 className="text-5xl sm:text-7xl font-light text-[var(--text-headings)] tracking-tight leading-[1.05]">
+              Assess <span className="font-luxury-serif italic text-[var(--text-muted)]">Your Talent</span><br />
               The Smart Way
             </h1>
           </div>
 
           {/* Body Paragraph */}
-          <p className="text-sm sm:text-base text-slate-600 max-w-lg leading-relaxed font-light">
+          <p className="text-sm sm:text-base text-[var(--text-muted)] max-w-lg leading-relaxed font-light">
             Curriculum-aware evaluation of your candidates — without lifting a finger. Your technical hiring is just four steps away from being autonomous!
           </p>
 
@@ -88,14 +88,14 @@ export function LandingPage({ onStart }) {
             onClick={handleSelectCandidate}
             className="p-5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer space-y-4 group shadow-sm"
           >
-            <div className="w-8 h-8 rounded-xl bg-slate-150 border border-slate-200 flex items-center justify-center text-slate-800">
+            <div className="w-8 h-8 rounded-xl bg-[var(--panel-bg)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-headings)]">
               <UserCheck className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-sm font-bold text-slate-900 group-hover:translate-x-0.5 transition-transform">
+              <div className="text-sm font-bold text-[var(--text-headings)] group-hover:translate-x-0.5 transition-transform">
                 Select Candidate
               </div>
-              <div className="text-[10px] text-slate-800 font-mono mt-1 font-bold">01</div>
+              <div className="text-[10px] text-[var(--text-muted)] font-mono mt-1 font-bold">01</div>
             </div>
           </div>
 
@@ -104,14 +104,14 @@ export function LandingPage({ onStart }) {
             onClick={() => navigate('/overview')}
             className="p-5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer space-y-4 group shadow-sm"
           >
-            <div className="w-8 h-8 rounded-xl bg-slate-150 border border-slate-200 flex items-center justify-center text-slate-800">
+            <div className="w-8 h-8 rounded-xl bg-[var(--panel-bg)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-headings)]">
               <Layers className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-sm font-bold text-slate-900 group-hover:translate-x-0.5 transition-transform">
+              <div className="text-sm font-bold text-[var(--text-headings)] group-hover:translate-x-0.5 transition-transform">
                 Analyze Syllabus
               </div>
-              <div className="text-[10px] text-slate-800 font-mono mt-1 font-bold">02</div>
+              <div className="text-[10px] text-[var(--text-muted)] font-mono mt-1 font-bold">02</div>
             </div>
           </div>
 
@@ -120,14 +120,14 @@ export function LandingPage({ onStart }) {
             onClick={handleSelectCandidate}
             className="p-5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer space-y-4 group shadow-sm"
           >
-            <div className="w-8 h-8 rounded-xl bg-slate-150 border border-slate-200 flex items-center justify-center text-slate-800">
+            <div className="w-8 h-8 rounded-xl bg-[var(--panel-bg)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-headings)]">
               <Cpu className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-sm font-bold text-slate-900 group-hover:translate-x-0.5 transition-transform">
+              <div className="text-sm font-bold text-[var(--text-headings)] group-hover:translate-x-0.5 transition-transform">
                 Adaptive Q&A
               </div>
-              <div className="text-[10px] text-slate-800 font-mono mt-1 font-bold">03</div>
+              <div className="text-[10px] text-[var(--text-muted)] font-mono mt-1 font-bold">03</div>
             </div>
           </div>
 
@@ -136,14 +136,14 @@ export function LandingPage({ onStart }) {
             onClick={() => navigate('/history')}
             className="p-5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer space-y-4 group shadow-sm"
           >
-            <div className="w-8 h-8 rounded-xl bg-slate-150 border border-slate-200 flex items-center justify-center text-slate-800">
+            <div className="w-8 h-8 rounded-xl bg-[var(--panel-bg)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-headings)]">
               <BarChart2 className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-sm font-bold text-slate-900 group-hover:translate-x-0.5 transition-transform">
+              <div className="text-sm font-bold text-[var(--text-headings)] group-hover:translate-x-0.5 transition-transform">
                 Skill Analytics
               </div>
-              <div className="text-[10px] text-slate-800 font-mono mt-1 font-bold">04</div>
+              <div className="text-[10px] text-[var(--text-muted)] font-mono mt-1 font-bold">04</div>
             </div>
           </div>
 

@@ -7,8 +7,9 @@ export function InterviewPreparation({ candidate, onStartInterview, loading }) {
 
   const handleBegin = async () => {
     const candId = candidate?.member?.id || candidate?.candidate_id || 'CAND-001';
-    await onStartInterview(candId, candidate);
-    navigate('/interview');
+    const state = await onStartInterview(candId, candidate);
+    const sId = state?.interview_id || state?.sessionId || 'CAND-001';
+    navigate(`/interview/${sId}`);
   };
 
   const topicsList = [

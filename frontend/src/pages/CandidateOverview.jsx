@@ -260,53 +260,53 @@ export function CandidateOverview({ candidates = [], selectedCandidate, onSelect
       </div>
 
       {/* Skill Signals Section */}
-      <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-card space-y-5">
-        <h3 className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
-          <BarChart2 className="w-5 h-5 text-indigo-600" />
+      <div className="p-6 rounded-3xl bg-[var(--card-bg)] border border-[var(--border-color)] space-y-5">
+        <h3 className="text-base font-bold text-[var(--text-headings)] tracking-tight flex items-center gap-2">
+          <BarChart2 className="w-5 h-5 text-[#EA580C]" />
           <span>Skill Signals Visualization</span>
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
           {/* Strong Areas */}
-          <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 space-y-2">
-            <div className="font-mono text-emerald-700 font-bold flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          <div className="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-800 space-y-2">
+            <div className="font-mono text-emerald-300 font-bold flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>Strong Areas (1 Attempt)</span>
             </div>
-            <ul className="space-y-1 text-slate-700 font-medium pl-1">
+            <ul className="space-y-1 text-[var(--text-muted)] font-medium pl-1">
               {strongAreas.slice(0, 5).map(a => (
                 <li key={a.day} className="truncate">✓ Day {a.day}: {a.title}</li>
               ))}
-              {strongAreas.length === 0 && <li className="text-slate-400 italic">None recorded</li>}
+              {strongAreas.length === 0 && <li className="text-[var(--text-muted)] italic">None recorded</li>}
             </ul>
           </div>
 
           {/* High Attempt / Friction Areas */}
-          <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-100 space-y-2">
-            <div className="font-mono text-amber-800 font-bold flex items-center gap-1.5">
-              <AlertCircle className="w-4 h-4 text-amber-600" />
+          <div className="p-4 rounded-2xl bg-amber-950/20 border border-amber-800 space-y-2">
+            <div className="font-mono text-amber-300 font-bold flex items-center gap-1.5">
+              <AlertCircle className="w-4 h-4 text-amber-400" />
               <span>High-Attempt Areas (≥ 4 Attempts)</span>
             </div>
-            <ul className="space-y-1 text-slate-700 font-medium pl-1">
+            <ul className="space-y-1 text-[var(--text-muted)] font-medium pl-1">
               {highAttemptAreas.map(a => (
                 <li key={a.day} className="truncate">⚠ Day {a.day}: {a.title} ({a.attempts} attempts)</li>
               ))}
-              {highAttemptAreas.length === 0 && <li className="text-slate-400 italic">No high-attempt bottlenecks</li>}
+              {highAttemptAreas.length === 0 && <li className="text-[var(--text-muted)] italic">No high-attempt bottlenecks</li>}
             </ul>
           </div>
 
           {/* Skipped & Missing Areas */}
-          <div className="p-4 rounded-2xl bg-rose-50/60 border border-rose-100 space-y-2">
-            <div className="font-mono text-rose-800 font-bold flex items-center gap-1.5">
-              <HelpCircle className="w-4 h-4 text-rose-600" />
+          <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-800 space-y-2">
+            <div className="font-mono text-rose-350 font-bold flex items-center gap-1.5">
+              <HelpCircle className="w-4 h-4 text-rose-400" />
               <span>Skipped & Missing Signals</span>
             </div>
-            <ul className="space-y-1 text-slate-700 font-medium pl-1">
+            <ul className="space-y-1 text-[var(--text-muted)] font-medium pl-1">
               {skippedAreas.map(a => (
-                <li key={a.day} className="truncate text-rose-700 font-semibold">! Day {a.day}: {a.title} (Skipped)</li>
+                <li key={a.day} className="truncate text-rose-300 font-semibold">! Day {a.day}: {a.title} (Skipped)</li>
               ))}
               {missingAreas.slice(0, 3).map(a => (
-                <li key={a.day} className="truncate text-slate-500">? Day {a.day}: {a.title} (Missing signal)</li>
+                <li key={a.day} className="truncate text-[var(--text-muted)]">? Day {a.day}: {a.title} (Missing signal)</li>
               ))}
             </ul>
           </div>
@@ -314,61 +314,61 @@ export function CandidateOverview({ candidates = [], selectedCandidate, onSelect
       </div>
 
       {/* Pre-Interview AI Priority Analysis Section */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-card space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+      <div className="p-6 sm:p-8 rounded-3xl bg-[var(--card-bg)] border border-[var(--border-color)] space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border-color)] pb-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 font-mono text-xs font-semibold mb-1">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-950/40 text-purple-300 font-mono text-xs font-semibold mb-1">
+              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
               <span>AI PRIORITY ENGINE</span>
             </div>
-            <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
+            <h3 className="text-xl font-extrabold text-[var(--text-headings)] tracking-tight">
               Pre-Interview Priority Analysis
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">
               Structured 5-tier candidate focus queue automatically derived from learning history.
             </p>
           </div>
 
-          <div className="text-xs font-mono text-slate-500 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl self-start sm:self-auto">
-            Top Priority: <span className="font-bold text-indigo-600">{priorityAnalysis[0]?.topic || 'Security'}</span>
+          <div className="text-xs font-mono text-[var(--text-muted)] bg-[var(--panel-bg)] border border-[var(--border-color)] px-3 py-1.5 rounded-xl self-start sm:self-auto">
+            Top Priority: <span className="font-bold text-[#EA580C]">{priorityAnalysis[0]?.topic || 'Security'}</span>
           </div>
         </div>
 
         <div className="space-y-3">
           {priorityAnalysis.slice(0, 6).map((item, idx) => {
             const categoryColors = {
-              SKIPPED: "bg-rose-50 border-rose-200 text-rose-700",
-              HIGH_ATTEMPTS: "bg-amber-50 border-amber-200 text-amber-800",
-              MEDIUM_ATTEMPTS: "bg-blue-50 border-blue-200 text-blue-800",
-              LOW_ATTEMPTS: "bg-emerald-50 border-emerald-200 text-emerald-800",
-              MISSING: "bg-slate-100 border-slate-300 text-slate-700"
+              SKIPPED: "bg-rose-950/40 border-rose-800 text-rose-300",
+              HIGH_ATTEMPTS: "bg-amber-950/40 border-amber-800 text-amber-300",
+              MEDIUM_ATTEMPTS: "bg-blue-950/40 border-blue-800 text-blue-300",
+              LOW_ATTEMPTS: "bg-emerald-950/40 border-emerald-800 text-emerald-300",
+              MISSING: "bg-slate-800/40 border-slate-700 text-slate-350"
             };
 
             return (
               <div
                 key={idx}
-                className="p-4 rounded-2xl bg-slate-50/90 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-indigo-200 transition-all"
+                className="p-4 rounded-2xl bg-[var(--panel-bg)] border border-[var(--border-color)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-[#EA580C] transition-all"
               >
                 <div className="flex items-start sm:items-center gap-3">
-                  <div className="w-7 h-7 rounded-full bg-indigo-600 text-white font-mono text-xs font-bold flex items-center justify-center shrink-0 shadow-sm">
+                  <div className="w-7 h-7 rounded-full bg-[#EA580C] text-white font-mono text-xs font-bold flex items-center justify-center shrink-0 shadow-sm">
                     {item.priority || idx + 1}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-bold text-slate-900">{item.topic}</h4>
-                      <span className="text-[11px] font-mono text-slate-400">Day {item.day}</span>
+                      <h4 className="text-sm font-bold text-[var(--text-headings)]">{item.topic}</h4>
+                      <span className="text-[11px] font-mono text-[var(--text-muted)]">Day {item.day}</span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="text-xs text-[var(--text-muted)] mt-0.5">
                       {item.reason}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className={`px-3 py-1 rounded-full text-[11px] font-mono font-semibold border ${categoryColors[item.category] || "bg-slate-100 text-slate-700"}`}>
+                  <span className={`px-3 py-1 rounded-full text-[11px] font-mono font-semibold border ${categoryColors[item.category] || "bg-[var(--panel-bg)] text-[var(--text-headings)]"}`}>
                     {item.category}
                   </span>
-                  <span className="text-[10px] font-mono text-slate-400 capitalize px-2 py-1 bg-white border border-slate-200 rounded-lg">
+                  <span className="text-[10px] font-mono text-[var(--text-muted)] capitalize px-2 py-1 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-lg">
                     {item.recommendedDifficulty || 'Medium'}
                   </span>
                 </div>

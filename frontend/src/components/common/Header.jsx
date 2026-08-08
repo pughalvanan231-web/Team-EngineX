@@ -1,101 +1,118 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Play, Search, Menu, ChevronDown, Cpu, Sparkles } from 'lucide-react';
+import { Play, Search, Menu, ChevronDown, Cpu, Sparkles, Sun, Moon } from 'lucide-react';
 
 export function Header({ activeSession, healthStatus, onResetSession }) {
   const location = useLocation();
+  const [isDark, setIsDark] = useState(
+    document.documentElement.classList.contains('dark') || 
+    localStorage.getItem('theme') === 'dark'
+  );
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDark]);
 
   return (
-    <header className="w-full bg-black/15 backdrop-blur-2xl sticky top-0 z-50 py-3.5 px-4 sm:px-8 text-white border-b border-white/10 shadow-lg">
+    <header className="w-full bg-[var(--card-bg)] border-b border-[var(--border-color)] sticky top-0 z-50 py-3.5 px-4 sm:px-8 text-[var(--text-headings)] transition-colors duration-250">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         
         {/* Left Brand Logo */}
         <Link 
           to="/" 
-          className="flex items-center gap-2.5 group transition-transform hover:scale-105"
+          className="flex items-center gap-2 group transition-transform hover:opacity-95"
         >
-          <div className="w-9 h-9 rounded-2xl bg-white/20 border border-white/30 backdrop-blur-xl flex items-center justify-center text-white shadow-md group-hover:rotate-6 transition-transform">
-            <Cpu className="w-4.5 h-4.5" />
+          <div className="w-8 h-8 rounded-lg bg-[var(--panel-bg)] border border-[var(--border-color)] flex items-center justify-center text-[#5E6C55]">
+            <Cpu className="w-4 h-4" />
           </div>
-          <span className="font-sans text-xl font-bold tracking-tight text-white drop-shadow-sm">
-            Engine.AI
-          </span>
+          <div className="text-left">
+            <span className="font-sans text-sm font-bold tracking-wider text-[var(--text-headings)] block">
+              ENGINE.AI
+            </span>
+            <span className="text-[10px] text-[#5E6C55] uppercase tracking-widest block font-mono">
+              Adaptive Technical Interview
+            </span>
+          </div>
         </Link>
 
-        {/* Center Nav Items with Ultra-Glassy Capsule Container */}
-        <nav className="hidden lg:flex items-center gap-3 text-xs font-semibold px-6 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-2xl shadow-inner text-white/90">
+        {/* Center Nav Items with clean enterprise borders */}
+        <nav className="hidden lg:flex items-center gap-1.5 text-xs font-semibold px-4 py-1.5 rounded-lg bg-[var(--panel-bg)] border border-[var(--border-color)]">
           <Link
             to="/candidates"
-            className={`px-3 py-1 rounded-full transition-all ${
+            className={`px-3 py-1 rounded transition-all ${
               location.pathname.startsWith('/candidates') 
-                ? 'bg-white text-slate-900 font-bold shadow-md' 
-                : 'hover:text-white hover:bg-white/10'
+                ? 'bg-[var(--border-color)] text-[var(--text-headings)] font-bold' 
+                : 'text-[var(--text-headings)] hover:bg-[var(--hover-bg)]'
             }`}
           >
             Candidates
           </Link>
-          <span className="text-white/30 text-[8px]">•</span>
 
           <Link
             to="/overview"
-            className={`px-3 py-1 rounded-full transition-all ${
+            className={`px-3 py-1 rounded transition-all ${
               location.pathname === '/overview' 
-                ? 'bg-white text-slate-900 font-bold shadow-md' 
-                : 'hover:text-white hover:bg-white/10'
+                ? 'bg-[var(--border-color)] text-[var(--text-headings)] font-bold' 
+                : 'text-[var(--text-headings)] hover:bg-[var(--hover-bg)]'
             }`}
           >
             Curriculum
           </Link>
-          <span className="text-white/30 text-[8px]">•</span>
 
           <Link
             to="/interview"
-            className={`px-3 py-1 rounded-full transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1 rounded transition-all flex items-center gap-1.5 ${
               location.pathname.startsWith('/interview') 
-                ? 'bg-white text-slate-900 font-bold shadow-md' 
-                : 'hover:text-white hover:bg-white/10'
+                ? 'bg-[var(--border-color)] text-[var(--text-headings)] font-bold' 
+                : 'text-[var(--text-headings)] hover:bg-[var(--hover-bg)]'
             }`}
           >
-            {activeSession && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />}
+            {activeSession && <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />}
             Live Interview
           </Link>
-          <span className="text-white/30 text-[8px]">•</span>
 
           <Link
             to="/history"
-            className={`px-3 py-1 rounded-full transition-all ${
+            className={`px-3 py-1 rounded transition-all ${
               location.pathname === '/history' 
-                ? 'bg-white text-slate-900 font-bold shadow-md' 
-                : 'hover:text-white hover:bg-white/10'
+                ? 'bg-[var(--border-color)] text-[var(--text-headings)] font-bold' 
+                : 'text-[var(--text-headings)] hover:bg-[var(--hover-bg)]'
             }`}
           >
             Skill Analytics
           </Link>
         </nav>
 
-        {/* Right Glassy Action Buttons */}
+        {/* Right Status Dot, Theme Switcher & Resume Indicator */}
         <div className="flex items-center gap-3 text-xs font-medium">
           {activeSession && !location.pathname.startsWith('/interview') && (
             <Link
               to={`/interview/${activeSession.interview_id || activeSession.sessionId}`}
-              className="px-4 py-2 rounded-full bg-white text-slate-900 font-bold hover:bg-white/90 transition-all flex items-center gap-1.5 shadow-md"
+              className="px-3.5 py-1.5 rounded-lg bg-[#EA580C] text-white font-bold hover:bg-[#D94E09] transition-all flex items-center gap-1.5"
             >
-              <Play className="w-3.5 h-3.5 fill-current text-slate-900" />
+              <Play className="w-3 h-3 fill-current text-white" />
               <span>Resume Session</span>
             </Link>
           )}
 
-          <div className="hidden sm:flex items-center gap-1 px-3 py-2 rounded-full bg-white/15 border border-white/20 backdrop-blur-xl cursor-pointer hover:bg-white/25 transition-all text-white/90 shadow-sm">
-            <span>EN</span>
-            <ChevronDown className="w-3.5 h-3.5" />
-          </div>
+          {/* Theme Toggler Toggle Button */}
+          <button
+            onClick={() => setIsDark(!isDark)}
+            className="w-8 h-8 rounded-lg bg-[var(--panel-bg)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-headings)] hover:bg-[var(--hover-bg)] transition-all"
+            aria-label="Toggle visual theme"
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
 
-          <div className="w-9 h-9 rounded-full bg-white/15 border border-white/20 backdrop-blur-xl flex items-center justify-center cursor-pointer hover:bg-white/25 transition-all text-white/90 shadow-sm">
-            <Search className="w-4 h-4" />
-          </div>
-
-          <div className="w-9 h-9 rounded-full bg-white/15 border border-white/20 backdrop-blur-xl flex items-center justify-center cursor-pointer hover:bg-white/25 transition-all text-white/90 shadow-sm">
-            <Menu className="w-4 h-4" />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--panel-bg)] border border-[var(--border-color)] text-[11px] font-mono text-[#059669] font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+            SYSTEM READY
           </div>
         </div>
 
