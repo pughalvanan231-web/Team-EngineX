@@ -3,13 +3,14 @@ import json
 import uuid
 import datetime
 import hashlib
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Dict, Any, List, Optional, Tuple
 
 from app.config import settings
 from app.db.database import save_interview, load_interview
-from app.schemas.schemas import DifficultyLevel, InterviewStateSchema, QuestionItem, AnswerEvaluation, FinalFeedback
 from app.services.provider import ai_service
+from app.schemas.schemas import CandidatePayload
 
+<<<<<<< HEAD
 # Load Curriculum & Candidate Datasets
 def load_curriculum_data() -> Dict[str, Any]:
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "curriculum.json"))
@@ -46,37 +47,77 @@ DIFFICULTY_STEPS = [
     DifficultyLevel.INTERMEDIATE,
     DifficultyLevel.ADVANCED,
     DifficultyLevel.EXPERT
+=======
+# Difficulty system: 5 levels per spec section 9
+DIFFICULTY_LEVELS = ["fundamentals", "application", "debugging", "architecture", "engineering"]
+DIFFICULTY_LABELS = {
+    "fundamentals": "Fundamentals",
+    "application": "Application",
+    "debugging": "Debugging",
+    "architecture": "Architecture",
+    "engineering": "Engineering Judgment",
+}
+
+STAGES = [
+    "Introduction",
+    "Experience & Warm-up",
+    "Core Technical Assessment",
+    "Adaptive Follow-up",
+    "System Design & Scenarios",
+    "Production Thinking",
+    "Capstone Discussion",
+>>>>>>> ef5acd71c8e8fed613b3c93946e4dab1962db1e8
 ]
 
-def step_difficulty(current: DifficultyLevel, direction: int) -> DifficultyLevel:
-    """Step difficulty up (+1) or down (-1) by exactly 1 level."""
-    try:
-        idx = DIFFICULTY_STEPS.index(current)
-        new_idx = max(0, min(len(DIFFICULTY_STEPS) - 1, idx + direction))
-        return DIFFICULTY_STEPS[new_idx]
-    except ValueError:
-        return DifficultyLevel.INTERMEDIATE
+
+def _now() -> str:
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
 
 def normalize_hash(text: str) -> str:
-    """Returns normalized lowercased whitespace-collapsed hash of a string."""
-    clean = " ".join(text.lower().strip().split())
-    return hashlib.md5(clean.encode('utf-8')).hexdigest()
+    return hashlib.md5(" ".join(text.lower().strip().split()).encode("utf-8")).hexdigest()
 
-def compute_overall_score(corr: int, depth: int, pract: int, reas: int, comm: int) -> int:
-    """
-    Computes exact weighted sub-score formula:
-    overall = round(0.30*correctness + 0.20*depth + 0.20*practical + 0.15*reasoning + 0.15*communication)
-    clipped to [1,10].
-    """
-    raw = (0.30 * corr) + (0.20 * depth) + (0.20 * pract) + (0.15 * reas) + (0.15 * comm)
-    val = int(round(raw))
-    return max(1, min(10, val))
+
+def step_difficulty(current_idx: int, direction: int) -> int:
+    return max(0, min(len(DIFFICULTY_LEVELS) - 1, current_idx + direction))
+
+
+def compute_overall(corr: int, depth: int, pract: int, reas: int, comm: int) -> int:
+    raw = 0.30 * corr + 0.20 * depth + 0.20 * pract + 0.15 * reas + 0.15 * comm
+    return max(1, min(10, int(round(raw))))
+
+
+# ---------------------------------------------------------------------------
+# Data loading (real supplied files)
+# ---------------------------------------------------------------------------
+def _data_path(name: str) -> str:
+    return os.path.join(os.path.dirname(__file__), "..", "data", name)
+
+
+def load_curriculum_data() -> Dict[str, Any]:
+    with open(_data_path("curriculum.json"), "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def load_candidate_data() -> List[Dict[str, Any]]:
+    with open(_data_path("candidates.json"), "r", encoding="utf-8") as f:
+        return json.load(f).get("candidates", [])
+
+
+def get_prompt_template(name: str) -> str:
+    with open(os.path.join(os.path.dirname(__file__), "..", "prompts", f"{name}.txt"), "r", encoding="utf-8") as f:
+        return f.read()
+
 
 class InterviewOrchestrator:
     def __init__(self):
         self.curriculum = load_curriculum_data()
+        self.days = self.curriculum.get("days", [])
+        self.modules = self.curriculum.get("modules", [])
         self.candidates = load_candidate_data()
+        self.day_index = {d["day"]: d for d in self.days}
 
+<<<<<<< HEAD
     def get_candidate(self, candidate_id: str) -> Optional[Dict[str, Any]]:
         self.candidates = load_candidate_data()
         for cand in self.candidates:
@@ -84,21 +125,42 @@ class InterviewOrchestrator:
             if c_id == candidate_id:
                 return cand
         return self.candidates[0] if self.candidates else None
+=======
+    # ------------------------------------------------------------------ utils
+    def _module_for_day(self, day: int) -> str:
+        day = int(day)
+        for mod in self.modules:
+            lo, hi = mod["days"]
+            if lo <= day <= hi:
+                return mod["title"]
+        return "AI Engineering"
+>>>>>>> ef5acd71c8e8fed613b3c93946e4dab1962db1e8
 
-    def start_interview(self, candidate_id: str) -> Dict[str, Any]:
-        cand = self.get_candidate(candidate_id)
-        if not cand:
-            raise ValueError(f"Candidate {candidate_id} not found")
+    def get_day(self, day: int) -> Dict[str, Any]:
+        day = int(day)
+        return self.day_index.get(day, {"day": day, "title": f"Day {day}", "tools": [], "objectives": []})
 
+<<<<<<< HEAD
         c_id = cand.get("candidate_id") or cand.get("member", {}).get("id") or candidate_id
         c_name = cand.get("name") or cand.get("member", {}).get("name", "Candidate")
 
         interview_id = f"int_{uuid.uuid4().hex[:12]}"
         now = datetime.datetime.utcnow().isoformat()
+=======
+    def find_candidate(self, candidate_id: str) -> Optional[Dict[str, Any]]:
+        for c in self.candidates:
+            if c.get("member", {}).get("id") == candidate_id:
+                return c
+        return None
+>>>>>>> ef5acd71c8e8fed613b3c93946e4dab1962db1e8
 
-        baseline_diff = cand.get("learning_signals", {}).get("baseline_difficulty", "intermediate")
-        initial_difficulty = DifficultyLevel(baseline_diff) if baseline_diff in DIFFICULTY_STEPS else DifficultyLevel.INTERMEDIATE
+    # ------------------------------------------------------- profile building
+    def build_profile(self, payload: Optional[CandidatePayload]) -> Dict[str, Any]:
+        cand_id = payload.candidate_id if payload else ""
+        raw = self.find_candidate(cand_id) if cand_id else None
+        override = None
 
+<<<<<<< HEAD
         # Pick initial topic from completed days
         completed_days = cand.get("completed_days")
         if completed_days is None and "missions" in cand:
@@ -129,143 +191,254 @@ class InterviewOrchestrator:
             "questions_asked_hashes": [normalize_hash(q_item["question"])],
             "topics_covered": [q_item["topic"]],
             "curriculum_days_covered": [q_item["curriculum_day"]],
+=======
+        if raw:
+            member = raw["member"]
+            missions = raw.get("missions", [])
+            signals = raw.get("signals", {})
+            if payload and payload.name:
+                override = payload
+        elif payload and payload.name:
+            member = payload
+            missions = payload.missions
+            signals = payload.signals
+        else:
+            raw = self.candidates[0]
+            member = raw["member"]
+            missions = raw.get("missions", [])
+            signals = raw.get("signals", {})
+
+        def field(payload_attr: str, data_key: str, fallback):
+            if override is not None:
+                val = getattr(override, payload_attr, None)
+                if val:
+                    return val
+            return member.get(data_key, fallback)
+
+        completed = [m for m in missions if m.get("passed", True) and not m.get("skipped", False)]
+        failed = [m for m in missions if not m.get("passed", True)]
+        skipped = [m for m in missions if m.get("skipped", False)]
+
+        profile = {
+            "candidate_id": field("candidate_id", "id", "CAND-UNKNOWN"),
+            "name": field("name", "name", "Candidate"),
+            "role": field("role", "jobRole", "Candidate"),
+            "experience": field("experience", "yearsExperience", 0),
+            "education": field("education", "education", ""),
+            "status": field("status", "status", "COMPLETED"),
+            "completed_days": sorted({m.get("day") for m in completed}),
+            "failed_days": sorted({m.get("day") for m in failed}),
+            "skipped_days": sorted({m.get("day") for m in skipped}),
+            "attempt_map": {m.get("day"): m.get("attempts", 1) for m in completed},
+            "signals": {
+                "commitDays": signals.get("commitDays", 0),
+                "missionsCompleted": signals.get("missionsCompleted", 0),
+                "missionsFirstTry": signals.get("missionsFirstTry", 0),
+            },
+        }
+        return profile
+
+    # ------------------------------------------------------- initial difficulty
+    def initial_difficulty(self, profile: Dict[str, Any]) -> int:
+        role = profile["role"].lower()
+        technical = any(k in role for k in ("engineer", "developer", "architect", "scientist", "devops", "analyst", "programmer"))
+        idx = 2  # application
+        if technical:
+            if profile["experience"] >= 8:
+                idx += 1
+            if profile["experience"] >= 14:
+                idx = min(idx + 1, len(DIFFICULTY_LEVELS) - 1)
+        else:
+            idx = 1
+            if profile["experience"] >= 6:
+                idx = 2
+
+        sig = profile["signals"]
+        ratio = sig["missionsFirstTry"] / max(1, sig["missionsCompleted"])
+        if ratio >= 0.7:
+            idx += 1
+        if ratio <= 0.25:
+            idx -= 1
+        if len(profile["failed_days"]) >= 3:
+            idx -= 1
+        if len(profile["failed_days"]) == 0 and ratio >= 0.9:
+            idx += 1
+
+        return max(0, min(len(DIFFICULTY_LEVELS) - 1, idx))
+
+    # ------------------------------------------------------- topic planning
+    def build_topic_pool(self, profile: Dict[str, Any]) -> List[Dict[str, Any]]:
+        pool: List[Dict[str, Any]] = []
+        seen = set()
+
+        def add(day_num: int):
+            day_num = int(day_num)
+            if day_num in seen:
+                return
+            seen.add(day_num)
+            pool.append(self.get_day(day_num))
+
+        # 1. failed days first -> probe fundamentals
+        for d in profile["failed_days"]:
+            add(d)
+        # 2. high-attempt passed days (struggled)
+        for d in sorted(profile["attempt_map"], key=lambda x: profile["attempt_map"][x], reverse=True):
+            if profile["attempt_map"][d] >= 3:
+                add(d)
+        # 3. remaining completed days
+        for d in profile["completed_days"]:
+            add(d)
+
+        # 4. role-relevant modules (Agents/MCP, Production, RAG) for depth questions
+        preferred = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 10, 11, 12, 15, 18, 20]
+        for d in preferred:
+            if int(d) in {int(x) for x in profile["completed_days"]} or int(d) in {int(x) for x in profile["failed_days"]}:
+                add(d)
+
+        # 5. fall back to any curriculum day to guarantee >= 4 distinct days
+        for d in self.days:
+            add(d["day"])
+
+        return pool
+
+    def next_topic(self, profile: Dict[str, Any], covered_days: List[int], covered_topics: List[str]) -> Dict[str, Any]:
+        pool = self.build_topic_pool(profile)
+        covered = {int(d) for d in covered_days}
+        for day_obj in pool:
+            if int(day_obj["day"]) not in covered:
+                return day_obj
+        # fully covered -> still cycle but avoid repeating exact topic
+        for day_obj in pool:
+            title = day_obj.get("title", day_obj["day"])
+            if title not in covered_topics:
+                return day_obj
+        return pool[0]
+
+    def stage_for(self, q_num: int) -> str:
+        if q_num == 1:
+            return "Introduction"
+        if q_num == 2:
+            return "Experience & Warm-up"
+        if q_num <= 4:
+            return "Core Technical Assessment"
+        if q_num <= 7:
+            return "Adaptive Follow-up"
+        if q_num <= 9:
+            return "System Design & Scenarios"
+        if q_num <= 11:
+            return "Production Thinking"
+        return "Capstone Discussion"
+
+    # ------------------------------------------------------- session lifecycle
+    def start_interview(self, session_id: str, candidate: Optional[CandidatePayload]) -> Dict[str, Any]:
+        profile = self.build_profile(candidate)
+        diff_idx = self.initial_difficulty(profile)
+
+        state = {
+            "session_id": session_id,
+            "candidate": profile,
+            "status": "in_progress",
+            "question_number": 0,
+>>>>>>> ef5acd71c8e8fed613b3c93946e4dab1962db1e8
             "answers": [],
             "evaluations": [],
+            "questions_asked": [],
+            "questions_hashes": [],
+            "topics_covered": [],
+            "days_covered": [],
+            "difficulty_index": diff_idx,
+            "difficulty_label": DIFFICULTY_LABELS[DIFFICULTY_LEVELS[diff_idx]],
+            "stage": "Introduction",
+            "followup_depth": 0,
+            "messages": [],
             "strengths": [],
             "weaknesses": [],
-            "unresolved_concepts": [],
-            "followup_depth_current": 0,
-            "difficulty": initial_difficulty,
-            "interview_stage": "Warm-up & Fundamentals",
-            "status": "in_progress",
-            "degraded_mode": degraded,
-            "created_at": now,
-            "updated_at": now,
-            "final_feedback": None
+            "unresolved": [],
+            "feedback": None,
+            "degraded": False,
+            "created_at": _now(),
+            "updated_at": _now(),
         }
 
-        save_interview(interview_id, candidate_id, "in_progress", state, now, now)
+        state = self._advance(state, welcome=True)
+        save_interview(session_id, profile["candidate_id"], state["status"], state, state["created_at"], state["updated_at"])
         return state
 
-    def process_answer(self, interview_id: str, candidate_answer: str) -> Dict[str, Any]:
-        state = load_interview(interview_id)
+    def process_message(self, session_id: str, message: str) -> Dict[str, Any]:
+        state = load_interview(session_id)
         if not state:
-            raise ValueError(f"Interview session {interview_id} not found")
-
+            raise ValueError(f"Interview session {session_id} not found")
         if state["status"] == "completed":
             return state
 
         current_q = state["current_question"]
-        now = datetime.datetime.utcnow().isoformat()
+        now = _now()
 
-        # Evaluate Answer
-        eval_result, eval_degraded = self._evaluate_answer(current_q, candidate_answer)
-        if eval_degraded:
-            state["degraded_mode"] = True
+        eval_result, eval_degraded = self._evaluate_answer(current_q, message)
+        state["degraded"] = state["degraded"] or eval_degraded
 
         state["answers"].append({
-            "question_number": state["question_number"],
+            "question_number": current_q["question_number"],
             "question": current_q["question"],
             "topic": current_q["topic"],
-            "curriculum_day": current_q["curriculum_day"],
-            "answer": candidate_answer,
-            "timestamp": now
+            "day": current_q["day"],
+            "difficulty": current_q["difficulty"],
+            "is_follow_up": current_q["is_follow_up"],
+            "answer": message,
+            "timestamp": now,
         })
-
         state["evaluations"].append(eval_result)
 
-        # Collect strengths & weaknesses
-        if eval_result.get("strengths"):
-            state["strengths"].extend(eval_result["strengths"])
-        if eval_result.get("weaknesses"):
-            state["weaknesses"].extend(eval_result["weaknesses"])
+        state["strengths"].extend(eval_result.get("strengths", []))
+        state["weaknesses"].extend(eval_result.get("weaknesses", []))
+        state["messages"].append({"role": "user", "text": message})
 
-        # Determine Follow-Up vs Next Question
+        # Adaptive difficulty
         quality = eval_result.get("quality_classification", "Partial")
-        prev_diff = DifficultyLevel(state["difficulty"])
+        if quality in ("Strong", "Exceptional"):
+            state["difficulty_index"] = step_difficulty(state["difficulty_index"], +1)
+        elif quality in ("Weak", "Vague", "Incorrect"):
+            state["difficulty_index"] = step_difficulty(state["difficulty_index"], -1)
+        state["difficulty_label"] = DIFFICULTY_LABELS[DIFFICULTY_LEVELS[state["difficulty_index"]]]
 
-        # Step difficulty based on quality
-        if quality in ["Strong", "Exceptional"]:
-            new_diff = step_difficulty(prev_diff, +1)
-        elif quality in ["Weak", "Incorrect"]:
-            new_diff = step_difficulty(prev_diff, -1)
-        else:
-            new_diff = prev_diff
-        state["difficulty"] = new_diff
-
-        # Check follow-up condition
-        should_followup = quality in ["Partial", "Weak", "Vague", "Incorrect"] and state["followup_depth_current"] < 2
+        # Follow-up decision — bounded so the interview never starves topic diversity.
+        # Within the first MIN_QUESTIONS answers, at most (MIN_QUESTIONS - MIN_CURRICULUM_DAYS)
+        # may be follow-ups, which guarantees >= MIN_CURRICULUM_DAYS distinct curriculum days.
+        weak_quality = quality in ("Partial", "Weak", "Vague", "Incorrect")
+        followups_so_far = len(state["answers"]) - len(state["days_covered"])
+        followup_budget = settings.MIN_QUESTIONS - settings.MIN_CURRICULUM_DAYS
+        should_followup = (
+            weak_quality
+            and state["followup_depth"] < settings.MAX_FOLLOWUP_DEPTH
+            and followups_so_far < followup_budget
+        )
 
         if should_followup:
-            state["followup_depth_current"] += 1
-            next_q, q_degraded = self._generate_followup(
-                current_q=current_q,
-                previous_answer=candidate_answer,
-                quality=quality,
-                missing_concepts=eval_result.get("missing_concepts", []),
-                difficulty=new_diff
-            )
-            if q_degraded: state["degraded_mode"] = True
+            state["followup_depth"] += 1
+            state = self._generate_followup(state, current_q, message, quality, eval_result.get("missing_concepts", []))
         else:
-            # Topic thread resolved or depth cap reached
-            if quality in ["Partial", "Weak", "Vague", "Incorrect"] and state["followup_depth_current"] >= 2:
-                state["unresolved_concepts"].append(f"{current_q['topic']} ({', '.join(eval_result.get('missing_concepts', ['unresolved']))})")
-            
-            state["followup_depth_current"] = 0
-
-            # Check stopping criteria
-            if self._should_finish_interview(state):
-                return self.finish_interview(interview_id)
-
-            # Pick next topic
-            cand = self.get_candidate(state["candidate_id"])
-            completed_days = cand.get("completed_days", [1, 4, 6, 8]) if cand else [1, 4, 6, 8]
-            next_topic_obj = self._select_next_topic(completed_days, state["curriculum_days_covered"], state["topics_covered"])
-
-            # Determine interview stage
-            q_num = state["question_number"] + 1
-            stage = self._get_stage_for_question(q_num)
-            state["interview_stage"] = stage
-
-            next_q, q_degraded = self._generate_question(
-                candidate_name=state["candidate_name"],
-                topic_obj=next_topic_obj,
-                difficulty=new_diff,
-                stage=stage,
-                previous_questions=[q["question"] for q in state["questions_asked"]],
-                is_followup=False
-            )
-            if q_degraded: state["degraded_mode"] = True
-
-        # Update state with next question
-        state["question_number"] += 1
-        state["current_question"] = next_q
-        state["questions_asked"].append(next_q)
-        state["questions_asked_hashes"].append(normalize_hash(next_q["question"]))
-        
-        if next_q["topic"] not in state["topics_covered"]:
-            state["topics_covered"].append(next_q["topic"])
-        if next_q["curriculum_day"] not in state["curriculum_days_covered"]:
-            state["curriculum_days_covered"].append(next_q["curriculum_day"])
+            if weak_quality and state["followup_depth"] >= settings.MAX_FOLLOWUP_DEPTH:
+                missing = ", ".join(eval_result.get("missing_concepts", ["unresolved"]))
+                state["unresolved"].append(f"{current_q['topic']} ({missing})")
+            state["followup_depth"] = 0
+            state = self._advance(state, welcome=False)
 
         state["updated_at"] = now
-        save_interview(interview_id, state["candidate_id"], "in_progress", state, state["created_at"], now)
+        save_interview(session_id, state["candidate"]["candidate_id"], state["status"], state, state["created_at"], state["updated_at"])
         return state
 
-    def finish_interview(self, interview_id: str) -> Dict[str, Any]:
-        state = load_interview(interview_id)
-        if not state:
-            raise ValueError(f"Interview {interview_id} not found")
+    def get_session(self, session_id: str) -> Optional[Dict[str, Any]]:
+        return load_interview(session_id)
 
-        now = datetime.datetime.utcnow().isoformat()
-        feedback, degraded = self._generate_final_feedback(state)
+    # ------------------------------------------------------- advancement
+    def _advance(self, state: Dict[str, Any], welcome: bool) -> Dict[str, Any]:
+        profile = state["candidate"]
+        answered = len(state["answers"])
 
-        state["status"] = "completed"
-        state["current_question"] = None
-        state["final_feedback"] = feedback
-        state["updated_at"] = now
-        if degraded: state["degraded_mode"] = True
+        if not welcome and self._should_finish(state, answered):
+            return self.finish_interview(state)
 
+<<<<<<< HEAD
         save_interview(interview_id, state["candidate_id"], "completed", state, state["created_at"], now)
         return state
 
@@ -325,152 +498,264 @@ class InterviewOrchestrator:
             return "Practical Implementation"
         elif q_num <= 8:
             return "System Design & Failure Debugging"
+=======
+        if welcome:
+            q_num = 1
+            stage = "Introduction"
+            topic_obj = self.next_topic(profile, state["days_covered"], state["topics_covered"])
+            is_followup = False
+            label = None
+>>>>>>> ef5acd71c8e8fed613b3c93946e4dab1962db1e8
         else:
-            return "Production Trade-offs & Architecture"
+            q_num = answered + 1
+            stage = self.stage_for(q_num)
+            topic_obj = self.next_topic(profile, state["days_covered"], state["topics_covered"])
+            is_followup = False
+            label = None
 
-    def _generate_question(self, candidate_name: str, topic_obj: Dict[str, Any], difficulty: DifficultyLevel, stage: str, previous_questions: List[str], is_followup: bool) -> Tuple[Dict[str, Any], bool]:
-        tmpl = get_prompt_template("question_generator")
-        prev_summary = "\n".join([f"- {q}" for q in previous_questions]) if previous_questions else "None"
-        
-        prompt = tmpl.format(
-            candidate_name=candidate_name,
-            topic=topic_obj["topic"],
-            curriculum_day=topic_obj["day"],
-            difficulty=difficulty.value if hasattr(difficulty, 'value') else str(difficulty),
-            interview_stage=stage,
-            previous_questions_summary=prev_summary
+        state["stage"] = stage
+
+        q_item, degraded = self._generate_question(
+            profile=profile,
+            topic_obj=topic_obj,
+            stage=stage,
+            q_num=q_num,
+            difficulty_index=state["difficulty_index"],
+            is_followup=is_followup,
+            followup_label=label,
+            previous_questions=state["questions_asked"],
         )
+        state["degraded"] = state["degraded"] or degraded
+        self._record_question(state, q_item)
 
-        res_dict, degraded = ai_service.call_ai(prompt, schema_type="question")
+        # Build reply
+        if welcome:
+            state["welcome_message"] = self._welcome_message(profile)
+            state["reply"] = state["welcome_message"] + "\n\n" + self._format_question(q_item, first=True)
+        else:
+            prev_topic = state["answers"][-1]["topic"] if state["answers"] else None
+            new_topic = q_item["topic"] != prev_topic
+            state["reply"] = self._format_question(q_item, first=False, topic_shift=new_topic)
 
-        # Normalize and check duplicate hash
-        q_text = res_dict.get("question", "How would you implement retrieval in a RAG pipeline?")
-        q_hash = normalize_hash(q_text)
+        state["question_number"] = q_item["question_number"]
+        state["current_question"] = q_item
+        state["messages"].append({"role": "ai", "text": state["reply"]})
+        return state
 
-        # Build QuestionItem
-        q_item = {
-            "question_number": len(previous_questions) + 1,
-            "question": q_text,
-            "topic": topic_obj["topic"],
-            "curriculum_day": topic_obj["day"],
-            "difficulty": difficulty.value if hasattr(difficulty, 'value') else str(difficulty),
-            "is_follow_up": is_followup,
-            "followup_label": None
-        }
-
-        return q_item, degraded
-
-    def _generate_followup(self, current_q: Dict[str, Any], previous_answer: str, quality: str, missing_concepts: List[str], difficulty: DifficultyLevel) -> Tuple[Dict[str, Any], bool]:
+    def _generate_followup(self, state: Dict[str, Any], current_q: Dict[str, Any], answer: str, quality: str, missing: List[str]) -> Dict[str, Any]:
         tmpl = get_prompt_template("followup_generator")
-        diff_val = difficulty.value if hasattr(difficulty, 'value') else str(difficulty)
-        
         prompt = tmpl.format(
             topic=current_q["topic"],
-            curriculum_day=current_q["curriculum_day"],
+            curriculum_day=current_q["day"],
+            day_title=self.get_day(current_q["day"]).get("title", ""),
             previous_question=current_q["question"],
-            previous_answer=previous_answer,
+            previous_answer=answer,
             quality_classification=quality,
-            missing_concepts=", ".join(missing_concepts) if missing_concepts else "None",
-            difficulty=diff_val
+            missing_concepts=", ".join(missing) if missing else "None",
+            difficulty=DIFFICULTY_LEVELS[state["difficulty_index"]],
         )
-
-        res_dict, degraded = ai_service.call_ai(prompt, schema_type="followup")
+        res, degraded = ai_service.call_ai(prompt, schema_type="followup")
 
         q_item = {
-            "question_number": current_q.get("question_number", 1) + 1,
-            "question": res_dict.get("question", "What trade-off does that approach introduce in production?"),
+            "question_number": current_q["question_number"] + 1,
+            "question": res.get("question", "What trade-offs does that approach introduce in production?"),
             "topic": current_q["topic"],
-            "curriculum_day": current_q["curriculum_day"],
-            "difficulty": diff_val,
+            "day": current_q["day"],
+            "module": self._module_for_day(current_q["day"]),
+            "difficulty": DIFFICULTY_LEVELS[state["difficulty_index"]],
             "is_follow_up": True,
-            "followup_label": res_dict.get("followup_label", "Let's go one level deeper.")
+            "followup_label": res.get("followup_label", "Let's go one level deeper."),
         }
+        state["degraded"] = state["degraded"] or degraded
+        self._record_question(state, q_item)
+        state["question_number"] = q_item["question_number"]
+        state["current_question"] = q_item
+        state["reply"] = f"{q_item['followup_label']}\n\n{q_item['question']}"
+        state["messages"].append({"role": "ai", "text": state["reply"]})
+        return state
 
-        return q_item, degraded
+    def _record_question(self, state: Dict[str, Any], q_item: Dict[str, Any]) -> None:
+        state["questions_asked"].append(q_item["question"])
+        state["questions_hashes"].append(normalize_hash(q_item["question"]))
+        if q_item["topic"] not in state["topics_covered"]:
+            state["topics_covered"].append(q_item["topic"])
+        if q_item["day"] not in state["days_covered"]:
+            state["days_covered"].append(q_item["day"])
 
-    def _evaluate_answer(self, question_item: Dict[str, Any], candidate_answer: str) -> Tuple[Dict[str, Any], bool]:
-        tmpl = get_prompt_template("answer_evaluator")
+    def _should_finish(self, state: Dict[str, Any], answered: int) -> bool:
+        # Hard rule: never finish before MIN_CURRICULUM_DAYS distinct days are covered.
+        if len(state["days_covered"]) < settings.MIN_CURRICULUM_DAYS:
+            return False
+        if answered >= settings.MIN_QUESTIONS:
+            return True
+        return answered >= settings.MAX_QUESTIONS
 
+    # ------------------------------------------------------- question generation
+    def _generate_question(self, profile: Dict[str, Any], topic_obj: Dict[str, Any], stage: str, q_num: int,
+                           difficulty_index: int, is_followup: bool, followup_label: Optional[str],
+                           previous_questions: Optional[List[str]] = None) -> Tuple[Dict[str, Any], bool]:
+        tmpl = get_prompt_template("question_generator")
+        prev_summary = "\n".join(f"- {q}" for q in (previous_questions or [])) or "None"
+        diff = DIFFICULTY_LEVELS[difficulty_index]
         prompt = tmpl.format(
-            question=question_item["question"],
-            topic=question_item["topic"],
-            curriculum_day=question_item["curriculum_day"],
-            difficulty=question_item.get("difficulty", "intermediate"),
-            candidate_answer=candidate_answer
+            candidate_name=profile["name"],
+            candidate_role=profile["role"],
+            topic=topic_obj.get("topic") or topic_obj.get("title", f"Day {topic_obj['day']}"),
+            curriculum_day=topic_obj["day"],
+            day_title=topic_obj.get("title", ""),
+            module=self._module_for_day(topic_obj["day"]),
+            objectives="\n".join(f"- {o}" for o in topic_obj.get("objectives", [])) or "None",
+            tools=", ".join(topic_obj.get("tools", [])) or "None",
+            difficulty=diff,
+            interview_stage=stage,
+            previous_questions_summary=prev_summary,
         )
 
-        res_dict, degraded = ai_service.call_ai(prompt, schema_type="evaluation")
+        res, degraded = ai_service.call_ai(prompt, schema_type="question")
+        q_text = res.get("question") or self._default_question(topic_obj)
 
-        corr = int(res_dict.get("technical_correctness", 7))
-        depth = int(res_dict.get("depth", 7))
-        pract = int(res_dict.get("practical_understanding", 7))
-        reas = int(res_dict.get("engineering_reasoning", 7))
-        comm = int(res_dict.get("communication", 8))
+        q_item = {
+            "question_number": q_num,
+            "question": q_text,
+            "topic": topic_obj.get("topic") or topic_obj.get("title", f"Day {topic_obj['day']}"),
+            "day": topic_obj["day"],
+            "module": self._module_for_day(topic_obj["day"]),
+            "difficulty": diff,
+            "is_follow_up": is_followup,
+            "followup_label": followup_label,
+        }
+        return q_item, degraded
 
-        # Explicit Backend Overall Formula Calculation
-        overall = compute_overall_score(corr, depth, pract, reas, comm)
-        res_dict["overall"] = overall
+    def _default_question(self, topic_obj: Dict[str, Any]) -> str:
+        return f"How would you apply the core ideas from Day {topic_obj['day']} ({topic_obj.get('title', '')}) to a production AI system, and what trade-offs matter most?"
 
-        return res_dict, degraded
+    # ------------------------------------------------------- answer evaluation
+    def _evaluate_answer(self, q_item: Dict[str, Any], answer: str) -> Tuple[Dict[str, Any], bool]:
+        tmpl = get_prompt_template("answer_evaluator")
+        prompt = tmpl.format(
+            question=q_item["question"],
+            topic=q_item["topic"],
+            curriculum_day=q_item["day"],
+            difficulty=q_item["difficulty"],
+            candidate_answer=answer,
+        )
+        res, degraded = ai_service.call_ai(prompt, schema_type="evaluation")
+
+        def num(key: str, default: int) -> int:
+            try:
+                return int(res.get(key, default))
+            except (TypeError, ValueError):
+                return default
+
+        corr, depth = num("technical_correctness", 7), num("depth", 7)
+        pract, reas = num("practical_understanding", 7), num("engineering_reasoning", 7)
+        comm = num("communication", 8)
+        res["overall"] = compute_overall(corr, depth, pract, reas, comm)
+        res.setdefault("quality_classification", "Partial")
+        res.setdefault("strengths", [])
+        res.setdefault("weaknesses", [])
+        res.setdefault("missing_concepts", [])
+        res.setdefault("evidence", "")
+        return res, degraded
+
+    # ------------------------------------------------------- finish / feedback
+    def finish_interview(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        feedback, degraded = self._generate_final_feedback(state)
+        state["status"] = "completed"
+        state["current_question"] = None
+        state["feedback"] = feedback
+        state["degraded"] = state["degraded"] or degraded
+        state["reply"] = "Interview completed."
+        state["updated_at"] = _now()
+        save_interview(state["session_id"], state["candidate"]["candidate_id"], "completed", state, state["created_at"], state["updated_at"])
+        return state
 
     def _generate_final_feedback(self, state: Dict[str, Any]) -> Tuple[Dict[str, Any], bool]:
         tmpl = get_prompt_template("final_feedback_generator")
-
-        # Compile evidence summary
         evidence_lines = []
-        topic_scores_map = {}
+        topic_scores_map: Dict[str, Dict[str, Any]] = {}
 
-        for idx, (ans, ev) in enumerate(zip(state["answers"], state["evaluations"])):
-            q_num = ans["question_number"]
-            topic = ans["topic"]
-            day = ans["curriculum_day"]
-            overall = ev.get("overall", 7)
-
-            evidence_lines.append(f"Q{q_num} [{topic}]: Question: '{ans['question']}' | Answer: '{ans['answer']}' | Score: {overall}/10 | Evidence: {ev.get('evidence', '')}")
-
-            if topic not in topic_scores_map:
-                topic_scores_map[topic] = {"day": day, "scores": []}
-            topic_scores_map[topic]["scores"].append(overall)
+        for ans, ev in zip(state["answers"], state["evaluations"]):
+            q_num, topic, day, overall = ans["question_number"], ans["topic"], ans["day"], ev.get("overall", 7)
+            evidence_lines.append(
+                f"Q{q_num} [{topic}]: Question: '{ans['question']}' | Answer: '{ans['answer']}' | Score: {overall}/10 | Evidence: {ev.get('evidence', '')}"
+            )
+            topic_scores_map.setdefault(topic, {"day": day, "scores": []})["scores"].append(overall)
 
         prompt = tmpl.format(
-            candidate_name=state["candidate_name"],
-            interview_summary_evidence="\n".join(evidence_lines)
+            candidate_name=state["candidate"]["name"],
+            candidate_role=state["candidate"]["role"],
+            interview_summary_evidence="\n".join(evidence_lines),
         )
+        res, degraded = ai_service.call_ai(prompt, schema_type="feedback")
 
-        res_dict, degraded = ai_service.call_ai(prompt, schema_type="feedback")
-
-        # Compute mean per-topic scores in backend code
-        calculated_topic_scores = []
-        all_topic_averages = []
-
+        computed_topic_scores = []
+        all_averages = []
         for topic, data in topic_scores_map.items():
             avg_10 = sum(data["scores"]) / max(1, len(data["scores"]))
-            pct_score = int(round(avg_10 * 10))
-            status = "Mastered" if pct_score >= 85 else "Developing" if pct_score >= 70 else "Needs Practice"
-            
-            calculated_topic_scores.append({
-                "topic": topic,
-                "day": data["day"],
-                "score": pct_score,
-                "status": status
-            })
-            all_topic_averages.append(pct_score)
+            pct = int(round(avg_10 * 10))
+            status = "Mastered" if pct >= 85 else "Developing" if pct >= 70 else "Needs Practice"
+            computed_topic_scores.append({"topic": topic, "day": data["day"], "score": pct, "status": status})
+            all_averages.append(pct)
 
-        # Calculate overall headline percentage
-        overall_headline = int(round(sum(all_topic_averages) / max(1, len(all_topic_averages)))) if all_topic_averages else 82
-        res_dict["overall_score"] = overall_headline
-        res_dict["topic_scores"] = calculated_topic_scores
+        overall_score = int(round(sum(all_averages) / len(all_averages))) if all_averages else 80
 
-        # Ensure traceable evidence mapping
-        traceable = []
-        for ans in state["answers"]:
-            traceable.append({
-                "question_number": ans["question_number"],
-                "topic": ans["topic"],
-                "answer_snippet": ans["answer"][:100]
-            })
-        res_dict["traceable_evidence"] = traceable
+        feedback = {
+            "summary": res.get("interviewer_summary") or res.get("summary", "The candidate demonstrated solid technical understanding across the interview."),
+            "strengths": res.get("strengths", []) or [],
+            "gaps": res.get("weaknesses", []) or res.get("gaps", []),
+            "next": res.get("recommendations", []) or res.get("next", []),
+            "overall_score": res.get("overall_score", overall_score),
+            "category_scores": res.get("category_scores", []),
+            "topic_scores": res.get("topic_scores") or computed_topic_scores,
+            "traceable_evidence": [
+                {"question_number": a["question_number"], "topic": a["topic"], "answer_snippet": a["answer"][:100]}
+                for a in state["answers"]
+            ],
+        }
+        return feedback, degraded
 
-        return res_dict, degraded
+    # ------------------------------------------------------- message formatting
+    def _welcome_message(self, profile: Dict[str, Any]) -> str:
+        return (
+            f"Welcome to your technical interview, {profile['name']}. "
+            f"Given your background as a {profile['role'].lower() or 'candidate'} in this cohort, "
+            "I'll be exploring how you understand and apply AI engineering concepts, "
+            "adapting to your answers as we go. Let's begin."
+        )
+
+    def _format_question(self, q_item: Dict[str, Any], first: bool = False, topic_shift: bool = False) -> str:
+        parts = []
+        if topic_shift and not first:
+            parts.append(f"Let's shift focus to {q_item['topic']}.")
+        if first:
+            parts.append(f"**Question {q_item['question_number']} · {q_item['topic']}**")
+        parts.append(q_item["question"])
+        return "\n\n".join(parts)
+
+    # ------------------------------------------------------- public response
+    def public_response(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        done = state["status"] == "completed"
+        return {
+            "reply": state.get("reply", ""),
+            "done": done,
+            "sessionId": state["session_id"],
+            "feedback": state.get("feedback"),
+            "question": state.get("current_question"),
+            "transcript": state.get("messages", []),
+            "progress": {
+                "question_number": state["question_number"],
+                "answers": len(state["answers"]),
+                "min_questions": settings.MIN_QUESTIONS,
+                "days_covered": state["days_covered"],
+                "min_days": settings.MIN_CURRICULUM_DAYS,
+                "topics_covered": state["topics_covered"],
+                "difficulty": state["difficulty_label"],
+                "stage": state["stage"],
+                "followup_depth": state["followup_depth"],
+            },
+            "degraded_mode": state["degraded"],
+        }
+
 
 orchestrator = InterviewOrchestrator()

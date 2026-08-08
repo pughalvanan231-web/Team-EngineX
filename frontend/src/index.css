@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+<<<<<<< HEAD
 @layer base {
   :root {
     color-scheme: dark;
@@ -50,3 +51,76 @@
 .animate-pulse-glow {
   animation: pulseGlow 3s infinite ease-in-out;
 }
+=======
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
+}
+
+body {
+  background-color: #05050a;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2f2f4a transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #2f2f4a;
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::selection {
+  background: rgba(139, 92, 246, 0.35);
+  color: #ffffff;
+}
+
+textarea:focus,
+input:focus,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.6);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .card-surface {
+    @apply rounded-2xl border border-line-800 bg-ink-800/80 backdrop-blur-sm;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line-700 bg-ink-700/60 px-3 py-1 text-xs font-medium text-zinc-300;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-primary-500 hover:shadow-glow-sm disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-line-700 bg-ink-700/40 px-5 py-3 text-sm font-medium text-zinc-300 transition-colors hover:border-line-600 hover:bg-ink-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-line-700 bg-ink-900 px-4 py-3 text-sm text-zinc-100 placeholder-zinc-500 transition-colors focus:border-primary-500 focus:outline-none;
+  }
+
+  .label-sm {
+    @apply mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted;
+  }
+}
+>>>>>>> ef5acd71c8e8fed613b3c93946e4dab1962db1e8
