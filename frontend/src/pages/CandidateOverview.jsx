@@ -169,146 +169,232 @@ export function CandidateOverview({ candidates = [], selectedCandidate, onSelect
       )}
 
       {/* Candidate Overview & Learning Statistics */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Profile Stats Overview */}
-        <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-card space-y-4">
-          <div className="text-xs font-mono text-slate-400 uppercase tracking-wider font-semibold">
-            Learning Statistics
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        {/* Left Visual Banner Profile (Optimized Layout) */}
+        <div className="lg:col-span-7 rounded-3xl bg-[var(--card-bg)] border border-[var(--border-color)] overflow-hidden flex flex-col justify-between relative min-h-[380px]">
+          <div className="p-8 space-y-6 z-10 text-left">
+            <span className="text-xs uppercase tracking-widest text-[#5E6C55] font-mono font-bold block">
+              Candidate Profile
+            </span>
+            <div className="space-y-2">
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text-headings)]">
+                {cand.name}
+              </h1>
+              <p className="text-sm text-[var(--text-muted)] font-medium">
+                {cand.role} &middot; {cand.experience} Years Exp
+              </p>
+            </div>
+            
+            <div className="pt-2">
+              <button
+                onClick={handleStartInterview}
+                disabled={startingInterview}
+                className="px-6 py-2.5 rounded-lg bg-white text-black hover:bg-slate-100 font-bold text-xs shadow-md transition-all active:scale-[0.98] flex items-center gap-2"
+              >
+                {startingInterview ? "Building Interview..." : "Start Now"}
+              </button>
+            </div>
+          </div>
+          
+          {/* Overlay Profile Image aligned on right edge (Dynamic Gender Portraits) */}
+          <div className="absolute right-0 bottom-0 h-full w-[45%] z-0 pointer-events-none opacity-90">
+            <img 
+              src={
+                (() => {
+                  const nameLower = (cand.name || "").toLowerCase();
+                  // Check if candidate name is female
+                  if (nameLower.includes("sarah") || nameLower.includes("emily") || nameLower.includes("jessica") || nameLower.includes("lisa") || nameLower.includes("anna")) {
+                    return "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80";
+                  }
+                  // Otherwise fallback to male portrait placeholder
+                  return "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=80";
+                })()
+              } 
+              alt={cand.name} 
+              className="h-full w-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[var(--card-bg)] via-[var(--card-bg)]/40 to-transparent" />
           </div>
 
-          <div className="space-y-3 text-xs font-sans">
-            <div className="flex justify-between py-2 border-b border-slate-100">
-              <span className="text-slate-500">Total Curriculum Days</span>
-              <span className="text-slate-900 font-mono font-bold">31 Days</span>
+          {/* Bottom frosted analytics line */}
+          <div className="w-full bg-[var(--panel-bg)] border-t border-[var(--border-color)] px-8 py-5 flex items-center justify-between text-xs font-mono font-bold z-10">
+            <div>
+              <span className="block text-[10px] text-[var(--text-muted)] uppercase">Active Days</span>
+              <span className="text-base text-[var(--text-headings)]">{stats.completedDays}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-slate-100">
-              <span className="text-slate-500">Completed Days</span>
-              <span className="text-slate-900 font-mono font-semibold">{stats.completedDays}</span>
+            <div>
+              <span className="block text-[10px] text-[var(--text-muted)] uppercase">Missions</span>
+              <span className="text-base text-[var(--text-headings)]">{stats.totalDays}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-slate-100">
-              <span className="text-slate-500">Passed Days</span>
-              <span className="text-emerald-600 font-mono font-bold">{stats.passedDays}</span>
+            <div>
+              <span className="block text-[10px] text-[var(--text-muted)] uppercase">First Try</span>
+              <span className="text-base text-[var(--text-headings)]">{stats.passedDays}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-slate-100">
-              <span className="text-slate-500">Failed Days</span>
-              <span className="text-rose-600 font-mono font-semibold">{stats.failedDays || 0}</span>
-            </div>
-            <div className="flex justify-between py-2 border-b border-slate-100">
-              <span className="text-slate-500">Explicitly Skipped Days</span>
-              <span className="text-amber-600 font-mono font-semibold">{stats.skippedDays}</span>
-            </div>
-            <div className="flex justify-between py-2 border-b border-slate-100">
-              <span className="text-slate-500">Missing / Unrecorded Days</span>
-              <span className="text-slate-400 font-mono font-semibold">{stats.missingDays}</span>
-            </div>
-            <div className="flex justify-between py-2">
-              <span className="text-slate-500">Average Attempts</span>
-              <span className="text-indigo-600 font-mono font-bold">{stats.avgAttempts}</span>
+            <div>
+              <span className="block text-[10px] text-[var(--text-muted)] uppercase">Avg Attempts</span>
+              <span className="text-base text-[var(--text-headings)]">{stats.avgAttempts}</span>
             </div>
           </div>
         </div>
 
-        {/* Progress Progress Bars / Metrics */}
-        <div className="lg:col-span-2 p-6 rounded-3xl bg-[#F2F7F4] border border-emerald-100/90 shadow-card flex flex-col justify-between space-y-6">
-          <div>
-            <div className="text-xs font-mono text-slate-500 uppercase tracking-wider font-semibold mb-4">
+        {/* Right Dashboard Statistics (Active telemetry) */}
+        <div className="lg:col-span-5 p-8 rounded-3xl bg-[var(--card-bg)] border border-[var(--border-color)] flex flex-col justify-between space-y-6 text-left">
+          <div className="space-y-6">
+            <div className="text-xs font-mono text-[var(--text-muted)] uppercase tracking-wider font-semibold">
               Curriculum Mastery & Progress
             </div>
 
             <div className="space-y-4">
               <div>
-                <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                  <span>Overall Curriculum Completion</span>
-                  <span className="font-mono text-indigo-600 font-bold">{stats.completionPct}%</span>
+                <div className="flex justify-between text-xs font-semibold text-[var(--text-headings)] mb-1">
+                  <span>Overall Completion</span>
+                  <span className="font-mono text-[#EA580C] font-bold">{stats.completionPct}%</span>
                 </div>
-                <div className="w-full bg-slate-200 rounded-full h-2.5">
-                  <div className="bg-indigo-600 h-2.5 rounded-full" style={{ width: `${stats.completionPct}%` }} />
+                <div className="w-full bg-[var(--panel-bg)] border border-[var(--border-color)] rounded-full h-2">
+                  <div className="bg-[#EA580C] h-2 rounded-full" style={{ width: `${stats.completionPct}%` }} />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-xs font-semibold text-slate-700 mb-1">
-                  <span>Pass Rate (Completed Modules)</span>
-                  <span className="font-mono text-emerald-600 font-bold">{stats.passPct}%</span>
+                <div className="flex justify-between text-xs font-semibold text-[var(--text-headings)] mb-1">
+                  <span>Pass Rate</span>
+                  <span className="font-mono text-[#10B981] font-bold">{stats.passPct}%</span>
                 </div>
-                <div className="w-full bg-slate-200 rounded-full h-2.5">
-                  <div className="bg-emerald-500 h-2.5 rounded-full" style={{ width: `${stats.passPct}%` }} />
+                <div className="w-full bg-[var(--panel-bg)] border border-[var(--border-color)] rounded-full h-2">
+                  <div className="bg-[#10B981] h-2 rounded-full" style={{ width: `${stats.passPct}%` }} />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-center">
-              <div className="text-[10px] font-mono text-slate-400 uppercase">Strong Signals</div>
-              <div className="text-xl font-bold text-emerald-600 font-mono mt-0.5">{strongAreas.length}</div>
+          <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="p-4 rounded-xl bg-[var(--panel-bg)] border border-[var(--border-color)] text-center">
+              <div className="text-[10px] font-mono text-[var(--text-muted)] uppercase">Strong Signals</div>
+              <div className="text-lg font-bold text-[#10B981] font-mono mt-0.5">{strongAreas.length}</div>
             </div>
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-center">
-              <div className="text-[10px] font-mono text-slate-400 uppercase">High Attempts</div>
-              <div className="text-xl font-bold text-amber-600 font-mono mt-0.5">{highAttemptAreas.length}</div>
+            <div className="p-4 rounded-xl bg-[var(--panel-bg)] border border-[var(--border-color)] text-center">
+              <div className="text-[10px] font-mono text-[var(--text-muted)] uppercase">High Attempts</div>
+              <div className="text-lg font-bold text-[#F59E0B] font-mono mt-0.5">{highAttemptAreas.length}</div>
             </div>
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-center">
-              <div className="text-[10px] font-mono text-slate-400 uppercase">Skipped</div>
-              <div className="text-xl font-bold text-rose-600 font-mono mt-0.5">{stats.skippedDays}</div>
+            <div className="p-4 rounded-xl bg-[var(--panel-bg)] border border-[var(--border-color)] text-center">
+              <div className="text-[10px] font-mono text-[var(--text-muted)] uppercase">Skipped</div>
+              <div className="text-lg font-bold text-[#EF4444] font-mono mt-0.5">{stats.skippedDays}</div>
             </div>
-            <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-center">
-              <div className="text-[10px] font-mono text-slate-400 uppercase">Missing Days</div>
-              <div className="text-xl font-bold text-slate-500 font-mono mt-0.5">{stats.missingDays}</div>
+            <div className="p-4 rounded-xl bg-[var(--panel-bg)] border border-[var(--border-color)] text-center">
+              <div className="text-[10px] font-mono text-[var(--text-muted)] uppercase">Missing Days</div>
+              <div className="text-lg font-bold text-[var(--text-muted)] font-mono mt-0.5">{stats.missingDays}</div>
             </div>
           </div>
         </div>
       </div>
 
+
       {/* Skill Signals Section */}
-      <div className="p-6 rounded-3xl bg-[var(--card-bg)] border border-[var(--border-color)] space-y-5">
+      <div className="p-6 rounded-3xl bg-[var(--card-bg)] border border-[var(--border-color)] space-y-6">
         <h3 className="text-base font-bold text-[var(--text-headings)] tracking-tight flex items-center gap-2">
           <BarChart2 className="w-5 h-5 text-[#EA580C]" />
-          <span>Skill Signals Visualization</span>
+          <span>Skill Signals Distribution & Analytics</span>
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          {/* Strong Areas */}
-          <div className="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-800 space-y-2">
-            <div className="font-mono text-emerald-300 font-bold flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Strong Areas (1 Attempt)</span>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          {/* Left Column: SVG Donut Chart */}
+          <div className="md:col-span-4 flex flex-col items-center justify-center space-y-3">
+            <div className="relative w-40 h-40">
+              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                {/* Background Ring */}
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="var(--border-color)" strokeWidth="8" />
+                
+                {/* Strong Segment (Green) */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  fill="transparent"
+                  stroke="#10B981"
+                  strokeWidth="10"
+                  strokeDasharray={`${Math.max(5, (strongAreas.length / 10) * 251.2)} 251.2`}
+                  strokeDashoffset="0"
+                />
+
+                {/* High Segment (Amber) */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  fill="transparent"
+                  stroke="#F59E0B"
+                  strokeWidth="10"
+                  strokeDasharray={`${Math.max(5, (highAttemptAreas.length / 10) * 251.2)} 251.2`}
+                  strokeDashoffset={`-${(strongAreas.length / 10) * 251.2}`}
+                />
+
+                {/* Skipped Segment (Red) */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  fill="transparent"
+                  stroke="#EF4444"
+                  strokeWidth="10"
+                  strokeDasharray={`${Math.max(5, ((skippedAreas.length + missingAreas.length) / 10) * 251.2)} 251.2`}
+                  strokeDashoffset={`-${((strongAreas.length + highAttemptAreas.length) / 10) * 251.2}`}
+                />
+              </svg>
+              {/* Inner Label */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-2xl font-black text-[var(--text-headings)]">
+                  {strongAreas.length + highAttemptAreas.length + skippedAreas.length}
+                </span>
+                <span className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">Signals</span>
+              </div>
             </div>
-            <ul className="space-y-1 text-[var(--text-muted)] font-medium pl-1">
-              {strongAreas.slice(0, 5).map(a => (
-                <li key={a.day} className="truncate">✓ Day {a.day}: {a.title}</li>
-              ))}
-              {strongAreas.length === 0 && <li className="text-[var(--text-muted)] italic">None recorded</li>}
-            </ul>
           </div>
 
-          {/* High Attempt / Friction Areas */}
-          <div className="p-4 rounded-2xl bg-amber-950/20 border border-amber-800 space-y-2">
-            <div className="font-mono text-amber-300 font-bold flex items-center gap-1.5">
-              <AlertCircle className="w-4 h-4 text-amber-400" />
-              <span>High-Attempt Areas (≥ 4 Attempts)</span>
+          {/* Right Column: Telemetry list details */}
+          <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            {/* Strong Areas Info */}
+            <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-800 space-y-2 text-left">
+              <div className="font-mono text-emerald-300 font-bold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Strong Areas ({strongAreas.length})</span>
+              </div>
+              <ul className="space-y-1 text-white pl-1 text-[11px]">
+                {strongAreas.slice(0, 3).map(a => (
+                  <li key={a.day} className="truncate">✓ Day {a.day}: {a.title}</li>
+                ))}
+                {strongAreas.length === 0 && <li className="text-white/60 italic">None</li>}
+              </ul>
             </div>
-            <ul className="space-y-1 text-[var(--text-muted)] font-medium pl-1">
-              {highAttemptAreas.map(a => (
-                <li key={a.day} className="truncate">⚠ Day {a.day}: {a.title} ({a.attempts} attempts)</li>
-              ))}
-              {highAttemptAreas.length === 0 && <li className="text-[var(--text-muted)] italic">No high-attempt bottlenecks</li>}
-            </ul>
-          </div>
 
-          {/* Skipped & Missing Areas */}
-          <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-800 space-y-2">
-            <div className="font-mono text-rose-350 font-bold flex items-center gap-1.5">
-              <HelpCircle className="w-4 h-4 text-rose-400" />
-              <span>Skipped & Missing Signals</span>
+            {/* High Attempt Info */}
+            <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-800 space-y-2 text-left">
+              <div className="font-mono text-amber-300 font-bold flex items-center gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
+                <span>High-Attempt ({highAttemptAreas.length})</span>
+              </div>
+              <ul className="space-y-1 text-white pl-1 text-[11px]">
+                {highAttemptAreas.slice(0, 3).map(a => (
+                  <li key={a.day} className="truncate">⚠ Day {a.day}: {a.title}</li>
+                ))}
+                {highAttemptAreas.length === 0 && <li className="text-white/60 italic">None</li>}
+              </ul>
             </div>
-            <ul className="space-y-1 text-[var(--text-muted)] font-medium pl-1">
-              {skippedAreas.map(a => (
-                <li key={a.day} className="truncate text-rose-300 font-semibold">! Day {a.day}: {a.title} (Skipped)</li>
-              ))}
-              {missingAreas.slice(0, 3).map(a => (
-                <li key={a.day} className="truncate text-[var(--text-muted)]">? Day {a.day}: {a.title} (Missing signal)</li>
-              ))}
-            </ul>
+
+            {/* Skipped Info */}
+            <div className="p-4 rounded-xl bg-rose-950/20 border border-rose-800 space-y-2 text-left">
+              <div className="font-mono text-rose-350 font-bold flex items-center gap-1.5">
+                <HelpCircle className="w-3.5 h-3.5 text-rose-400" />
+                <span>Skipped/Missing ({skippedAreas.length + missingAreas.length})</span>
+              </div>
+              <ul className="space-y-1 text-white pl-1 text-[11px]">
+                {skippedAreas.slice(0, 2).map(a => (
+                  <li key={a.day} className="truncate">! Day {a.day}: {a.title}</li>
+                ))}
+                {missingAreas.slice(0, 1).map(a => (
+                  <li key={a.day} className="truncate">? Day {a.day}: {a.title}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -334,41 +420,46 @@ export function CandidateOverview({ candidates = [], selectedCandidate, onSelect
           </div>
         </div>
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {priorityAnalysis.slice(0, 6).map((item, idx) => {
             const categoryColors = {
-              SKIPPED: "bg-rose-950/40 border-rose-800 text-rose-300",
-              HIGH_ATTEMPTS: "bg-amber-950/40 border-amber-800 text-amber-300",
-              MEDIUM_ATTEMPTS: "bg-blue-950/40 border-blue-800 text-blue-300",
-              LOW_ATTEMPTS: "bg-emerald-950/40 border-emerald-800 text-emerald-300",
-              MISSING: "bg-slate-800/40 border-slate-700 text-slate-350"
+              SKIPPED: "bg-rose-600 border-rose-700 text-white",
+              HIGH_ATTEMPTS: "bg-amber-600 border-amber-700 text-white",
+              MEDIUM_ATTEMPTS: "bg-blue-600 border-blue-700 text-white",
+              LOW_ATTEMPTS: "bg-emerald-600 border-emerald-700 text-white",
+              MISSING: "bg-slate-500 border-slate-600 text-white"
             };
 
             return (
               <div
                 key={idx}
-                className="p-4 rounded-2xl bg-[var(--panel-bg)] border border-[var(--border-color)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-[#EA580C] transition-all"
+                className="card-surface p-5 flex flex-col justify-between space-y-4 text-left group"
               >
-                <div className="flex items-start sm:items-center gap-3">
-                  <div className="w-7 h-7 rounded-full bg-[#EA580C] text-white font-mono text-xs font-bold flex items-center justify-center shrink-0 shadow-sm">
-                    {item.priority || idx + 1}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-bold text-[var(--text-headings)]">{item.topic}</h4>
-                      <span className="text-[11px] font-mono text-[var(--text-muted)]">Day {item.day}</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="w-8 h-8 rounded-lg bg-[#EA580C] text-white font-mono text-xs font-bold flex items-center justify-center shadow-sm">
+                      {item.priority || idx + 1}
                     </div>
-                    <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                    <span className="text-[11px] font-mono text-[var(--text-muted)] font-bold">
+                      DAY {item.day}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-extrabold text-[var(--text-headings)] tracking-tight leading-snug group-hover:text-[#EA580C] transition-colors">
+                      {item.topic}
+                    </h4>
+                    <p className="text-xs text-[var(--text-muted)] leading-relaxed line-clamp-2">
                       {item.reason}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className={`px-3 py-1 rounded-full text-[11px] font-mono font-semibold border ${categoryColors[item.category] || "bg-[var(--panel-bg)] text-[var(--text-headings)]"}`}>
+                <div className="flex items-center justify-between pt-2 border-t border-[var(--border-color)]">
+                  <span className={`px-2.5 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider uppercase border ${categoryColors[item.category] || "bg-[var(--panel-bg)] text-[var(--text-headings)]"}`}>
                     {item.category}
                   </span>
-                  <span className="text-[10px] font-mono text-[var(--text-muted)] capitalize px-2 py-1 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-lg">
+                  <span className="text-[10px] font-mono text-[var(--text-muted)] capitalize px-2 py-0.5 bg-[var(--panel-bg)] border border-[var(--border-color)] rounded">
                     {item.recommendedDifficulty || 'Medium'}
                   </span>
                 </div>

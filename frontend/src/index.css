@@ -73,11 +73,14 @@
 @layer components {
   /* Cards & Elevate Layout Containers */
   .shadow-card, .shadow-sm, .shadow-md, .shadow-lg, .bg-white, .clay-card {
-    background: var(--card-bg) !important;
-    backdrop-filter: none !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%) !important;
+    backdrop-filter: blur(25px) saturate(120%) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(120%) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: 12px !important;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05) !important;
+    box-shadow: 
+      0 12px 35px -10px rgba(0, 0, 0, 0.3),
+      inset 1px 1px 0px 0px rgba(255, 255, 255, 0.05) !important;
     color: var(--text-headings) !important;
     transition: background-color 0.2s ease, border-color 0.2s ease;
   }
