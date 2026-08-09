@@ -155,8 +155,8 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
         <div className="flex items-center gap-6">
           <div className="flex flex-col items-end gap-1.5">
             <div className="flex items-center gap-2 text-xs font-mono">
-              <span className="text-white/60 font-medium">Question</span>
-              <span className="font-bold text-white">{qNum} / ~{totalTarget}</span>
+              <span className="font-medium" style={{ color: 'var(--text-muted)' }}>Question</span>
+              <span className="font-bold" style={{ color: 'var(--text-headings)' }}>{qNum} / ~{totalTarget}</span>
             </div>
 
             {/* Progress Bar */}

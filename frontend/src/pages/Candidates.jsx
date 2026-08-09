@@ -35,6 +35,45 @@ export function Candidates({ candidates = [] }) {
 
   return (
     <div className="w-full py-10 max-w-6xl mx-auto space-y-8">
+      {/* Student ID Lookup Section */}
+      <div className="card-surface p-8 max-w-lg mx-auto space-y-4 text-center">
+        <h2 className="text-lg font-bold text-[var(--text-headings)] tracking-tight">Access Student Dashboard</h2>
+        <p className="text-xs text-[var(--text-muted)]">
+          Enter a Student ID (e.g., CAND-001, CAND-002) to view curriculum mastery, performance signals, and launch adaptive AI interviews.
+        </p>
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            const studentId = e.currentTarget.studentId.value.trim();
+            if (studentId) {
+              const exists = candidates.some(c => 
+                (c.member?.id || c.candidate_id || "").toLowerCase() === studentId.toLowerCase()
+              );
+              if (exists) {
+                navigate(`/candidates/${studentId.toUpperCase()}`);
+              } else {
+                setLookupError(studentId);
+              }
+            }
+          }}
+          className="flex flex-col sm:flex-row gap-1 pt-2"
+        >
+          <input
+            type="text"
+            name="studentId"
+            placeholder="e.g. CAND-001"
+            className="flex-1 px-5 py-3 rounded-lg bg-[var(--panel-bg)] border border-[var(--border-color)] text-sm text-[var(--text-headings)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#EA580C] transition-all"
+            required
+          />
+          <button
+            type="submit"
+            className="px-6 py-3 rounded-lg bg-[#EA580C] hover:bg-[#D94E09] text-white text-xs font-bold transition-all shadow-md active:scale-[0.98]"
+          >
+            Access Dashboard
+          </button>
+        </form>
+      </div>
+
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/20 pb-6 text-white">
         <div className="space-y-1">
@@ -139,45 +178,6 @@ export function Candidates({ candidates = [] }) {
           })()}
         </div>
       )}
-
-      {/* Student ID Lookup Section */}
-      <div className="card-surface p-8 mt-12 max-w-lg mx-auto space-y-4 text-center">
-        <h2 className="text-lg font-bold text-[var(--text-headings)] tracking-tight">Access Student Dashboard</h2>
-        <p className="text-xs text-[var(--text-muted)]">
-          Enter a Student ID (e.g., CAND-001, CAND-002) to view curriculum mastery, performance signals, and launch adaptive AI interviews.
-        </p>
-        <form 
-          onSubmit={(e) => {
-            e.preventDefault();
-            const studentId = e.currentTarget.studentId.value.trim();
-            if (studentId) {
-              const exists = candidates.some(c => 
-                (c.member?.id || c.candidate_id || "").toLowerCase() === studentId.toLowerCase()
-              );
-              if (exists) {
-                navigate(`/candidates/${studentId.toUpperCase()}`);
-              } else {
-                setLookupError(studentId);
-              }
-            }
-          }}
-          className="flex flex-col sm:flex-row gap-3 pt-2"
-        >
-          <input
-            type="text"
-            name="studentId"
-            placeholder="e.g. CAND-001"
-            className="flex-1 px-5 py-3 rounded-lg bg-[var(--panel-bg)] border border-[var(--border-color)] text-sm text-[var(--text-headings)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#EA580C] transition-all"
-            required
-          />
-          <button
-            type="submit"
-            className="px-6 py-3 rounded-lg bg-[#EA580C] hover:bg-[#D94E09] text-white text-xs font-bold transition-all shadow-md active:scale-[0.98]"
-          >
-            Access Dashboard
-          </button>
-        </form>
-      </div>
 
       {/* Glassmorphic Popup Modal */}
       {activeDay && (
