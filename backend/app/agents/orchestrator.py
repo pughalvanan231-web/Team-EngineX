@@ -173,6 +173,7 @@ class InterviewOrchestrator:
             "experience": member.get("yearsExperience", member.get("experience", 4)),
             "education": member.get("education", "Computer Science"),
             "status": member.get("status", "COMPLETED"),
+            "imageUrl": member.get("imageUrl", ""),
             "stats": {
                 "totalDays": 31,
                 "completedDays": completed_count,

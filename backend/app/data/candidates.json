@@ -7,7 +7,8 @@
         "jobRole": "Senior Data Engineer",
         "yearsExperience": 9,
         "education": "MS Computer Science",
-        "status": "COMPLETED"
+        "status": "COMPLETED",
+        "imageUrl": "https://static.vecteezy.com/system/resources/thumbnails/038/962/461/small/ai-generated-caucasian-successful-confident-young-businesswoman-ceo-boss-bank-employee-worker-manager-with-arms-crossed-in-formal-wear-isolated-in-white-background-photo.jpg"
       },
       "missions": [
         { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 1 },
@@ -30,7 +31,8 @@
         "jobRole": "Backend Software Engineer",
         "yearsExperience": 5,
         "education": "B.Tech Computer Science",
-        "status": "COMPLETED"
+        "status": "COMPLETED",
+        "imageUrl": "https://t4.ftcdn.net/jpg/03/25/73/59/360_F_325735908_TkxHU7okor9CTWHBhkGfdRumONWfIDEb.jpg"
       },
       "missions": [
         { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 3 },
@@ -53,7 +55,8 @@
         "jobRole": "AI Engineer",
         "yearsExperience": 6,
         "education": "MS Artificial Intelligence",
-        "status": "COMPLETED"
+        "status": "COMPLETED",
+        "imageUrl": "https://img.magnific.com/premium-photo/business-man-outdoor-portrait-arms-crossed-with-professional-legal-job-lawyer-city-corporate-male-attorney-confidence-justice-career-law-advisor-employee-urban-town_590464-423455.jpg?semt=ais_test_b&w=740&q=80"
       },
       "missions": [
         { "day": 7, "title": "Embeddings Explained", "passed": true, "attempts": 1 },

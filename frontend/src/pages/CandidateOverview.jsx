@@ -200,7 +200,7 @@ export function CandidateOverview({ candidates = [], selectedCandidate, onSelect
           <div className="absolute right-0 bottom-0 h-full w-[45%] z-0 pointer-events-none opacity-90">
             <img 
               src={
-                (() => {
+                cand?.imageUrl || (() => {
                   const nameLower = (cand.name || "").toLowerCase();
                   const femaleNames = ["sarah", "emily", "wendy", "zara", "mia", "bethany", "isabella", "diane", "priyanka", "jessica", "lisa", "anna"];
                   const isFemale = femaleNames.some(fn => nameLower.includes(fn));
