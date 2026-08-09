@@ -167,7 +167,7 @@ export function LandingPage({ onStart }) {
             <div className="absolute inset-0 bg-slate-950/20 rounded-[40px] blur-2xl transform scale-95 translate-y-6 pointer-events-none" />
 
             <img 
-              src="/src/assets/image.png" 
+              src="https://i.pinimg.com/1200x/5b/05/f8/5b05f838ba47e0b913df73b507fbe144.jpg" 
               alt="Luxury AI Pavilion Architecture" 
               className="w-full h-auto object-cover rounded-[36px] drop-shadow-2xl transform hover:scale-[1.02] transition-transform duration-500 relative z-10"
             />
