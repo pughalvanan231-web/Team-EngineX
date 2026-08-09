@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Sun, Moon } from 'lucide-react';
 
@@ -19,13 +19,29 @@ export function Header({ activeSession, healthStatus, onResetSession }) {
     }
   }, [isDark]);
 
+  const toggleTheme = () => {
+    setIsDark(!isDark);
+  };
+
+  const getLinkClass = (isActive) => {
+    return `text-sm font-light transition-colors ${
+      isActive
+        ? (isDark ? 'text-[#FFFFFF] font-medium' : 'text-[#171717] font-medium')
+        : (isDark ? 'text-[#A3A3A3] hover:text-[#FFFFFF]' : 'text-[#737373] hover:text-[#171717]')
+    }`;
+  };
+
   return (
-    <header className="sticky top-4 z-50 max-w-4xl mx-auto px-4 w-full">
-      <nav className="flex items-center justify-between p-1 bg-[#171717] border border-[#0A0A0A] rounded-full shadow-[0_12px_32px_rgba(0,0,0,0.18)]">
+    <header className="fixed top-4 left-0 right-0 z-50 max-w-4xl mx-auto px-4 w-full">
+      <nav className={`flex items-center justify-between p-1 rounded-full shadow-[0_12px_32px_rgba(0,0,0,0.12)] backdrop-blur-md transition-colors duration-250 ${
+        isDark ? 'bg-[#171717] border border-[#0A0A0A]' : 'bg-[#FFFFFF]/95 border border-[#E2E8F0]'
+      }`}>
         {/* Planet Icon Logo */}
         <Link
           to="/"
-          className="w-10 h-10 rounded-full bg-[#FFFFFF] flex items-center justify-center text-[#171717] shrink-0 hover:scale-105 active:scale-95 transition-all ml-1"
+          className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 hover:scale-105 active:scale-95 transition-all ml-1 ${
+            isDark ? 'bg-[#FFFFFF] text-[#171717]' : 'bg-[#171717] text-[#FFFFFF]'
+          }`}
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
             <circle cx="12" cy="12" r="8" />
@@ -37,29 +53,25 @@ export function Header({ activeSession, healthStatus, onResetSession }) {
         <div className="flex items-center gap-7">
           <Link
             to="/curriculum#dashboard"
-            className={`text-sm font-light transition-colors ${location.hash === '#dashboard' || (location.pathname === '/curriculum' && !location.hash) ? 'text-[#FFFFFF] font-medium' : 'text-[#A3A3A3] hover:text-[#FFFFFF]'
-              }`}
+            className={getLinkClass(location.hash === '#dashboard' || (location.pathname === '/curriculum' && !location.hash))}
           >
             Candidates
           </Link>
           <Link
             to="/curriculum#syllabus"
-            className={`text-sm font-light transition-colors ${location.hash === '#syllabus' ? 'text-[#FFFFFF] font-medium' : 'text-[#A3A3A3] hover:text-[#FFFFFF]'
-              }`}
+            className={getLinkClass(location.hash === '#syllabus')}
           >
             Curriculum
           </Link>
           <Link
             to="/interview"
-            className={`text-sm font-light transition-colors ${location.pathname.startsWith('/interview') ? 'text-[#FFFFFF] font-medium' : 'text-[#A3A3A3] hover:text-[#FFFFFF]'
-              }`}
+            className={getLinkClass(location.pathname.startsWith('/interview'))}
           >
             Live Interview
           </Link>
           <Link
             to="/history"
-            className={`text-sm font-light transition-colors ${location.pathname === '/history' ? 'text-[#FFFFFF] font-medium' : 'text-[#A3A3A3] hover:text-[#FFFFFF]'
-              }`}
+            className={getLinkClass(location.pathname === '/history')}
           >
             Skill Analytics
           </Link>
@@ -77,8 +89,12 @@ export function Header({ activeSession, healthStatus, onResetSession }) {
           )}
 
           <button
-            onClick={() => setIsDark(!isDark)}
-            className="w-8 h-8 rounded-full bg-[#262626] border border-[#3A3A3A] flex items-center justify-center text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#323232] transition-all"
+            onClick={toggleTheme}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+              isDark 
+                ? 'bg-[#262626] border border-[#3A3A3A] text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#323232]' 
+                : 'bg-[#F5F5F4] border border-[#E7E5E4] text-[#737373] hover:text-[#171717] hover:bg-[#E7E5E4]'
+            }`}
             aria-label="Toggle theme"
           >
             {isDark ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
@@ -86,7 +102,11 @@ export function Header({ activeSession, healthStatus, onResetSession }) {
 
           <Link
             to="/curriculum"
-            className="bg-[#FFFFFF] text-[#171717] text-sm font-medium px-5 py-2.5 rounded-full hover:bg-[#F0F0EE] hover:scale-[1.02] active:scale-[0.98] transition-all"
+            className={`text-sm font-medium px-5 py-2.5 rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all ${
+              isDark 
+                ? 'bg-[#FFFFFF] text-[#171717] hover:bg-[#F0F0EE]' 
+                : 'bg-[#171717] text-[#FFFFFF] hover:bg-[#262626]'
+            }`}
           >
             AbTalks
           </Link>

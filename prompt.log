@@ -1,5 +1,30 @@
 # Prompt Log
 
+CATEGORY 1 → SKIPPED TOPICS
+    ↓
+Candidate has no demonstrated completion
+    ↓
+Test fundamentals first
+
+CATEGORY 2 → Highest-attempt topics (≥4)
+    ↓
+Candidate struggled during learning
+    ↓
+Probe understanding deeply
+
+CATEGORY 3 → Medium attempts (2–3)
+    ↓
+Moderate difficulty signal
+
+CATEGORY 4 → Low attempts (1)
+    ↓
+Likely stronger areas
+
+CATEGORY 5 → No detailed mission signal
+    ↓
+Use only when needed for curriculum breadth
+
+
 Chronological tracking log mapping developer prompts, instructions, and engineering requests to their corresponding git commits and development steps.
 
 ---
@@ -84,3 +109,1512 @@ Chronological tracking log mapping developer prompts, instructions, and engineer
   "Conditionally restore the Curriculum Syllabus grid section inside `Candidates.jsx` so that it is displayed when the hash is `#syllabus` (linked via the Curriculum tab) and hidden when the hash is `#dashboard` (Candidates tab)."
 * **Prompt**:
   "Fix candidate name mapping persistence inside client-side fallback sessions of `api.js` by embedding the candidate ID in the session ID and retrieving real candidate statistics dynamically instead of hardcoding 'Sarah Johnson'."
+
+
+# MASTER PROMPT — AI ADAPTIVE INTERVIEW AGENT
+
+You are working on an existing **AI Interview Agent** project.
+
+Your task is to **modify the existing application**, not rebuild it blindly from scratch.
+
+First inspect the complete existing project structure, frontend, backend, API routes, orchestrator, candidate JSON, database/session logic, and current interview flow.
+
+The current project already has:
+
+* React + Vite frontend
+* FastAPI backend
+* SQLite session persistence
+* Candidate data stored in JSON
+* AI/provider integration using Groq/OpenAI with Demo Mode fallback
+* Interview orchestrator
+* Adaptive question generation
+* Final interview scoring
+
+Preserve working functionality wherever possible.
+
+---
+
+# 1. NEW PRODUCT GOAL
+
+Transform the current application into an:
+
+> **AI-Powered Adaptive Candidate Interview & Skill Analytics Platform**
+
+The system must:
+
+1. Show a landing page.
+2. Allow the interviewer to select a candidate.
+3. Display candidate ID cards from the candidate JSON.
+4. Allow the interviewer to inspect a candidate's analytics.
+5. Start an AI-generated adaptive interview.
+6. Automatically determine interview-question priority from the candidate's learning history.
+7. Treat explicitly skipped and missing curriculum days as high-priority interview signals.
+8. Adapt the next question based on the candidate's previous answer.
+9. Complete approximately 8 questions, but allow the number to dynamically vary when necessary.
+10. Generate AI-based feedback after the interview.
+11. Generate a final candidate result/score.
+12. Clearly show strengths, weaknesses, knowledge gaps, skipped areas, recommendations, and overall performance.
+
+---
+
+# 2. IMPORTANT: INSPECT EXISTING CODE FIRST
+
+Before making changes:
+
+Inspect:
+
+* frontend directory
+* backend directory
+* candidate JSON
+* `main.py`
+* `orchestrator.py`
+* database/session files
+* API routes
+* existing interview components
+* existing dashboard components
+* existing scoring logic
+* existing provider/Groq integration
+* existing CSS/design system
+
+Do NOT duplicate existing functionality.
+
+Reuse existing:
+
+* API infrastructure
+* database/session persistence
+* AI provider abstraction
+* scoring utilities
+* candidate data structures
+* existing UI components where appropriate
+
+Only refactor when required.
+
+---
+
+# 3. COMPLETE NEW USER FLOW
+
+Implement this exact flow:
+
+```text
+LANDING PAGE
+     ↓
+SELECT CANDIDATE
+     ↓
+CANDIDATE ID CARDS
+     ↓
+READ MORE
+     ↓
+CANDIDATE ANALYTICS DASHBOARD
+     ↓
+START INTERVIEW
+     ↓
+PRE-INTERVIEW AI PRIORITY ANALYSIS
+     ↓
+INTERVIEW TEST PANEL
+     ↓
+QUESTION
+     ↓
+CANDIDATE ANSWER
+     ↓
+AI EVALUATION
+     ↓
+ADAPTIVE NEXT QUESTION
+     ↓
+REPEAT
+     ↓
+INTERVIEW COMPLETE
+     ↓
+AI FEEDBACK ANALYSIS
+     ↓
+FINAL RESULT
+```
+
+---
+
+# 4. LANDING PAGE
+
+Create/update the landing page with a clean, premium AI recruitment/interview UI.
+
+Primary CTA:
+
+> **Select Candidate**
+
+The landing page should explain briefly:
+
+* AI-powered candidate assessment
+* Curriculum-aware interview generation
+* Adaptive questioning
+* Skill-gap analysis
+* AI-generated final evaluation
+
+Do not overload the landing page.
+
+Use a professional SaaS/recruitment dashboard visual style.
+
+---
+
+# 5. SELECT CANDIDATE PAGE
+
+When the interviewer clicks:
+
+> **Select Candidate**
+
+show candidate cards.
+
+The candidates MUST come dynamically from the existing candidate JSON.
+
+Do not hardcode candidate names.
+
+Each card should display:
+
+* Candidate ID
+* Candidate name
+* Job role
+* Years of experience
+* Overall curriculum completion
+* Passed modules
+* Skipped modules
+* Average attempts
+* Short skill summary
+
+Example:
+
+```text
+┌──────────────────────────────────┐
+│ CAND-011                         │
+│                                  │
+│ Mia Alvarez                      │
+│ UX Researcher                    │
+│ 4 Years Experience               │
+│                                  │
+│ Completed     18                 │
+│ Skipped        2                  │
+│ Avg Attempts   2.1               │
+│                                  │
+│ [ Read More ]                    │
+└──────────────────────────────────┘
+```
+
+Every card must have:
+
+> **Read More**
+
+Also provide:
+
+> **Close**
+
+where appropriate for expanded candidate information/modal.
+
+---
+
+# 6. READ MORE → CANDIDATE ANALYTICS
+
+When the user clicks **Read More**, navigate to a candidate-specific analytics dashboard.
+
+Example route:
+
+```text
+/candidates/CAND-011
+```
+
+The dashboard must be generated dynamically from that candidate's JSON data.
+
+Do not create a static dashboard.
+
+---
+
+# 7. CANDIDATE ANALYTICS DASHBOARD
+
+Create a detailed analytics dashboard.
+
+Show:
+
+## Candidate Overview
+
+* Candidate ID
+* Name
+* Job role
+* Years of experience
+
+## Learning Statistics
+
+* Total curriculum days
+* Completed days
+* Passed days
+* Failed days
+* Skipped days
+* Missing/unrecorded days
+* Average attempts
+* Completion percentage
+* Pass percentage
+
+## Skill Signals
+
+Visualize:
+
+* Strong areas
+* Moderate areas
+* High-attempt areas
+* Skipped areas
+* Missing areas
+
+Use appropriate charts/cards.
+
+For example:
+
+```text
+Curriculum Progress
+████████████████░░░░ 80%
+
+Strong Skills
+✓ Embeddings
+✓ Chatbot Backend
+
+Needs Investigation
+⚠ Prompt Engineering
+⚠ Docker & Kubernetes
+
+No Demonstrated Completion
+! Security
+! Distributed Systems
+```
+
+---
+
+# 8. CRITICAL: DETERMINE INTERVIEW PRIORITY USING AI
+
+Before the interview begins, the backend must analyze the candidate's curriculum data.
+
+Do NOT simply sort topics by attempts.
+
+Build a structured **Interview Priority Engine**.
+
+The priority categories must be:
+
+```text
+CATEGORY 1
+Explicitly skipped topics
+
+CATEGORY 2
+Highest-attempt topics
+attempts >= 4
+
+CATEGORY 3
+Medium-attempt topics
+attempts = 2–3
+
+CATEGORY 4
+Low-attempt topics
+attempts = 1
+
+CATEGORY 5
+Missing curriculum days / no detailed signal
+```
+
+However:
+
+> **Skipped does NOT mean the candidate is weak.**
+
+It means:
+
+> There is insufficient demonstrated evidence of knowledge.
+
+The interview must test the candidate rather than automatically penalize them.
+
+---
+
+# 9. MISSING DAYS MUST ALSO BE DETECTED
+
+This is extremely important.
+
+If the curriculum contains days such as:
+
+```text
+Day 1
+Day 2
+Day 3
+Day 4
+Day 5
+...
+Day 31
+```
+
+but the candidate JSON only contains:
+
+```text
+Day 7
+Day 8
+Day 10
+Day 12
+Day 16
+Day 22
+Day 23
+Day 28
+Day 29
+Day 31
+```
+
+the system must detect the missing days.
+
+For example:
+
+```text
+Day 1 → Missing
+Day 2 → Missing
+Day 3 → Missing
+...
+Day 7 → Embeddings
+Day 8 → Vector DB
+Day 9 → Missing
+Day 10 → Retrieval
+...
+Day 29 → Skipped
+```
+
+Missing curriculum days must become:
+
+> **No Demonstrated Signal**
+
+and should be available as interview topics.
+
+Do NOT confuse:
+
+```text
+Skipped
+```
+
+with:
+
+```text
+Missing
+```
+
+They are separate signals.
+
+---
+
+# 10. PRIORITY EXAMPLE
+
+For this candidate:
+
+```text
+Prompt Engineering       → 4 attempts
+Docker/Kubernetes        → 3 attempts
+Retrieval                → 2 attempts
+Multi-Agent              → 2 attempts
+MCP                      → 2 attempts
+Embeddings               → 1 attempt
+Chatbot Backend          → 1 attempt
+```
+
+and suppose:
+
+```text
+Security                  → skipped
+```
+
+then the priority engine should initially produce something like:
+
+```text
+1. Security
+2. Prompt Engineering
+3. Docker & Kubernetes
+4. Retrieval
+5. Multi-Agent
+6. MCP
+7. Embeddings
+8. Chatbot Backend
+```
+
+The exact order may be adjusted by the AI based on:
+
+* job role
+* years of experience
+* curriculum importance
+* topic criticality
+* previous answers
+* interview coverage
+* difficulty
+
+---
+
+# 11. AI PRIORITY ENGINE OUTPUT
+
+Create a backend function/service such as:
+
+```text
+buildInterviewPriority(candidate)
+```
+
+It should return structured JSON similar to:
+
+```json
+{
+  "candidateId": "CAND-011",
+  "priorityAnalysis": [
+    {
+      "topic": "Security",
+      "day": 29,
+      "category": "SKIPPED",
+      "priority": 1,
+      "reason": "No demonstrated completion",
+      "recommendedDifficulty": "medium"
+    },
+    {
+      "topic": "Prompt Engineering",
+      "day": 12,
+      "category": "HIGH_ATTEMPTS",
+      "attempts": 4,
+      "priority": 2,
+      "reason": "Highest learning friction",
+      "recommendedDifficulty": "medium"
+    }
+  ]
+}
+```
+
+The frontend may show a simplified version, but the backend should maintain the detailed structure.
+
+---
+
+# 12. START INTERVIEW BUTTON
+
+On the candidate analytics dashboard add a prominent button:
+
+> **Start Interview**
+
+When clicked:
+
+```text
+POST /api/interview/start
+```
+
+Send:
+
+```json
+{
+  "candidateId": "CAND-011"
+}
+```
+
+The backend should:
+
+1. Load candidate JSON.
+2. Analyze curriculum.
+3. Detect skipped days.
+4. Detect missing days.
+5. Analyze attempts.
+6. Analyze role.
+7. Analyze experience.
+8. Build interview priority.
+9. Create session.
+10. Generate the first question.
+
+---
+
+# 13. INTERVIEW TEST PANEL
+
+After clicking Start Interview, redirect to:
+
+```text
+/interview/:sessionId
+```
+
+The test panel should contain:
+
+### Header
+
+* Candidate name
+* Candidate ID
+* Job role
+* Question number
+* Progress indicator
+
+Example:
+
+```text
+Mia Alvarez
+CAND-011
+UX Researcher
+
+Question 2 / ~8
+
+████████░░░░░░░░
+```
+
+### Question Area
+
+Display:
+
+```text
+AI Interviewer
+
+Question:
+How would you evaluate whether a retrieval system
+is returning relevant information?
+```
+
+### Answer Area
+
+Provide:
+
+* textarea
+* submit button
+* optional voice input if already supported
+* loading state while AI evaluates
+
+---
+
+# 14. ADAPTIVE INTERVIEW LOGIC
+
+The next question MUST NOT simply be:
+
+```text
+priority[index + 1]
+```
+
+The candidate's answer must influence the next question.
+
+After every answer:
+
+```text
+Candidate Answer
+       ↓
+AI Evaluation
+       ↓
+Answer Quality
+       ↓
+Determine next action
+```
+
+Classify answer as:
+
+```text
+EXCEPTIONAL
+STRONG
+PARTIAL
+WEAK
+INCORRECT
+```
+
+---
+
+# 15. ADAPTIVE DIFFICULTY
+
+If answer is:
+
+### Exceptional
+
+```text
+Increase difficulty
+Move toward next priority topic
+Possibly ask scenario/system-design question
+```
+
+### Strong
+
+```text
+Increase difficulty slightly
+Continue to next priority
+```
+
+### Partial
+
+```text
+Keep difficulty
+Ask one clarification/follow-up
+```
+
+### Weak
+
+```text
+Decrease difficulty
+Ask fundamental question
+```
+
+### Incorrect
+
+```text
+Ask fundamental recovery question
+Do not immediately penalize heavily
+```
+
+---
+
+# 16. FOLLOW-UP LOGIC
+
+For weak/partial answers, allow a follow-up.
+
+Example:
+
+```text
+Question 1:
+Explain vector databases.
+
+Candidate:
+They store vectors for searching.
+
+AI:
+Partial answer.
+
+Follow-up:
+Why is cosine similarity commonly used with
+embedding vectors?
+```
+
+Maximum follow-ups per topic:
+
+```text
+2
+```
+
+After the limit:
+
+```text
+Move to next priority topic.
+```
+
+---
+
+# 17. QUESTION COUNT
+
+Target:
+
+> **8 questions**
+
+But make the interview adaptive.
+
+Use:
+
+```text
+Minimum: 8
+Recommended: 8–10
+Maximum: 12
+```
+
+Do not terminate before minimum coverage unless there is a technical/session failure.
+
+The interview should finish when:
+
+```text
+questions >= 8
+AND
+sufficient priority areas have been evaluated
+```
+
+or:
+
+```text
+questions >= 12
+```
+
+---
+
+# 18. COVERAGE REQUIREMENT
+
+Do not allow the interview to focus entirely on one topic.
+
+Track:
+
+```text
+coveredTopics
+coveredDays
+priorityCategoriesTested
+```
+
+Try to cover multiple categories:
+
+```text
+Skipped
+High attempts
+Medium attempts
+Low attempts
+Missing
+```
+
+when available.
+
+---
+
+# 19. INTERVIEW STATE
+
+Persist the complete interview state in SQLite.
+
+Session state should contain:
+
+```json
+{
+  "sessionId": "...",
+  "candidateId": "...",
+  "status": "active",
+  "currentQuestion": "...",
+  "questionNumber": 4,
+  "questions": [],
+  "answers": [],
+  "evaluations": [],
+  "priorityQueue": [],
+  "coveredTopics": [],
+  "coveredDays": [],
+  "followUpDepth": 0,
+  "difficulty": 5,
+  "startedAt": "...",
+  "completedAt": null
+}
+```
+
+Browser refresh must NOT destroy interview progress.
+
+---
+
+# 20. ANSWER EVALUATION
+
+For every answer, the AI should evaluate:
+
+```text
+Technical Correctness
+Conceptual Depth
+Practical Understanding
+Engineering Reasoning
+Communication
+```
+
+Return structured JSON:
+
+```json
+{
+  "classification": "STRONG",
+  "correctness": 85,
+  "depth": 75,
+  "practical": 80,
+  "reasoning": 78,
+  "communication": 88,
+  "confidence": 0.91,
+  "strengths": [
+    "Correct understanding of vector similarity"
+  ],
+  "weaknesses": [
+    "Did not explain indexing"
+  ],
+  "needsFollowUp": false,
+  "reason": "Candidate demonstrated solid practical understanding."
+}
+```
+
+Do not allow malformed AI output to crash the interview.
+
+Use validation and fallback handling.
+
+---
+
+# 21. AI PRIORITY SHOULD BE EXPLAINABLE
+
+The final system should be able to explain:
+
+> Why was this question asked?
+
+For every question internally store:
+
+```json
+{
+  "topic": "Prompt Engineering",
+  "day": 12,
+  "priorityCategory": "HIGH_ATTEMPTS",
+  "attempts": 4,
+  "reason": "Candidate required four attempts to pass this module."
+}
+```
+
+This is important for demonstrating that the interview is genuinely personalized.
+
+---
+
+# 22. INTERVIEW COMPLETION
+
+When the interview finishes:
+
+Change session status:
+
+```text
+completed
+```
+
+Then generate a final AI analysis.
+
+---
+
+# 23. FINAL FEEDBACK
+
+The final feedback must include:
+
+## Overall Score
+
+0–100.
+
+Use the existing weighted scoring model unless there is a strong reason to improve it:
+
+```text
+Technical Correctness    30%
+Depth                    20%
+Practical Understanding 20%
+Engineering Reasoning    15%
+Communication            15%
+```
+
+Formula:
+
+```text
+Overall =
+0.30 * Correctness
++ 0.20 * Depth
++ 0.20 * Practical
++ 0.15 * Reasoning
++ 0.15 * Communication
+```
+
+Round to nearest integer.
+
+---
+
+# 24. FINAL RESULT PAGE
+
+After the interview automatically redirect to:
+
+```text
+/interview/:sessionId/result
+```
+
+Create a polished final result dashboard.
+
+Display:
+
+### Candidate
+
+```text
+Mia Alvarez
+CAND-011
+UX Researcher
+```
+
+### Overall Score
+
+```text
+82 / 100
+```
+
+and a clear performance label:
+
+```text
+Strong Candidate
+```
+
+Possible labels:
+
+```text
+Exceptional
+Strong
+Moderate
+Needs Improvement
+Insufficient Evidence
+```
+
+---
+
+# 25. FINAL ANALYTICS
+
+Show:
+
+### Score Breakdown
+
+```text
+Technical Correctness     86
+Depth                     78
+Practical Understanding  84
+Engineering Reasoning     80
+Communication             88
+```
+
+Use clean charts.
+
+---
+
+# 26. STRENGTHS
+
+Example:
+
+```text
+✓ Strong API/backend understanding
+✓ Good understanding of embeddings
+✓ Clear technical communication
+✓ Good practical reasoning
+```
+
+---
+
+# 27. WEAKNESSES
+
+Example:
+
+```text
+⚠ Limited depth in Kubernetes
+⚠ Prompt engineering reasoning needs improvement
+```
+
+---
+
+# 28. KNOWLEDGE GAPS
+
+Separate knowledge gaps from weaknesses.
+
+Example:
+
+```text
+Knowledge Gaps
+
+• Kubernetes deployment strategies
+• Advanced retrieval optimization
+• Multi-agent failure handling
+```
+
+---
+
+# 29. SKIPPED/MISSING ANALYSIS
+
+Very important.
+
+The final result must explicitly show:
+
+```text
+Previously Skipped Topics
+```
+
+and:
+
+```text
+Previously Missing Curriculum Signals
+```
+
+For example:
+
+```text
+Skipped:
+• Security
+
+Missing:
+• Distributed Systems
+• Advanced ML
+```
+
+But do NOT automatically label these as weaknesses.
+
+Use wording such as:
+
+> "These areas had limited prior learning evidence and were therefore prioritized for interview validation."
+
+---
+
+# 30. QUESTION-BY-QUESTION REVIEW
+
+Show every interview question.
+
+Example:
+
+```text
+Q1  Security
+    Strong
+    Score: 82
+
+Q2  Prompt Engineering
+    Partial
+    Score: 68
+
+Q3  Docker & Kubernetes
+    Strong
+    Score: 84
+```
+
+Allow the interviewer to expand each question and see:
+
+* question
+* candidate answer
+* AI evaluation
+* score
+* topic
+* priority category
+* why it was selected
+
+---
+
+# 31. FINAL RECOMMENDATION
+
+AI should generate a concise hiring recommendation:
+
+Examples:
+
+```text
+Recommended
+
+Candidate demonstrates strong practical engineering
+knowledge with good adaptability across AI infrastructure
+and backend systems.
+```
+
+or:
+
+```text
+Consider with Reservations
+
+Candidate demonstrates strong fundamentals but requires
+additional validation in production deployment and
+advanced AI orchestration.
+```
+
+or:
+
+```text
+Further Evaluation Recommended
+
+The interview produced insufficient evidence in several
+high-priority areas.
+```
+
+Do NOT make the recommendation solely from skipped modules.
+
+Use actual interview performance.
+
+---
+
+# 32. API DESIGN
+
+Preserve existing endpoints if possible.
+
+Implement/modify APIs approximately as follows:
+
+```text
+GET  /api/v1/candidates
+GET  /api/v1/candidates/{candidateId}
+
+POST /api/interview/start
+
+GET  /api/interview/{sessionId}
+
+POST /api/interview/{sessionId}/answer
+
+POST /api/interview/{sessionId}/complete
+
+GET  /api/interview/{sessionId}/result
+```
+
+If the project already has equivalent endpoints, reuse them instead of creating duplicates.
+
+---
+
+# 33. DATA FLOW
+
+The complete backend flow should be:
+
+```text
+Candidate JSON
+      ↓
+Candidate Analyzer
+      ↓
+Curriculum Normalizer
+      ↓
+Missing Day Detector
+      ↓
+Skipped Day Detector
+      ↓
+Attempt Analyzer
+      ↓
+Role/Experience Analyzer
+      ↓
+AI Priority Engine
+      ↓
+Priority Queue
+      ↓
+Question Generator
+      ↓
+Candidate Answer
+      ↓
+Answer Evaluator
+      ↓
+Adaptive Router
+      ↓
+Next Question
+      ↓
+Interview Complete
+      ↓
+Final Evaluation
+      ↓
+Result Generator
+      ↓
+Final Dashboard
+```
+
+---
+
+# 34. CURRICULUM NORMALIZATION
+
+Create a normalized representation for every curriculum day.
+
+Example:
+
+```json
+{
+  "day": 12,
+  "title": "Prompt Engineering Fundamentals",
+  "status": "passed",
+  "attempts": 4
+}
+```
+
+For missing:
+
+```json
+{
+  "day": 9,
+  "title": "Unknown / Missing Curriculum Data",
+  "status": "missing",
+  "attempts": null
+}
+```
+
+For skipped:
+
+```json
+{
+  "day": 29,
+  "title": "Monitoring, Logging & Observability",
+  "status": "skipped",
+  "attempts": null
+}
+```
+
+Never silently ignore missing days.
+
+---
+
+# 35. IMPORTANT DISTINCTION
+
+The system must distinguish:
+
+```text
+PASSED
+FAILED
+SKIPPED
+MISSING
+```
+
+These signals mean different things.
+
+### PASSED
+
+Candidate demonstrated successful completion.
+
+### FAILED
+
+Candidate attempted but did not successfully complete.
+
+### SKIPPED
+
+Candidate did not demonstrate completion.
+
+### MISSING
+
+The dataset contains no record for that curriculum day.
+
+Do not merge these categories.
+
+---
+
+# 36. AI PROMPT DESIGN
+
+Create separate AI responsibilities instead of one giant prompt.
+
+Use separate logical prompts/services for:
+
+```text
+1. Priority Analysis
+2. Question Generation
+3. Answer Evaluation
+4. Adaptive Routing
+5. Final Feedback
+```
+
+This makes the system easier to debug and more reliable.
+
+---
+
+# 37. DEMO MODE
+
+The existing Demo Mode must continue working when:
+
+```text
+GROQ_API_KEY
+```
+
+is unavailable.
+
+Demo Mode must still:
+
+* generate deterministic questions
+* evaluate answers
+* move through priorities
+* produce feedback
+* produce final result
+
+The application must not crash because the API key is missing.
+
+---
+
+# 38. ERROR HANDLING
+
+Handle:
+
+* invalid candidate ID
+* missing JSON data
+* malformed candidate records
+* AI timeout
+* AI malformed JSON
+* missing API key
+* expired session
+* duplicate answer submission
+* browser refresh
+* network failure
+
+Show useful user-facing error messages.
+
+Never expose raw stack traces to the frontend.
+
+---
+
+# 39. UI/UX REQUIREMENTS
+
+The interface should feel like a premium AI recruitment platform.
+
+Design principles:
+
+* modern
+* minimal
+* professional
+* strong visual hierarchy
+* responsive
+* accessible
+* smooth transitions
+* clean cards
+* subtle gradients
+* readable typography
+* excellent spacing
+* meaningful data visualization
+
+Avoid:
+
+* excessive neon effects
+* unnecessary animations
+* clutter
+* generic dashboard templates
+* huge text everywhere
+
+---
+
+# 40. NAVIGATION
+
+Implement a clear navigation flow:
+
+```text
+Landing
+   ↓
+Candidates
+   ↓
+Candidate Analytics
+   ↓
+Interview
+   ↓
+Final Result
+```
+
+Allow:
+
+```text
+Back to Candidates
+```
+
+after completion.
+
+Do not allow accidental navigation to destroy an active session.
+
+---
+
+# 41. FINAL RESULT MUST BE PERSISTENT
+
+After interview completion, store:
+
+```text
+candidate
+session
+questions
+answers
+evaluations
+priority analysis
+scores
+final feedback
+recommendation
+```
+
+in a persistent format.
+
+Refreshing the result page must continue to show the result.
+
+---
+
+# 42. DO NOT BREAK EXISTING FUNCTIONALITY
+
+Before finishing:
+
+Test:
+
+```text
+Candidate loading
+Candidate selection
+Candidate analytics
+Interview start
+Question generation
+Answer submission
+Adaptive routing
+Follow-up questions
+Session persistence
+Browser refresh
+Interview completion
+Final scoring
+Final result
+Demo Mode
+Groq Mode
+```
+
+---
+
+# 43. ACCEPTANCE CRITERIA
+
+The implementation is complete only when this exact scenario works:
+
+```text
+1. Open application
+2. Click "Select Candidate"
+3. Candidate cards appear from JSON
+4. Select candidate
+5. Click "Read More"
+6. Candidate-specific analytics dashboard opens
+7. Dashboard correctly calculates curriculum statistics
+8. Skipped topics are detected
+9. Missing curriculum days are detected
+10. Attempt-based signals are detected
+11. Click "Start Interview"
+12. AI priority analysis runs
+13. First question comes from highest-priority signal
+14. Candidate answers
+15. AI evaluates answer
+16. Next question adapts according to answer
+17. Follow-up is generated when necessary
+18. Interview continues until sufficient coverage
+19. Minimum 8 questions
+20. Maximum 12 questions
+21. Interview completes
+22. AI generates final feedback
+23. Overall score is calculated
+24. Strengths appear
+25. Weaknesses appear
+26. Knowledge gaps appear
+27. Skipped areas appear
+28. Missing-signal areas appear
+29. Question-by-question analysis appears
+30. Final recommendation appears
+31. Result survives browser refresh
+```
+
+---
+
+# 44. IMPORTANT IMPLEMENTATION PRINCIPLE
+
+Do not make the interview a simple:
+
+```text
+sort(attempts)
+→ ask questions
+```
+
+It must be:
+
+```text
+Candidate Data
+      ↓
+Evidence Analysis
+      ↓
+AI Priority Ranking
+      ↓
+Question Selection
+      ↓
+Candidate Answer
+      ↓
+Answer Evaluation
+      ↓
+Adaptive Routing
+      ↓
+New Evidence
+      ↓
+Priority Re-ranking
+      ↓
+Next Question
+```
+
+The priority queue should be capable of being **re-ranked during the interview**.
+
+For example:
+
+```text
+Initial:
+
+Security        Priority 1
+Prompt          Priority 2
+Docker          Priority 3
+Retrieval       Priority 4
+MCP             Priority 5
+```
+
+Candidate gives an exceptional answer on Security.
+
+The system can then decide:
+
+```text
+Security → validated
+Prompt → investigate
+Docker → investigate
+Retrieval → investigate
+```
+
+If the candidate struggles heavily with Prompt Engineering, the system can temporarily increase the importance of that topic and ask a follow-up before moving forward.
+
+This is the core feature that makes the platform genuinely **adaptive**.
+
+---
+
+# 45. DELIVERABLE
+
+Implement the complete workflow in the existing project.
+
+At the end, provide:
+
+1. Files changed
+2. New files created
+3. API changes
+4. Database/session changes
+5. AI prompt changes
+6. Frontend route changes
+7. How to run backend
+8. How to run frontend
+9. Environment variables required
+10. Test results
+
+Do not merely describe the implementation.
+
+**Actually implement it in the existing codebase.**
+
+
