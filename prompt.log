@@ -1,0 +1,86 @@
+# Prompt Log
+
+Chronological tracking log mapping developer prompts, instructions, and engineering requests to their corresponding git commits and development steps.
+
+---
+
+### Commit: bab6837
+* **Message**: feat: implement frontend foundation and interview preparation pages
+* **Prompt**:
+  "Set up the initial React frontend directory using Vite. Install Lucide React, Axios, and React Router. Create global CSS variables in `index.css` for a premium dark/sage green design aesthetic. Implement the Candidate onboarding/preparation card view (`InterviewPreparation.jsx`) with dynamic loaders and instructions."
+
+---
+
+### Commit: 503280f
+* **Message**: glass
+* **Prompt**:
+  "Apply premium glassmorphic styles across the candidate preparation layout. Add CSS utility classes for `backdrop-blur-md`, subtle semi-transparent backgrounds (`bg-white/10`, `bg-slate-900/40`), and thin borders (`border-white/10`) to make panels look modern and layered."
+
+---
+
+### Commit: 8406176
+* **Message**: feat: implement candidate overview dashboard with analytics and custom design system styles
+* **Prompt**:
+  "Develop the dashboard view to display curriculum mastery metrics. Render percentage bars for overall progress, attempt count charts, and separate stats columns tracking completed, skipped, and missing days."
+
+---
+
+### Commit: cf4c213
+* **Message**: feat: implement candidate overview page with analytics visualization and add profile image assets
+* **Prompt**:
+  "Create the detailed candidate profile view. Add a collection of candidate profile picture assets under `src/assets/candidates image/` and write a lookup hash function to map names consistently to their corresponding avatars."
+
+---
+
+### Commit: c7d7083
+* **Message**: feat: implement CandidateOverview component with analytics visualization and AI interview initiation flow
+* **Prompt**:
+  "Integrate the CandidateOverview component with the backend APIs. Connect the 'Start AI Interview' button to trigger session initialization (`startInterviewSession`) and redirect the router to the `/interview/:id` workspace."
+
+---
+
+### Commit: 78bf0ed
+* **Message**: interview check
+* **Prompt**:
+  "Audit the live interview conversation turn handlers. Ensure that user message submissions dispatch to the backend, wait times display typing animations, and incoming question states update the local state correctly."
+
+---
+
+### Commit: 1c07c2a
+* **Message**: feat: add Render configuration for automated deployment of backend and frontend services
+* **Prompt**:
+  "Create a `render.yaml` configuration at the root of the project to support automated multi-service builds on Render. Specify a static site deployment for the Vite frontend and a web service deployment for the Python FastAPI backend."
+
+---
+
+### Commit: 0883c81
+* **Message**: feat: implement interview orchestrator agent and candidate overview dashboard for performance tracking
+* **Prompt**:
+  "Write the backend interview orchestrator logic. Setup FastAPI routers under `api/v1/interview`, and write LLM prompts to dynamically generate questions (`question_generator.txt`) and follow-ups (`followup_generator.txt`) based on curriculum gaps."
+
+---
+
+### Commit: 34ae7ac
+* **Message**: feat: implement frontend landing page and placeholder routes for interview, candidate, and report workflows
+* **Prompt**:
+  "Completely redesign the application landing page. Create an editorial layout with a mock live adaptive interview dialog simulator and an interactive difficulty ladder track with vertical timeline circles."
+
+---
+
+### Uncommitted/Latest Updates (Redesign Refinement)
+* **Prompt**:
+  "Relocate the FAQ section directly below the Adaptive Difficulty Ladder on the landing page, and resolve the `ReferenceError: difficultyLevels is not defined` runtime error."
+* **Prompt**:
+  "Overhaul the global header component (`Header.jsx`) to match the premium dark pill-shaped nav bar UI, featuring white rounded badge icons and white pill action triggers."
+* **Prompt**:
+  "Delete the local mockup header from `LandingPage.jsx` to prevent duplicate navigation bars from rendering on the landing page view."
+* **Prompt**:
+  "Create a dedicated 31-day Cohort Syllabus grid view (`CurriculumSyllabus.jsx`) and map it to the `/overview` route linked under the Curriculum nav button."
+* **Prompt**:
+  "Rename the candidate dashboard route paths from `/candidates` to `/curriculum` across all components and page templates while keeping lookup methods functional."
+* **Prompt**:
+  "Update the landing page hero image src to point to the remote URL: `https://i.pinimg.com/1200x/5b/05/f8/5b05f838ba47e0b913df73b507fbe144.jpg`."
+* **Prompt**:
+  "Conditionally restore the Curriculum Syllabus grid section inside `Candidates.jsx` so that it is displayed when the hash is `#syllabus` (linked via the Curriculum tab) and hidden when the hash is `#dashboard` (Candidates tab)."
+* **Prompt**:
+  "Fix candidate name mapping persistence inside client-side fallback sessions of `api.js` by embedding the candidate ID in the session ID and retrieving real candidate statistics dynamically instead of hardcoding 'Sarah Johnson'."
