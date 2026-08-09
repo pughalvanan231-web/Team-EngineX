@@ -16,6 +16,7 @@ import { SkeletonLoader } from './components/common/SkeletonLoader';
 import { LandingPage } from './pages/LandingPage';
 import { Candidates } from './pages/Candidates';
 import { CandidateOverview } from './pages/CandidateOverview';
+import { CurriculumSyllabus } from './pages/CurriculumSyllabus';
 import { InterviewPreparation } from './pages/InterviewPreparation';
 import { LiveInterview } from './pages/LiveInterview';
 import { InterviewCompletion } from './pages/InterviewCompletion';
@@ -131,7 +132,7 @@ export default function App() {
     setInterviewState(null);
     localStorage.removeItem(STORAGE_SESSION_KEY);
     setError(null);
-    navigate('/candidates');
+    navigate('/curriculum');
   };
 
   if (initialLoading) {
@@ -178,7 +179,7 @@ export default function App() {
             <Route path="/" element={<LandingPage onStart={handleStartInterview} />} />
             
             <Route 
-              path="/candidates" 
+              path="/curriculum" 
               element={
                 <Candidates 
                   candidates={candidates}
@@ -188,7 +189,7 @@ export default function App() {
             />
 
             <Route 
-              path="/candidates/:candidateId" 
+              path="/curriculum/:candidateId" 
               element={
                 <CandidateOverview 
                   candidates={candidates}
@@ -201,14 +202,7 @@ export default function App() {
 
             <Route 
               path="/overview" 
-              element={
-                <CandidateOverview 
-                  candidates={candidates}
-                  selectedCandidate={selectedCandidate}
-                  onSelectCandidate={setSelectedCandidate}
-                  curriculum={curriculum}
-                />
-              } 
+              element={<CurriculumSyllabus />} 
             />
 
             <Route 

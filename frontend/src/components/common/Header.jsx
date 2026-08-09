@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Play, Search, Menu, ChevronDown, Cpu, Sparkles, Sun, Moon } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 
 export function Header({ activeSession, healthStatus, onResetSession }) {
   const location = useLocation();
@@ -20,103 +20,82 @@ export function Header({ activeSession, healthStatus, onResetSession }) {
   }, [isDark]);
 
   return (
-    <header className="w-full bg-[var(--card-bg)] border-b border-[var(--border-color)] sticky top-0 z-50 py-3.5 px-4 sm:px-8 text-[var(--text-headings)] transition-colors duration-250">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        
-        {/* Left Brand Logo */}
+    <header className="sticky top-4 z-50 max-w-4xl mx-auto px-4 w-full">
+      <nav className="flex items-center justify-between p-1 bg-[#171717] border border-[#0A0A0A] rounded-full shadow-[0_12px_32px_rgba(0,0,0,0.18)]">
+        {/* Planet Icon Logo */}
         <Link 
           to="/" 
-          className="flex items-center gap-2 group transition-transform hover:opacity-95"
+          className="w-10 h-10 rounded-full bg-[#FFFFFF] flex items-center justify-center text-[#171717] shrink-0 hover:scale-105 active:scale-95 transition-all ml-1"
         >
-          <div className="w-8 h-8 rounded-lg bg-[var(--panel-bg)] border border-[var(--border-color)] flex items-center justify-center text-[#5E6C55]">
-            <Cpu className="w-4 h-4" />
-          </div>
-          <div className="text-left">
-            <span className="font-sans text-sm font-bold tracking-wider text-[var(--text-headings)] block">
-              ENGINE.AI
-            </span>
-            <span className="text-[10px] text-[#5E6C55] uppercase tracking-widest block font-mono">
-              Adaptive Technical Interview
-            </span>
-          </div>
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <circle cx="12" cy="12" r="8" />
+            <ellipse cx="12" cy="12" rx="8" ry="3" transform="rotate(-15 12 12)" />
+          </svg>
         </Link>
 
-        {/* Center Nav Items with clean enterprise borders */}
-        <nav className="hidden lg:flex items-center gap-1.5 text-xs font-semibold px-4 py-1.5 rounded-lg bg-[var(--panel-bg)] border border-[var(--border-color)]">
+        {/* Center links */}
+        <div className="flex items-center gap-7">
           <Link
-            to="/candidates"
-            className={`px-3 py-1 rounded transition-all ${
-              location.pathname.startsWith('/candidates') 
-                ? 'bg-[var(--border-color)] text-[var(--text-headings)] font-bold' 
-                : 'text-[var(--text-headings)] hover:bg-[var(--hover-bg)]'
+            to="/curriculum#dashboard"
+            className={`text-sm font-light transition-colors ${
+              location.hash === '#dashboard' || (location.pathname === '/curriculum' && !location.hash) ? 'text-[#FFFFFF] font-medium' : 'text-[#A3A3A3] hover:text-[#FFFFFF]'
             }`}
           >
             Candidates
           </Link>
-
           <Link
-            to="/overview"
-            className={`px-3 py-1 rounded transition-all ${
-              location.pathname === '/overview' 
-                ? 'bg-[var(--border-color)] text-[var(--text-headings)] font-bold' 
-                : 'text-[var(--text-headings)] hover:bg-[var(--hover-bg)]'
+            to="/curriculum#syllabus"
+            className={`text-sm font-light transition-colors ${
+              location.hash === '#syllabus' ? 'text-[#FFFFFF] font-medium' : 'text-[#A3A3A3] hover:text-[#FFFFFF]'
             }`}
           >
             Curriculum
           </Link>
-
           <Link
             to="/interview"
-            className={`px-3 py-1 rounded transition-all flex items-center gap-1.5 ${
-              location.pathname.startsWith('/interview') 
-                ? 'bg-[var(--border-color)] text-[var(--text-headings)] font-bold' 
-                : 'text-[var(--text-headings)] hover:bg-[var(--hover-bg)]'
+            className={`text-sm font-light transition-colors ${
+              location.pathname.startsWith('/interview') ? 'text-[#FFFFFF] font-medium' : 'text-[#A3A3A3] hover:text-[#FFFFFF]'
             }`}
           >
-            {activeSession && <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />}
             Live Interview
           </Link>
-
           <Link
             to="/history"
-            className={`px-3 py-1 rounded transition-all ${
-              location.pathname === '/history' 
-                ? 'bg-[var(--border-color)] text-[var(--text-headings)] font-bold' 
-                : 'text-[var(--text-headings)] hover:bg-[var(--hover-bg)]'
+            className={`text-sm font-light transition-colors ${
+              location.pathname === '/history' ? 'text-[#FFFFFF] font-medium' : 'text-[#A3A3A3] hover:text-[#FFFFFF]'
             }`}
           >
             Skill Analytics
           </Link>
-        </nav>
+        </div>
 
-        {/* Right Status Dot, Theme Switcher & Resume Indicator */}
-        <div className="flex items-center gap-3 text-xs font-medium">
+        {/* Right side white button & theme switcher */}
+        <div className="flex items-center gap-2 pr-1">
           {activeSession && !location.pathname.startsWith('/interview') && (
             <Link
               to={`/interview/${activeSession.interview_id || activeSession.sessionId}`}
-              className="px-3.5 py-1.5 rounded-lg bg-[#EA580C] text-white font-bold hover:bg-[#D94E09] transition-all flex items-center gap-1.5"
+              className="bg-[#EA580C] text-[#FFFFFF] text-xs font-semibold px-4 py-2.5 rounded-full hover:bg-[#D94E09] transition-all mr-1"
             >
-              <Play className="w-3 h-3 fill-current text-white" />
-              <span>Resume Session</span>
+              Resume
             </Link>
           )}
 
-          {/* Theme Toggler Toggle Button */}
           <button
             onClick={() => setIsDark(!isDark)}
-            className="w-8 h-8 rounded-lg bg-[var(--panel-bg)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-headings)] hover:bg-[var(--hover-bg)] transition-all"
-            aria-label="Toggle visual theme"
+            className="w-8 h-8 rounded-full bg-[#262626] border border-[#3A3A3A] flex items-center justify-center text-[#A3A3A3] hover:text-[#FFFFFF] hover:bg-[#323232] transition-all"
+            aria-label="Toggle theme"
           >
-            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {isDark ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
 
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--panel-bg)] border border-[var(--border-color)] text-[11px] font-mono text-[#059669] font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-            SYSTEM READY
-          </div>
+          <Link
+            to="/curriculum"
+            className="bg-[#FFFFFF] text-[#171717] text-sm font-medium px-5 py-2.5 rounded-full hover:bg-[#F0F0EE] hover:scale-[1.02] active:scale-[0.98] transition-all"
+          >
+            ihyaet@gmail.com
+          </Link>
         </div>
-
-      </div>
+      </nav>
     </header>
   );
 }
