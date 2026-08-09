@@ -98,7 +98,10 @@ export function FeedbackReport({ state: propState, onReset }) {
         </div>
 
         <button
-          onClick={() => navigate('/candidates')}
+          onClick={() => {
+            if (onReset) onReset();
+            else navigate('/candidates');
+          }}
           className="px-6 py-3 rounded-full bg-white hover:bg-slate-50 text-slate-900 text-xs font-bold flex items-center gap-2 self-start sm:self-auto shadow-md transition-all active:scale-[0.98]"
         >
           <RotateCcw className="w-3.5 h-3.5" />

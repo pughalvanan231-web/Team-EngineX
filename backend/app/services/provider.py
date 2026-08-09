@@ -132,13 +132,12 @@ class AIProviderService:
             }
 
         if schema_type == "question":
-            topic = ""
-            match = re.search(r'Topic: (.*?) \(Day (\d+)\)', prompt, re.IGNORECASE)
-            if match:
-                topic = match.group(1).strip()
-                day = int(match.group(2))
-            else:
-                day = 8
+            topic = "AI Engineering"
+            day = 8
+            day_match = re.search(r'- Day (\d+): (.*?)(?:\r?\n|$)', prompt, re.IGNORECASE)
+            if day_match:
+                day = int(day_match.group(1))
+                topic = day_match.group(2).strip()
             return {
                 "question": self._demo_question(topic, day),
                 "topic": topic,
@@ -147,14 +146,17 @@ class AIProviderService:
             }
 
         if schema_type == "followup":
+            topic = "RAG"
+            day = 8
             topic_match = re.search(r'CURRENT TOPIC: (.*?) \(Day (\d+)', prompt, re.IGNORECASE)
-            topic = topic_match.group(1).strip() if topic_match else "RAG"
-            day = int(topic_match.group(2)) if topic_match else 8
+            if topic_match:
+                topic = topic_match.group(1).strip()
+                day = int(topic_match.group(2))
             # Extract recommended_followup_type from prompt for demo specificity
             type_match = re.search(r'Recommended follow-up type: (\w+)', prompt, re.IGNORECASE)
             followup_type = type_match.group(1).strip() if type_match else "MISSING_CONCEPT"
             return {
-                "question": "What specific failure modes or trade-offs does that approach introduce in a production system, and how would you measure them?",
+                "question": f"Regarding your point on {topic}, what specific failure modes or trade-offs does that approach introduce in a production system, and how would you measure them?",
                 "topic": topic,
                 "curriculum_day": day,
                 "difficulty": "advanced",

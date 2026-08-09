@@ -89,8 +89,8 @@ export default function App() {
   };
 
   // 2. Submit Answer in Conversation Turn
-  const handleSubmitAnswer = async (answerText) => {
-    const activeSessionId = interviewState?.interview_id || interviewState?.sessionId;
+  const handleSubmitAnswer = async (answerText, providedSessionId) => {
+    const activeSessionId = providedSessionId || interviewState?.interview_id || interviewState?.sessionId;
     if (!activeSessionId) return;
     setLoading(true);
     setError(null);
@@ -109,8 +109,8 @@ export default function App() {
   };
 
   // 3. Finish Early
-  const handleFinishEarly = async () => {
-    const activeSessionId = interviewState?.interview_id || interviewState?.sessionId;
+  const handleFinishEarly = async (providedSessionId) => {
+    const activeSessionId = providedSessionId || interviewState?.interview_id || interviewState?.sessionId;
     if (!activeSessionId) return;
     setLoading(true);
     setError(null);
@@ -128,9 +128,10 @@ export default function App() {
 
   // 4. Reset & Start Over
   const handleResetSession = () => {
-    localStorage.removeItem(STORAGE_SESSION_KEY);
     setInterviewState(null);
+    localStorage.removeItem(STORAGE_SESSION_KEY);
     setError(null);
+    navigate('/candidates');
   };
 
   if (initialLoading) {

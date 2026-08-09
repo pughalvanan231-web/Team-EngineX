@@ -51,7 +51,8 @@ class CandidatePayload(BaseModel):
     signals: CandidateSignals = CandidateSignals()
 
 class StartInterviewRequest(BaseModel):
-    candidate_id: str = Field(..., alias="candidateId")
+    model_config = {'populate_by_name': True}
+    candidate_id: str
     candidateId: Optional[str] = None
 
 class SubmitAnswerRequest(BaseModel):

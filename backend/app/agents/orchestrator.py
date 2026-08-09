@@ -268,12 +268,14 @@ class InterviewOrchestrator:
     def build_profile(self, candidate_payload: Any) -> Dict[str, Any]:
         if isinstance(candidate_payload, dict):
             return self.normalize_curriculum(candidate_payload)
-        if hasattr(candidate_payload, "dict"):
+        if hasattr(candidate_payload, "model_dump"):
+            return self.normalize_curriculum(candidate_payload.model_dump())
+        elif hasattr(candidate_payload, "dict"):
             return self.normalize_curriculum(candidate_payload.dict())
         return self.normalize_curriculum({"member": {"id": str(candidate_payload)}})
 
     def build_topic_pool(self, candidate_raw: Any) -> List[Dict[str, Any]]:
-        cand_dict = candidate_raw if isinstance(candidate_raw, dict) else (candidate_raw.dict() if hasattr(candidate_raw, "dict") else self.find_candidate(str(candidate_raw)))
+        cand_dict = candidate_raw if isinstance(candidate_raw, dict) else (candidate_raw.model_dump() if hasattr(candidate_raw, "model_dump") else (candidate_raw.dict() if hasattr(candidate_raw, "dict") else self.find_candidate(str(candidate_raw))))
         return self.build_interview_priority(cand_dict or {})
 
     def initial_difficulty(self, profile: Dict[str, Any]) -> int:
@@ -299,12 +301,12 @@ class InterviewOrchestrator:
             if session_or_cand_id.startswith("int_") or session_or_cand_id.startswith("t-") or session_or_cand_id.startswith("session_"):
                 real_session_id = session_or_cand_id
                 if candidate_payload:
-                    cand_raw = candidate_payload if isinstance(candidate_payload, dict) else (candidate_payload.dict() if hasattr(candidate_payload, "dict") else None)
+                    cand_raw = candidate_payload if isinstance(candidate_payload, dict) else (candidate_payload.model_dump() if hasattr(candidate_payload, "model_dump") else (candidate_payload.dict() if hasattr(candidate_payload, "dict") else None))
             else:
                 cand_raw = self.find_candidate(session_or_cand_id)
 
         if not cand_raw and candidate_payload:
-            cand_raw = candidate_payload if isinstance(candidate_payload, dict) else (candidate_payload.dict() if hasattr(candidate_payload, "dict") else None)
+            cand_raw = candidate_payload if isinstance(candidate_payload, dict) else (candidate_payload.model_dump() if hasattr(candidate_payload, "model_dump") else (candidate_payload.dict() if hasattr(candidate_payload, "dict") else None))
 
         if not cand_raw:
             cand_raw = self.candidates[0] if self.candidates else {}

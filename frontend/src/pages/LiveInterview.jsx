@@ -56,7 +56,12 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
     setAnswerText('');
 
     if (propSubmit) {
-      propSubmit(currentAns);
+      setSubmitting(true);
+      try {
+        await propSubmit(currentAns, sessionId);
+      } finally {
+        setSubmitting(false);
+      }
       return;
     }
 
@@ -87,7 +92,12 @@ export function LiveInterview({ state: propState, onSubmitAnswer: propSubmit, on
 
   const handleFinishEarly = async () => {
     if (propFinish) {
-      propFinish();
+      setSubmitting(true);
+      try {
+        await propFinish(sessionId);
+      } finally {
+        setSubmitting(false);
+      }
       return;
     }
     try {
